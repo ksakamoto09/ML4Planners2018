@@ -1,0 +1,13 @@
+name: "ML4Planners-Website"
+output_dir: "."
+navbar:
+  title: ""
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Syllabus"
+      href: syllabus.html
+    - text: "Assignments"
+      href: assignments.html
+    - text: "Readings"
+      href: readings.html
