@@ -1,5 +1,128 @@
 ---
 title: "Syllabus"
 ---
+--------
 
-Course Syllabus
+## Text Book
+
+R for Everyone: Advanced Analytics and Graphics by Jared Lander ([amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&qid=1518561244&sr=8-1&keywords=r+for+everyone))
+
+R: Unleash Machine Learning Techniques by Brett Lantz, Cory Lesmeister, Dipanjan Sarkar, and Raghav Bali ([Safari Online](http://proquest.safaribooksonline.com.ezproxy.cul.columbia.edu/))
+
+## Online Resources
+
+[Online Stat Book](http://onlinestatbook.com/2/index.html) -Basic stats knowledge
+
+ 
+
+## Assignments
+
+There will be weekly [assignments](assignments.html), reinforcing and pushing topics covered inc class.
+
+## Readings
+
+There will also be weekly [readings](readings.html) assigned.
+
+## Grading
+
+Assignments 50%
+Reading Discussion 10%
+Final Project 40%
+
+## Topics
+
+### Part I - R Basics
+
+* Getting started with R
+* R Environment - intro to RStudio
+* Essential R Programming
+* Data Types
+* Data Structure
+* Functions
+* Logical Operators
+
+### Part II - Machine Learning
+
+* Data Munging
+* Reading in data
+* Grep (regular expressions)
+* Dplyr
+* Reshape
+* Missing Data
+* Exploratory Data Analysis
+* Getting started with ggplot2
+* Histograms and distributions
+* Rmarkdown
+
+### Introduction to ML
+
+* What is machine learning?
+* Machine learning problems
+* Supervised vs. Unsupervised Learning
+* Regression, Classification, Clustering
+* Classification
+    + KNN K nearest neighbors
+    + KNN exercise 
+    + Naive Bayes 
+    + Decision Trees
+    + Decision tree exercise
+* Regression
+    + Generalized linear models
+    + GLM exercise 
+    + Regression with trees
+    + Regression trees exercise
+* Model Evaluation
+    + Confusion matrix
+    + Sensitivity, specificity, precision, recall
+    + ROC curves
+    + Residuals
+    + P-value
+    + RMSE
+
+## Part III - Final Projects
+
+* Inclass Kaggle + Report
+
+--------
+
+# Calendar
+
+#### Week 1 
+* Course Intro
+* Computational thinking
+* [Intro to R](labs/lab1.html)
+* assignment 1 - functions
+
+#### Week 2 - **SPRING BREAK**
+
+#### Week 3 
+* Munging
+* EDA
+* Reading (Critical Theory of Technology)
+* Assignment 2 - data munging
+
+#### Week 4 
+* What is machine learning?
+* Rmarkdown
+* Reading (Technological Utopianism in American Culture)
+* assignment 3 - reports
+
+####Week 5 
+* Regression
+* Classification
+* Reading(Rethinking Objectivity)
+* assignment 4 - classification
+
+#### Week 6 
+* Clustering
+* Text Mining
+* Reading(Trust in Numbers, Weapons of Math Destruction)
+* assignment 5 - NLP
+
+#### Week 7 
+* Model Evaluation
+* Work day
+
+#### Week 8
+* Discussion on Final Competition
+Bias in Machine Learning - Guest Speaker
