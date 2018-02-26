@@ -1,0 +1,11 @@
+---
+title: "Labs"
+---
+--------
+
+These labs were generously shared by Jared Lander and modified to meet class needs.
+
+### [Intro to R](labs/lab1.html)
+
+###[Data Munging](labs/lab2.html)
+
