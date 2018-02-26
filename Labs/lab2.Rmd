@@ -21,7 +21,7 @@ library(readr)
 tomato <- read_csv(file=file.path(dataDir, "TomatoFirst.csv"))
 ```
 ```{r read-tomato,eval=FALSE}
-tomato <- read_csv(file="http://www.jaredlander.com/data/TomatoFirst.csv")
+tomato <- read_csv(file="http://ml-course.kazsakamoto.com/Data/subway.csv")
 ```
 
 
