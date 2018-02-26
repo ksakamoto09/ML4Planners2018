@@ -9,5 +9,7 @@ navbar:
       href: syllabus.html
     - text: "Assignments"
       href: assignments.html
+    - text: "Labs"
+      href: labs.html
     - text: "Readings"
       href: readings.html

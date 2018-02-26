@@ -2,4 +2,15 @@
 title: "Readings"
 ---
 
-List of Readings.
+## Computational Thinking
+[BBC Bitsize Introduction to Computational Thinking](https://www.bbc.co.uk/education/guides/zp92mp3/revision)
+
+## Intelligence
+[How to pass the Turing Artifical Intelligence Test](https://www.wired.com/2012/06/pass-turing-ai-test/)
+
+## Danger Will Robinson
+
+[Weapons of Math Destruction](https://weaponsofmathdestructionbook.com/) (selected chapeters on canvas)
+[Machine Bias](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
+[New York City Passes Bill to Study Biases in Algorithms Used by the City](https://motherboard.vice.com/en_us/article/xw4xdw/new-york-city-algorithmic-bias-bill-law)
+[Big Data will be biased, if we let it](https://towardsdatascience.com/bias-in-big-data-for-the-non-tech-90fc53729025)

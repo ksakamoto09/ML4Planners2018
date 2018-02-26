@@ -1,0 +1,343 @@
+---
+title: "Intro to R"
+author: ""
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+## Basic Math
+R is great for statistics but can handle basic math operations. Let's have a try:
+
+```{r calculator}
+1 + 1
+1 + 2 + 3
+3 * 7 * 2
+4 / 2
+4 / 3
+```
+
+## PEMDAS 
+
+Let's see how order affects how code is run:
+```{r pemdas}
+4 * 6 + 5
+(4 * 6) + 5
+4 * (6 + 5)
+```
+
+# Variables
+
+## Assigning variables
+When assignining variables you can use that "<-" or "=" to assign variables:
+```{r variable-assignment}
+x <- 2
+x
+y = 5
+y
+
+3 -> z
+z
+
+a <- b <- 7
+a
+b
+
+assign("j", 4)
+j
+```
+
+## Removing 
+
+Sometimes you need to remove a variable from your workspace:
+```{r removing-vars}
+j
+rm(j)
+# now it is gone
+j
+```
+
+## Case Sensitive 
+
+In R variables are case sensitive:
+```{r case-sensitive-vars}
+theVariable <- 17
+theVariable
+THEVARIABLE
+```
+
+# Data Types 
+
+## Numeric
+
+As we saw earlier R can handle numeric data types:
+```{r numeric}
+x <- 2
+x
+class(x)
+is.numeric(x)
+```
+
+## Integer
+
+Integers are also numeric data types but do not have any decimal places:
+```{r integer}
+i <- 5L
+i
+is.integer(i)
+is.numeric(i)
+```
+
+## Integer Division
+
+R will convert integers to numeric when needed, for example when you are mixing
+types in multiplcation or division:
+```{r int-division}
+class(4L)
+class(2.8)
+4L * 2.8
+class(4L * 2.8)
+
+class(5L)
+class(2L)
+5L / 2L
+class(5L / 2L)
+```
+
+## Character Data 
+
+Another data type is character which can take in strings:
+```{r characters}
+x <- "data"
+x
+```
+
+let's take a count of the number of characters in our variable:
+```{r nchar-intro}
+nchar(x)
+nchar("hello")
+nchar(3)
+nchar(452)
+```
+
+
+## Dates
+
+Dates are also important and distinct, there are Date (Days) and POSIXct (seconds)
+from Janurary 1, 1970:
+```{r create-dates}
+date1 <- as.Date("2012-06-28")
+date1
+class(date1)
+as.numeric(date1)
+
+date2 <- as.POSIXct("2012-06-28 17:42")
+date2
+class(date2)
+as.numeric(date2)
+```
+
+
+## Logical
+
+Booleans are another type which stores True or False. They are stored numerically
+as 1 = True, 0 = False:
+```{r true-false-mult}
+TRUE * 5
+FALSE * 5
+```
+
+```{r logical-check}
+k <- TRUE
+class(k)
+is.logical(k)
+```
+
+We can also compare variables as logicals:
+```{r comparison-example}
+# does 2 equal 3?
+2 == 3
+# does 2 not equal three?
+2 != 3
+# is two less than three?
+2 < 3
+# is two less than or equal tothree?
+2 <= 3
+# is two greater than three?
+2 > 3
+# is two greater than or equal to three?
+2 >= 3
+# is "data" equal to "stats"?
+"data" == "stats"
+# is "data" less than "stats"?
+"data" < "stats"
+```
+
+# Vectors 
+
+## Vector Creation 
+
+A vector is a collection of the same data type:
+```{r create-first-vector} 
+x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+x
+```
+
+## Vector Operations
+
+What if we want to multiply each element in our vector by 3:
+```{r vector-elem-mult}
+x * 3
+```
+
+As you saw earlier, vectorized operations are great:
+```{r vector-examples}
+x + 2
+x - 3
+x / 4
+x^2
+sqrt(x)
+```
+
+## Vector Range Creation
+Using a ":" will also to create a range between the two numbers:
+```{r consecutive-vector}
+1:10
+10:1
+-2:3
+5:-7
+```
+
+## Vector Operations 
+
+We can even run oeprations against two vectors of equal length:
+```{r vector-two-operations}
+# create two vectors of equal length
+x <- 1:10
+y <- -5:4
+# add them
+x + y
+# subtract them
+x - y
+# multiply them
+x * y
+# divide them--notice division by 0 results in Inf
+x / y
+# raise one to the power of the other
+x^y
+# check the length of each
+length(x)
+length(y)
+# the length of them added together should be the same
+length(x + y)
+```
+Unlike the example above, if one vector is shorter it will get recycled. 
+If the longer vector is not a multiple of the shorter a warning will be thrown:
+```{r vector-recycling}
+x + c(1, 2)
+x + c(1, 2, 3)
+```
+Comparissions also works as vectors:
+```{r logical-vectors}
+x <= 5
+x > y
+x < y
+```
+
+
+## Character Vectors 
+
+We've been looking at numeric vectors, but what about character vectors?
+```{r nchar-vector,tidy=FALSE}
+q <- c("Hockey", "Football", "Baseball", "Curling", "Rugby",
+       "Lacrosse", "Basketball", "Tennis", "Cricket", "Soccer")
+nchar(q)
+nchar(y)
+```
+
+## Vector Elements
+
+by using the "[" we can select elements by their order number:
+```{r vector-elements}
+q[1]
+q[1:2]
+q[c(1, 4)]
+```
+
+## Vector Names 
+
+You can provide names for elements in your vector:
+```{r vector-names}
+# provide a name for each element of an array using a name-value pair
+c(One="a", Two="y", Last="r")
+
+# create a vector
+w <- 1:3
+# name the elements
+names(w) <- c("a", "b", "c")
+w
+```
+
+# Calling Functions
+
+## Mean and Sum 
+
+let's take the mean and the sum of our previous vector:
+```{r mean-simple}
+mean(x)
+sum(x)
+```
+
+## Getting help 
+Using a "?" will help you get to the help page for a function:
+```{r binary-help,eval=FALSE,tidy=FALSE}
+?mean
+```
+
+Not sure what the name of the function is? try apropos:
+```{r apropos}
+apropos("mea")
+```
+
+# Missing Data {#MissingData page=RfE50}
+
+## NA
+
+You will most likely have to deal with NAs some point in your work:
+```{r na-example}
+z <- c(1, 2, NA, 8, 3, NA, 3)
+z
+is.na(z)
+```
+
+calcluating functions with NAs might not work how you expect:
+```{r na-mean}
+mean(z)
+mean(z, na.rm = TRUE)
+```
+
+
+Here is an example with character data:
+```{r na-types}
+zChar <- c("Hockey", NA, "Lacrosse")
+zChar
+is.na(zChar)
+```
+
+## NULL
+
+Null differs from NA which is represented as another element in the vector. Null
+is more similar to nothingness:
+```{r null-disappear}
+z <- c(1, NULL, 3)
+z
+```
+
+```{r null-test}
+d <- NULL
+is.null(d)
+is.null(7)
+```
