@@ -3,12 +3,16 @@ title: "Readings"
 ---
 
 ## Computational Thinking
+
 [BBC Bitsize Introduction to Computational Thinking](https://www.bbc.co.uk/education/guides/zp92mp3/revision)
 
-## Intelligence
-[How to pass the Turing Artifical Intelligence Test](https://www.wired.com/2012/06/pass-turing-ai-test/)
+## Artifical Intelligence
 
-## Danger Will Robinson
+[How to pass the Turing Artifical Intelligence Test](https://www.wired.com/2012/06/pass-turing-ai-test/)
+[Resisting Reduction: Designing our Complex Future with Machines](https://pubpub.ito.com/pub/resisting-reduction)
+
+
+## Biased Algorithms?
 
 [Weapons of Math Destruction](https://weaponsofmathdestructionbook.com/) (selected chapeters on canvas)
 [Machine Bias](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
