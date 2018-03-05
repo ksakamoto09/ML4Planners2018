@@ -2,6 +2,8 @@
 title: "Readings"
 ---
 
+Herea are a list of readings, please check [Canvas](courseworks.columbia.edu) for the pdfs of weekly readings.
+
 ## Computational Thinking
 
 [BBC Bitsize Introduction to Computational Thinking](https://www.bbc.co.uk/education/guides/zp92mp3/revision)
