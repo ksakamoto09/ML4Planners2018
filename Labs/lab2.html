@@ -128,10 +128,109 @@ $(document).ready(function () {
 <h3>Reading in CSV</h3>
 <p>CSVs are probably one of the most common data formats that you will work with. To read in data we will use the “readr” package.</p>
 <pre class="r"><code>library(readr)
-tomato &lt;- read_csv(file=file.path(dataDir, &quot;subway.csv&quot;))</code></pre>
-<pre class="r"><code>tomato &lt;- read_csv(file=&quot;http://ml-course.kazsakamoto.com/Data/subway.csv&quot;)</code></pre>
-<pre class="r"><code>head(tomato)</code></pre>
+root &lt;- rprojroot::find_rstudio_root_file()
+dataDir &lt;- file.path(root, 'Data')
+
+subway &lt;- read_csv(file=file.path(dataDir, &quot;subway.csv&quot;))</code></pre>
+<pre class="r"><code>subway_online &lt;- read_csv(file=&quot;http://ml-course.kazsakamoto.com/Data/subway.csv&quot;)</code></pre>
+<pre class="r"><code>head(subway)</code></pre>
 </div>
+</div>
+<div id="read-excel" class="section level2">
+<h2>Read Excel</h2>
+<p>Load the package</p>
+<pre class="r"><code>root &lt;- rprojroot::find_rstudio_root_file()
+dataDir &lt;- file.path(root, 'Data')
+excel_sheets(file.path(dataDir, 'subway.xlsx'))</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   OBJECTID NAME                                  the_geom            LINE 
+##   &lt;chr&gt;    &lt;chr&gt;                                 &lt;chr&gt;               &lt;chr&gt;
+## 1 802      Nostrand Ave &amp; Fulton St at NE corner POINT (-73.9495149… A-C  
+## 2 803      Nostrand Ave &amp; Fulton St at NW corner POINT (-73.9497529… A-C  
+## 3 804      Throop Ave &amp; Fulton St at NE corner   POINT (-73.9402469… A-C  
+## 4 805      Throop Ave &amp; Fulton St at NW corner   POINT (-73.9404830… A-C  
+## 5 806      Utica Ave &amp; Fulton St at SW corner    POINT (-73.9300440… A-C  
+## 6 807      Utica Ave &amp; Fulton St at NW corner    POINT (-73.9297250… A-C</code></pre>
+</div>
+<div id="Pipes" class="section level1" page="RfES151">
+<h1>Pipes</h1>
+<pre class="r"><code>library(magrittr)</code></pre>
+<p>The name comes from Rene Magritte.</p>
+<pre class="r"><code>head(iris)
+iris %&gt;% head
+
+head(iris, n=4)
+iris %&gt;% head(n=4)</code></pre>
+<p>Get the fourth row</p>
+<pre class="r"><code>tail(head(iris, n=4), n=1)
+iris %&gt;% head(n=4) %&gt;% tail(n=1)</code></pre>
+<div id="dplyr" class="section level2">
+<h2>Dplyr</h2>
+<pre class="r"><code>data(&quot;diamonds&quot;, package=&quot;ggplot2&quot;)
+head(diamonds)</code></pre>
+</div>
+</div>
+<div id="tbl" class="section level1">
+<h1>tbl</h1>
+<p>Not needed but helpful</p>
+<pre class="r"><code>library(dplyr)
+dia &lt;- as.tbl(diamonds)
+dia</code></pre>
+</div>
+<div id="select" class="section level1">
+<h1>select</h1>
+<pre class="r"><code>dia[, c('carat', 'price')]
+dia %&gt;% select(carat, price)
+dia %&gt;% select_('carat', 'price')
+# carat and price
+dia %&gt;% select(1, 7)
+# everything but carat and price
+dia %&gt;% select(-c(1, 7))</code></pre>
+</div>
+<div id="filter" class="section level1">
+<h1>filter</h1>
+<pre class="r"><code>dia[dia$cut == 'Ideal', ]
+dia %&gt;% filter(cut == 'Ideal')
+# and
+dia %&gt;% filter(cut == 'Ideal', color == 'E')
+# and
+dia %&gt;% filter(cut == 'Ideal' &amp; color == 'E')
+# or
+dia %&gt;% filter(cut == 'Ideal' | cut == 'Premium')
+# or
+dia %&gt;% filter(cut %in% c('Ideal', 'Premium'))</code></pre>
+</div>
+<div id="slice" class="section level1">
+<h1>slice</h1>
+<pre class="r"><code>dia %&gt;% slice(1:5)
+dia %&gt;% slice(1:10)</code></pre>
+<pre class="r"><code>dia %&gt;% filter_(&quot;cut=='Ideal'&quot;)
+dia %&gt;% filter_(~cut=='Ideal')</code></pre>
+</div>
+<div id="mutate" class="section level1">
+<h1>mutate</h1>
+<pre class="r"><code># price/carat
+dia %&gt;% mutate(price/carat)
+dia %&gt;% mutate(ratio=price/carat)
+library(magrittr)
+# write back to original data.frame
+dia %&lt;&gt;% mutate(ratio=price/carat)
+dia</code></pre>
+<pre class="r"><code>dia %&gt;% mutate(TotalSize=x+y+z, TwiceSize=TotalSize*2)</code></pre>
+</div>
+<div id="summarize" class="section level1">
+<h1>summarize</h1>
+<pre class="r"><code># first see summarize in action
+# gives access to column names
+# returns one row
+dia %&gt;% summarize(mean(price))
+dia %&gt;% summarize(AvgPrice=mean(price))</code></pre>
+</div>
+<div id="group_by" class="section level1">
+<h1>group_by</h1>
+<pre class="r"><code>dia %&gt;% group_by(cut) %&gt;% summarize(AvgPrice=mean(price))
+dia %&gt;% group_by(cut, color) %&gt;% summarize(AvgPrice=mean(price))</code></pre>
+<pre class="r"><code>dia %&gt;% group_by(cut) %&gt;% summarize(AvgPrice=mean(price), AvgCarat=mean(carat), TotalCarat=sum(carat))</code></pre>
 </div>
 
 
