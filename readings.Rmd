@@ -2,7 +2,7 @@
 title: "Readings"
 ---
 
-Herea are a list of readings, please check [Canvas](https://courseworks.columbia.edu/) for the pdfs of weekly readings.
+Herea are a list of readings, please check [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F%2Fcourseworks.columbia.edu%2Fsakai-login-tool%2Fcontainer) for the pdfs of weekly readings.
 
 ## Computational Thinking
 

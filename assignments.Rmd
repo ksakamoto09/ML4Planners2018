@@ -2,6 +2,4 @@
 title: "Assignments"
 ---
 
-Please check [Canvas](http://courseworks.columbia.edu)
-
 Please check [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F%2Fcourseworks.columbia.edu%2Fsakai-login-tool%2Fcontainer)
