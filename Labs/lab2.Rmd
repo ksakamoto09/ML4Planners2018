@@ -16,15 +16,153 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 CSVs are probably one of the most common data formats that you will work with.
 To read in data we will use the "readr" package.
 
-```{r read-tomato-do}
+```{r read-subway-do}
 library(readr)
-tomato <- read_csv(file=file.path(dataDir, "TomatoFirst.csv"))
+subway <- read_csv(file=file.path(dataDir, "subway.csv"))
 ```
-```{r read-tomato,eval=FALSE}
-tomato <- read_csv(file="http://ml-course.kazsakamoto.com/Data/subway.csv")
+```{r read-subway,eval=FALSE}
+subway_online <- read_csv(file="http://ml-course.kazsakamoto.com/Data/subway.csv")
 ```
 
 
-```{r tomato-head-show,dependson='read-tomato-do'}
-head(tomato)
+```{r subway-head-show,dependson='read-tomato-do'}
+head(subway)
+```
+
+## Read Excel
+Load the package
+
+```{r load-readxl}
+library(readxl)
+```
+
+```{r see-sheets-show,eval=FALSE}
+excel_sheets('ExcelExample.xlsx')
+```
+```{r see-sheets-do,echo=FALSE}
+excel_sheets(file.path(dataDir, 'ExcelExample.xlsx'))
+```
+
+```{r read-tomato-with-readxl-show,eval=FALSE}
+tomatoXL <- read_excel('ExcelExample.xlsx', sheet=1)
+head(tomatoXL)
+```
+```{r read-iris-with-readxl-do,eval=TRUE,echo=FALSE}
+tomatoXL <- read_excel(file.path(dataDir, 'ExcelExample.xlsx'), sheet=1)
+head(tomatoXL)
+```
+
+# Pipes {#Pipes page=RfES151}
+
+```{r load-magrittr}
+library(magrittr)
+```
+
+The name comes from Rene Magritte.
+
+```{r pipe-pic,include=FALSE}
+knitr::include_graphics(file.path(imageDir, 'magritte-pipe.jpg'))
+```
+
+```{r head}
+head(iris)
+iris %>% head
+
+head(iris, n=4)
+iris %>% head(n=4)
+```
+
+Get the fourth row
+
+```{r head-tail}
+tail(head(iris, n=4), n=1)
+iris %>% head(n=4) %>% tail(n=1)
+```
+
+## Dplyr
+
+```{r get-diamonds-data}
+data("diamonds", package="ggplot2")
+head(diamonds)
+```
+
+# tbl {#tbl}
+Not needed but helpful
+
+```{r dia-tbl}
+library(dplyr)
+dia <- as.tbl(diamonds)
+dia
+```
+
+# select {#select}
+```{r dplyr-select}
+dia[, c('carat', 'price')]
+dia %>% select(carat, price)
+dia %>% select_('carat', 'price')
+# carat and price
+dia %>% select(1, 7)
+# everything but carat and price
+dia %>% select(-c(1, 7))
+```
+
+# filter {#filter}
+```{r dplyr-filter}
+dia[dia$cut == 'Ideal', ]
+dia %>% filter(cut == 'Ideal')
+# and
+dia %>% filter(cut == 'Ideal', color == 'E')
+# and
+dia %>% filter(cut == 'Ideal' & color == 'E')
+# or
+dia %>% filter(cut == 'Ideal' | cut == 'Premium')
+# or
+dia %>% filter(cut %in% c('Ideal', 'Premium'))
+```
+
+# slice {#slice}
+```{r dplyr-slice}
+dia %>% slice(1:5)
+dia %>% slice(1:10)
+```
+
+
+```{r filter-with-quoted formula}
+dia %>% filter_("cut=='Ideal'")
+dia %>% filter_(~cut=='Ideal')
+```
+
+
+# mutate {#mutate}
+```{r dplyr-mutate}
+# price/carat
+dia %>% mutate(price/carat)
+dia %>% mutate(ratio=price/carat)
+library(magrittr)
+# write back to original data.frame
+dia %<>% mutate(ratio=price/carat)
+dia
+```
+
+```{r dplyr-mutate-seq}
+dia %>% mutate(TotalSize=x+y+z, TwiceSize=TotalSize*2)
+```
+
+# summarize {#summarize}
+```{r dplyr-sumamrize}
+# first see summarize in action
+# gives access to column names
+# returns one row
+dia %>% summarize(mean(price))
+dia %>% summarize(AvgPrice=mean(price))
+```
+
+# group_by {#group_by}
+```{r dplyr-group-by}
+dia %>% group_by(cut) %>% summarize(AvgPrice=mean(price))
+dia %>% group_by(cut, color) %>% summarize(AvgPrice=mean(price))
+```
+
+```{r dplyr-group-by-mult}
+dia %>% group_by(cut) %>% summarize(AvgPrice=mean(price), AvgCarat=mean(carat), TotalCarat=sum(carat))
 ```

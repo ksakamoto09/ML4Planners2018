@@ -7,5 +7,14 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 
 ### [Intro to R](Labs/lab1.html)
 
-###[Data Munging](Labs/lab2.html)
+### [Data Munging](Labs/lab2.html)
+
+### Reports with R Markdown
+
+### Machine Learning part 1
+
+### Machine Learning part 2
+
+### Model Evaluation
+
 
