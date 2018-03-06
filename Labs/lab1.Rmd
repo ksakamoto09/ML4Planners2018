@@ -291,6 +291,12 @@ mean(x)
 sum(x)
 ```
 
+## Median
+
+```{r}
+median(x)
+```
+
 ## Getting help 
 Using a "?" will help you get to the help page for a function:
 ```{r binary-help,eval=FALSE,tidy=FALSE}
