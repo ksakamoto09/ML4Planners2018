@@ -21,4 +21,4 @@ The first portion of the class will be dedicated to learning the basics of R esp
 
 The class will work on tuning parameters and evaluating performance of models. A diverse selection of urban data sets will be used in the class; some of them include 311 data, PLUTO, US census, and Citi bike data.
 
-The final project will be a inclass Kaggle competition testing student's skills gained during class, accompanied by a report. 
+The final project will be a in-class Kaggle competition testing student's skills gained during class, accompanied by a report. 

@@ -2,7 +2,7 @@
 title: "Readings"
 ---
 
-Herea are a list of readings, please check [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F%2Fcourseworks.columbia.edu%2Fsakai-login-tool%2Fcontainer) for the pdfs of weekly readings.
+Here are a list of readings, please check [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F%2Fcourseworks.columbia.edu%2Fsakai-login-tool%2Fcontainer) for the pdfs of weekly readings.
 
 ## Computational Thinking
 
@@ -16,7 +16,7 @@ Herea are a list of readings, please check [Canvas](https://cas.columbia.edu/cas
 
 ## Biased Algorithms?
 
-[Weapons of Math Destruction](https://weaponsofmathdestructionbook.com/) (selected chapeters on canvas)
+[Weapons of Math Destruction](https://weaponsofmathdestructionbook.com/) (selected chapters on canvas)
 [Machine Bias](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
 [New York City Passes Bill to Study Biases in Algorithms Used by the City](https://motherboard.vice.com/en_us/article/xw4xdw/new-york-city-algorithmic-bias-bill-law)
 [Big Data will be biased, if we let it](https://towardsdatascience.com/bias-in-big-data-for-the-non-tech-90fc53729025)

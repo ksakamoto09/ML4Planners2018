@@ -5,9 +5,9 @@ title: "Syllabus"
 
 ## Text Book
 
-R for Everyone: Advanced Analytics and Graphics by Jared Lander ([amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&qid=1518561244&sr=8-1&keywords=r+for+everyone))
+R for Everyone: Advanced Analytics and Graphics by Jared Lander [amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&qid=1518561244&sr=8-1&keywords=r+for+everyone)
 
-R: Unleash Machine Learning Techniques by Brett Lantz, Cory Lesmeister, Dipanjan Sarkar, and Raghav Bali ([Safari Online](http://proquest.safaribooksonline.com.ezproxy.cul.columbia.edu/))
+R: Unleash Machine Learning Techniques by Brett Lantz, Cory Lesmeister, Dipanjan Sarkar, and Raghav Bali [Safari Online](http://proquest.safaribooksonline.com.ezproxy.cul.columbia.edu/)
 
 ## Online Resources
 
@@ -17,7 +17,7 @@ R: Unleash Machine Learning Techniques by Brett Lantz, Cory Lesmeister, Dipanjan
 
 ## Assignments
 
-There will be weekly [assignments](assignments.html), reinforcing and pushing topics covered inc class.
+There will be weekly [assignments](assignments.html), reinforcing and pushing topics covered in class.
 
 ## Readings
 
@@ -81,7 +81,7 @@ Final Project 40%
 
 ## Part III - Final Projects
 
-* Inclass Kaggle + Report
+* In-class Kaggle + Report
 
 --------
 
@@ -116,12 +116,13 @@ Final Project 40%
 #### Week 6 
 * Clustering
 * Text Mining
-* Reading(Trust in Numbers, Weapons of Math Destruction)
+* Reading(Trust in Numbers)
 * assignment 5 - NLP
 
 #### Week 7 
 * Model Evaluation
 * Work day
+* Reading(Weapons of Math Destruction)
 
 #### Week 8
 * Discussion on Final Competition
