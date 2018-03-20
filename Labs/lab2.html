@@ -284,6 +284,11 @@ cbind(subway, crossStreetsTable) %&gt;% head</code></pre>
 str_sub(string=subway$NAME, start=1, end=5)
 # get the 4rd through 8th characters
 str_sub(string=subway$NAME, start=4, end=8)</code></pre>
+</div>
+<div id="regular-expressions" class="section level2">
+<h2>regular expressions</h2>
+<p>if you need to learn more about regular expressions take a look at this <a href="https://regexone.com/">site</a></p>
+<p>remember in R you need another ’' to escape the special character</p>
 <pre class="r"><code>Avenues &lt;- str_detect(string=subway$NAME, pattern=&quot;Ave&quot;)
 sum(Avenues)
 Streets &lt;- str_detect(string = subway$NAME, pattern = &quot;St&quot;)

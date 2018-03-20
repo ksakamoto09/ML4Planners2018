@@ -255,6 +255,11 @@ str_sub(string=subway$NAME, start=1, end=5)
 str_sub(string=subway$NAME, start=4, end=8)
 ```
 
+## regular expressions
+
+if you need to learn more about regular expressions take a look at this [site](https://regexone.com/)
+
+remember in R you need another '\' to escape the special character
 ```{r }
 Avenues <- str_detect(string=subway$NAME, pattern="Ave")
 sum(Avenues)
