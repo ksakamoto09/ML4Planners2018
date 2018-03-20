@@ -185,6 +185,8 @@ subway %&gt;% filter(LINE == 'SIR' &amp; Long &lt; -74.18)
 subway %&gt;% filter(LINE == 'SIR' | Long &lt; -74.18)
 # or
 subway %&gt;% filter(LINE %in% c('SIR', '6'))</code></pre>
+<p>let’s filter out nas from our names</p>
+<pre class="r"><code>subway %&gt;% filter(!is.na(NAME)) -&gt; subway</code></pre>
 </div>
 <div id="slice" class="section level3">
 <h3>slice</h3>
@@ -244,6 +246,64 @@ subwayLong</code></pre>
 subway %&gt;% arrange(desc(pass))
 subway %&gt;% arrange(desc(pass), desc(stairs))</code></pre>
 </div>
+</div>
+<div id="strings-continued" class="section level2">
+<h2>Strings continued</h2>
+<p>concatenating strings can be an important task.</p>
+<pre class="r"><code>message &lt;- &quot;Hello Bob, it is going to be 42 degrees today and sunny&quot;
+
+person &lt;- &quot;claire&quot;
+temp &lt;- 78
+condition &lt;- &quot;rainy&quot;
+
+paste(&quot;Hello &quot;, person, &quot;, it is going to be&quot;, temp, 
+      &quot;today and&quot;, condition)
+
+paste(&quot;Hello &quot;, person, &quot;, it is going to be&quot;, temp, 
+      &quot;today and&quot;, condition, sep = &quot;&quot;)</code></pre>
+<p>here is another way to do it with sprintf</p>
+<pre class="r"><code>sprintf(&quot;Hello %s, it is going to be %s degrees today and %s&quot;, person, temp, condition)</code></pre>
+<p>what about over a vector?</p>
+<pre class="r"><code>sprintf(&quot;Hello %s, it is going to be %s degrees today and %s&quot;, c(&quot;Claire&quot;, &quot;Bob&quot;, &quot;Nick&quot;), temp, condition)</code></pre>
+</div>
+<div id="string-manipulation" class="section level2">
+<h2>String Manipulation</h2>
+<pre class="r"><code>require(stringr)
+# split the string
+crossStreets &lt;- str_split(string=subway$NAME, pattern=&quot; &amp; &quot;)
+head(crossStreets)
+# combine them into one table
+crossStreetsTable &lt;- data.frame(Reduce(rbind, crossStreets))
+head(crossStreetsTable)
+# give the columns good names
+names(crossStreetsTable) &lt;- c(&quot;Street_1&quot;, &quot;Street_2&quot;)
+head(crossStreetsTable)
+# bind the new columns onto the data.frame
+cbind(subway, crossStreetsTable) %&gt;% head</code></pre>
+<pre class="r"><code># get the first 3 characters
+str_sub(string=subway$NAME, start=1, end=5)
+# get the 4rd through 8th characters
+str_sub(string=subway$NAME, start=4, end=8)</code></pre>
+<pre class="r"><code>Avenues &lt;- str_detect(string=subway$NAME, pattern=&quot;Ave&quot;)
+sum(Avenues)
+Streets &lt;- str_detect(string = subway$NAME, pattern = &quot;St&quot;)
+sum(Streets)</code></pre>
+<pre class="r"><code>subway %&gt;% filter(str_detect(string=subway$NAME, pattern=&quot;[r,R]&quot;))
+# begins with
+subway %&gt;% filter(str_detect(string=subway$NAME, pattern=&quot;^[r,R]&quot;))
+# ends with
+subway %&gt;% filter(str_detect(string=subway$NAME, pattern=&quot;[r,R]$&quot;))</code></pre>
+<pre class="r"><code>Search &lt;- str_detect(subway$LINE, &quot;L&quot;)
+sum(Search)</code></pre>
+<pre class="r"><code># this looks for any  numbers in subway line
+str_extract(string=subway$LINE, &quot;[1-9]&quot;)
+subway %&gt;% mutate(numberLines = str_extract_all(LINE, &quot;[1-9]&quot;))</code></pre>
+<pre class="r"><code># this looks for any  numbers in subway line
+str_extract(string=subway$LINE, &quot;[1-9]&quot;)
+subway %&gt;% mutate(numberLines = str_extract_all(LINE, &quot;[1-9]&quot;))</code></pre>
+<pre class="r"><code># replace the first digit seen with &quot;x&quot;
+str_replace(string=subway$LINE, pattern=&quot;\\d&quot;, replacement=&quot;x&quot;) %&gt;% head
+str_replace_all(string=subway$LINE, pattern=&quot;\\d&quot;, replacement=&quot;x&quot;) %&gt;% head</code></pre>
 </div>
 <div id="function-arguments" class="section level2">
 <h2>Function Arguments</h2>

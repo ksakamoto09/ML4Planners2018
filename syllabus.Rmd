@@ -91,19 +91,18 @@ Final Project 40%
 * Course Intro
 * Computational thinking
 * [Intro to R](labs/lab1.html)
-* assignment 1 - functions
+* [assignment 1](assignments/Assignment1.html) - vectors
 
 #### Week 2 - **SPRING BREAK**
 
 #### Week 3 
-* Munging
-* EDA
+* [Munging](labs/lab2.html)
 * Reading (Critical Theory of Technology)
-* Assignment 2 - data munging
+* [Assignment 2](assignments/assignment2.html) - data munging
 
 #### Week 4 
 * What is machine learning?
-* Rmarkdown
+* Rmarkdown + EDA
 * Reading (Technological Utopianism in American Culture)
 * assignment 3 - reports
 

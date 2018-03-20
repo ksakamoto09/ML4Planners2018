@@ -83,6 +83,7 @@ tail(head(iris, n=4), n=1)
 iris %>% head(n=4) %>% tail(n=1)
 ```
 
+
 ## Dplyr
 
 ### select
@@ -113,6 +114,12 @@ subway %>% filter(LINE == 'SIR' & Long < -74.18)
 subway %>% filter(LINE == 'SIR' | Long < -74.18)
 # or
 subway %>% filter(LINE %in% c('SIR', '6'))
+```
+
+let's filter out nas from our names
+
+```{r}
+subway %>% filter(!is.na(NAME)) -> subway
 ```
 
 ### slice
@@ -194,6 +201,97 @@ subwayCoord %>% separate(Coord, c("Lat", "Long"), sep = " ")
 subway %>% arrange(pass)
 subway %>% arrange(desc(pass))
 subway %>% arrange(desc(pass), desc(stairs))
+```
+
+## Strings continued
+
+concatenating strings can be an important task.
+
+```{r build-paste-expression,tidy=FALSE}
+message <- "Hello Bob, it is going to be 42 degrees today and sunny"
+
+person <- "claire"
+temp <- 78
+condition <- "rainy"
+
+paste("Hello ", person, ", it is going to be", temp, 
+      "today and", condition)
+
+paste("Hello ", person, ", it is going to be", temp, 
+      "today and", condition, sep = "")
+```
+
+here is another way to do it with sprintf
+```{r sprintf-sentence}
+sprintf("Hello %s, it is going to be %s degrees today and %s", person, temp, condition)
+```
+
+what about over a vector?
+```{r sprintf-sentence-vector}
+sprintf("Hello %s, it is going to be %s degrees today and %s", c("Claire", "Bob", "Nick"), temp, condition)
+```
+
+## String Manipulation
+
+```{r }
+require(stringr)
+# split the string
+crossStreets <- str_split(string=subway$NAME, pattern=" & ")
+head(crossStreets)
+# combine them into one table
+crossStreetsTable <- data.frame(Reduce(rbind, crossStreets))
+head(crossStreetsTable)
+# give the columns good names
+names(crossStreetsTable) <- c("Street_1", "Street_2")
+head(crossStreetsTable)
+# bind the new columns onto the data.frame
+cbind(subway, crossStreetsTable) %>% head
+```
+
+```{r }
+# get the first 3 characters
+str_sub(string=subway$NAME, start=1, end=5)
+# get the 4rd through 8th characters
+str_sub(string=subway$NAME, start=4, end=8)
+```
+
+```{r }
+Avenues <- str_detect(string=subway$NAME, pattern="Ave")
+sum(Avenues)
+Streets <- str_detect(string = subway$NAME, pattern = "St")
+sum(Streets)
+```
+
+```{r }
+subway %>% filter(str_detect(string=subway$NAME, pattern="[r,R]"))
+# begins with
+subway %>% filter(str_detect(string=subway$NAME, pattern="^[r,R]"))
+# ends with
+subway %>% filter(str_detect(string=subway$NAME, pattern="[r,R]$"))
+
+```
+
+```{r}
+Search <- str_detect(subway$LINE, "L")
+sum(Search)
+```
+
+```{r}
+# this looks for any  numbers in subway line
+str_extract(string=subway$LINE, "[1-9]")
+subway %>% mutate(numberLines = str_extract_all(LINE, "[1-9]"))
+```
+
+```{r}
+# this looks for any  numbers in subway line
+str_extract(string=subway$LINE, "[1-9]")
+subway %>% mutate(numberLines = str_extract_all(LINE, "[1-9]"))
+```
+
+```{r}
+# replace the first digit seen with "x"
+str_replace(string=subway$LINE, pattern="\\d", replacement="x") %>% head
+str_replace_all(string=subway$LINE, pattern="\\d", replacement="x") %>% head
 ```
 
 ## Function Arguments
