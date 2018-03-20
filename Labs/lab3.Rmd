@@ -18,7 +18,7 @@ First we will call the library and load in data.
 ```{r}
 library(ggplot2)
 library(readxl)
-download.file("http://ml-course.kazsakamoto.com/Data/NY_Lots_train.xlsx", 
+download.file("http://kazsakamoto.com/data/NY_Lots_train.xlsx", 
               "Data/NY_Lots_train.xlsx", mode = "wb")
 
 root <- rprojroot::find_rstudio_root_file()
