@@ -5,3 +5,5 @@ title: "Assignments"
 Please upload to [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F%2Fcourseworks.columbia.edu%2Fsakai-login-tool%2Fcontainer)
 
 ## [Assignment 1](assignments/Assignment1.html)
+
+## [Assigntment 2](assignments/Assignment2.html)

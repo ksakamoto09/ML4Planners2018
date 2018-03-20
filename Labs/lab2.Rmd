@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
-library(readxl)
 ```
 
 ## Reading in Data
@@ -18,18 +17,22 @@ CSVs are probably one of the most common data formats that you will work with.
 To read in data we will use the "readr" package.
 
 ```{r read-subway-do}
-library(readr)
 root <- rprojroot::find_rstudio_root_file()
 dataDir <- file.path(root, 'Data')
 
+library(readr)
 subway <- read_csv(file=file.path(dataDir, "subway.csv"))
 ```
+
+How about reading files from online?
+
 ```{r read-subway,eval=FALSE}
 subway_online <- read_csv(file="http://ml-course.kazsakamoto.com/Data/subway.csv")
 ```
 
+Let's take a look at what subway loos like
 
-```{r subway-head-show,dependson='read-tomato-do'}
+```{r subway-head-show}
 head(subway)
 ```
 
@@ -38,44 +41,42 @@ Load the package
 
 ```{r load-readxl,echo=FALSE}
 library(readxl)
-root <- rprojroot::find_rstudio_root_file()
-dataDir <- file.path(root, 'Data')
 ```
 
-```{r see-sheets-show,eval=FALSE, dependson='read-subway-do'}
-root <- rprojroot::find_rstudio_root_file()
-dataDir <- file.path(root, 'Data')
+let's now set the data directory and load the excel file and see the sheets
+
+```{r see-sheets-show, eval=FALSE, warning = FALSE, error=FALSE}
 excel_sheets(file.path(dataDir, 'subway.xlsx'))
 ```
 
-```{r read-subway-with-readxl-do,eval=TRUE,echo=FALSE, dependson='read-subway-do'}
-root <- rprojroot::find_rstudio_root_file()
-dataDir <- file.path(root, 'Data')
+we can load the actual table with the specified sheet.
+```{r read-subway-with-readxl-do,eval=FALSE}
 subwayXL <- read_excel(file.path(dataDir, 'subway.xlsx'), sheet=1)
-head(subwayXL)
 ```
 
-# Pipes {#Pipes page=RfES151}
+## Pipes
+
+let's load the library magrittr.
 
 ```{r load-magrittr}
 library(magrittr)
 ```
-
-The name comes from Rene Magritte.
-
-```{r pipe-pic,include=FALSE}
-knitr::include_graphics(file.path(imageDir, 'magritte-pipe.jpg'))
-```
-
+  
+pipes are very useful and easier to read. Let's compare viewing the head of the
+data with and without pipes.
 ```{r head}
-head(iris)
-iris %>% head
+head(subway)
+subway %>% head
+```
+what if we wanted to get only the top four observations? let's add n = 4 as an argument.
 
-head(iris, n=4)
-iris %>% head(n=4)
+```{r}
+head(subway, n=4)
+subway %>% head(n=4)
 ```
 
-Get the fourth row
+
+What if we wanted to get just the fourth row?
 
 ```{r head-tail}
 tail(head(iris, n=4), n=1)
@@ -84,88 +85,142 @@ iris %>% head(n=4) %>% tail(n=1)
 
 ## Dplyr
 
-```{r get-diamonds-data}
-data("diamonds", package="ggplot2")
-head(diamonds)
-```
+### select
 
-# tbl {#tbl}
-Not needed but helpful
-
-```{r dia-tbl}
-library(dplyr)
-dia <- as.tbl(diamonds)
-dia
-```
-
-# select {#select}
+If we need to select ceration columns from our table there are a few ways to do it
+in dplyr we use select
 ```{r dplyr-select}
-dia[, c('carat', 'price')]
-dia %>% select(carat, price)
-dia %>% select_('carat', 'price')
-# carat and price
-dia %>% select(1, 7)
+subway[, c('Lat', 'Long')]
+subway %>% select(Lat, Long)
+
+subway %>% select(5, 6)
 # everything but carat and price
-dia %>% select(-c(1, 7))
+subway %>% select(-c(5, 6))
 ```
 
-# filter {#filter}
+### filter
+
+if we want to apply certain filters to our data, we can use filter to add
+logical arguments
 ```{r dplyr-filter}
-dia[dia$cut == 'Ideal', ]
-dia %>% filter(cut == 'Ideal')
+subway[subway$LINE == 'SIR', ]
+subway %>% filter(LINE == 'SIR')
 # and
-dia %>% filter(cut == 'Ideal', color == 'E')
+subway %>% filter(LINE == 'SIR', Long < -74.18)
 # and
-dia %>% filter(cut == 'Ideal' & color == 'E')
+subway %>% filter(LINE == 'SIR' & Long < -74.18)
 # or
-dia %>% filter(cut == 'Ideal' | cut == 'Premium')
+subway %>% filter(LINE == 'SIR' | Long < -74.18)
 # or
-dia %>% filter(cut %in% c('Ideal', 'Premium'))
+subway %>% filter(LINE %in% c('SIR', '6'))
 ```
 
-# slice {#slice}
+### slice
+
+If we want to select rows by index numbers, we can use slice
 ```{r dplyr-slice}
-dia %>% slice(1:5)
-dia %>% slice(1:10)
+subway %>% slice(1:5)
+subway %>% slice(1:10)
 ```
 
 
-```{r filter-with-quoted formula}
-dia %>% filter_("cut=='Ideal'")
-dia %>% filter_(~cut=='Ideal')
-```
+### mutate 
 
+If you want to create a new column use the mutate function
 
-# mutate {#mutate}
 ```{r dplyr-mutate}
 # price/carat
-dia %>% mutate(price/carat)
-dia %>% mutate(ratio=price/carat)
-library(magrittr)
+subway %>% mutate(pass / stairs)
+subway %>% mutate(ratio = pass / stairs)
+
 # write back to original data.frame
-dia %<>% mutate(ratio=price/carat)
-dia
+subway %<>% mutate(ratio = pass / stairs)
+subway
 ```
-
+ We can even include more than one column to be made
 ```{r dplyr-mutate-seq}
-dia %>% mutate(TotalSize=x+y+z, TwiceSize=TotalSize*2)
+subway %>% mutate(passLog = log(pass), TwiceSize = ratio * 2)
 ```
 
-# summarize {#summarize}
+### summarize
+
+what if we want to make sume summary stats?
 ```{r dplyr-sumamrize}
-# first see summarize in action
-# gives access to column names
-# returns one row
-dia %>% summarize(mean(price))
-dia %>% summarize(AvgPrice=mean(price))
+
+subway %>% summarize(mean(pass))
+subway %>% summarize(AvgPass = mean(pass))
 ```
 
-# group_by {#group_by}
+### group_by 
+like pivot tables, maybe you want to group your data?
 ```{r dplyr-group-by}
-dia %>% group_by(cut) %>% summarize(AvgPrice=mean(price))
-dia %>% group_by(cut, color) %>% summarize(AvgPrice=mean(price))
+subway %>% group_by(borough) %>% summarize(AvgPass=mean(pass))
+subway %>% group_by(borough, stairs) %>% summarize(AvgPass=mean(pass))
 ```
 
+how about multiple summaries?
 ```{r dplyr-group-by-mult}
-dia %>% group_by(cut) %>% summarize(AvgPrice=mean(price), AvgCarat=mean(carat), TotalCarat=sum(carat))
+subway %>% group_by(borough) %>% summarize(AvgPass=mean(pass), AvgStairs=mean(stairs), TotalPass=sum(pass))
+subway %>% group_by(borough, stairs) %>% summarize(AvgPass=mean(pass), Count = n(), TotalPass=sum(pass)) -> subwayWide
+subwayWide
+```
+
+### gather
+```{r}
+subwayWide %>% gather(key = variable, value = value, -borough, - stairs) -> subwayLong
+subwayLong
+```
+
+
+### spread
+```{r}
+subwayLong %>% spread(key = variable, value = value)
+```
+
+
+### unite
+```{r}
+subway %>% unite(Coord, Lat, Long, sep = " ") -> subwayCoord
+```
+
+### separate
+```{r}
+subwayCoord %>% separate(Coord, c("Lat", "Long"), sep = " ")
+```
+
+### arrange
+
+```{r}
+subway %>% arrange(pass)
+subway %>% arrange(desc(pass))
+subway %>% arrange(desc(pass), desc(stairs))
+```
+
+## Function Arguments
+```{r multiplying-funcs}
+timesTwo <- function(x)
+{
+    return(x * 2)
+}
+timesTwo(3)
+
+timesTwo <- function(x)
+{
+    x * 2
+}
+timesTwo(3)
+
+timesX <- function(n, x)
+{
+    n * x
+}
+timesX(4,7)
+
+timesX <- function(n, x=2)
+{
+    n * x
+}
+
+timesX(4, 7)
+timesX(4)
 ```
