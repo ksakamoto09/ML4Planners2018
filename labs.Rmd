@@ -9,7 +9,7 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 
 ### [Data Munging](Labs/lab2.html)
 
-### Reports with R Markdown
+### [Reports with R Markdown](Labs/lab3.html)
 
 ### Machine Learning part 1
 

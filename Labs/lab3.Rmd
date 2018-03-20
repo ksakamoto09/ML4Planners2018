@@ -1,0 +1,157 @@
+---
+title: "Rmarkdown and Plotting"
+author: ""
+date: ""
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+# ggplot2
+
+Now we will need to learn how to make some charts. Often times it is good for data scientists to understand
+their data, as well as showing others their work, and it facilitates information gain.
+
+First we will call the library and load in data.
+```{r}
+library(ggplot2)
+library(readxl)
+download.file("http://ml-course.kazsakamoto.com/Data/NY_Lots_train.xlsx", 
+              "Data/NY_Lots_train.xlsx", mode = "wb")
+
+root <- rprojroot::find_rstudio_root_file()
+dataDir <- file.path(root, 'Data')
+
+# we are now going to load one table in using read_excel
+Boroughs <- excel_sheets(file.path(dataDir, "NY_Lots_train.xlsx"))
+
+# we will now combine all the tables in one line
+NYC_Lots <- map_df(Boroughs, ~read_excel(file.path(dataDir, "NY_Lots_train.xlsx") ,sheet = .x, na = '-')) 
+
+#Sample data
+NYC_Lots %>% 
+group_by(Borough) %>% 
+sample_frac(.05) %>% filter(LotArea<20000) -> NYC_Lots
+```
+
+```{r}
+# let's add comps to our function ggplot
+ggplot(NYC_Lots)
+
+# now we will add PctChng as our x value
+ggplot(NYC_Lots, aes(x = LotArea))
+
+# to create a histogram we need to add geom_histogram()
+ggplot(NYC_Lots, aes(x = LotArea)) + geom_histogram()
+
+# to create a density plot we use geom_density()
+ggplot(NYC_Lots, aes(x = LotArea)) + geom_density()
+
+# to change the color we will add this argument color='red' in geom_density
+ggplot(NYC_Lots, aes(x = LotArea))+ geom_density(color = "red")
+
+# that's great let's add fill='blue' to geom_density too
+ggplot(NYC_Lots, aes(x = LotArea)) + geom_density(color='red', fill = "blue")
+
+```
+
+```{r}
+## now we need to variables to plot
+## we will add x=LotArea, y=TotalValue 
+
+ggplot(NYC_Lots, aes(LotArea, TotalValue)) + geom_point()
+
+## we can also add x=LotArea, y=TotalValue  in geom_point()
+ggplot(NYC_Lots) + aes(LotArea, TotalValue))
+
+
+# we will now color our scatterplot by color=Borough
+ggplot(NYC_Lots, aes(x=LotArea, y=TotalValue)) + geom_point(aes(color = Borough))
+
+
+# here is an example of adding a trend line
+ggplot(NYC_Lots, aes(x=LotArea, y=TotalValue)) + 
+geom_point(aes(color=Borough)) + geom_smooth(aes(color=Borough)) + 
+geom_smooth(color='green')
+
+# let's change the shape of our points add shape=1 to geom_point()
+ggplot(NYC_Lots, aes(x=LotArea, y=TotalValue, color=Borough)) + 
+geom_point(shape = 1)
+
+# we can also change the shape by a variable add shape=Borough now
+ggplot(NYC_Lots, aes(x=LotFront, y=TotalValue, color=Borough)) + 
+geom_point(aes(shape = Borough))
+
+## Sometimes there might be too much data and lots of overlaping data
+## we can change the transparency with alpha=1/4
+
+ggplot(NYC_Lots, aes(x=LotFront, y=TotalValue, color=Borough)) + 
+geom_point(shape=1, size=1, aplha = 1/4)
+
+# to create a violin plot wi will add geom_violin()
+ggplot(NYC_Lots, aes(x=Borough, y=TotalValue)) + geom_violin()
+
+# we will now run through adding the points back in with geom_point()
+ggplot(NYC_Lots, aes(x=Borough, y=TotalValue)) + geom_violin() + geom_point()
+
+# adding geom_jitter() will help you visualize it better
+ggplot(NYC_Lots, aes(x=Borough, y=TotalValue)) + geom_violin() + geom_jitter()
+
+# again order matters so we will first place the jitter than the violin layer
+ggplot(NYC_Lots, aes(x=Borough, y=TotalValue)) + geom_jitter() + geom_violin()
+
+# and let's now add more layers to finish off our plot
+ggplot(NYC_Lots, aes(x=Borough, y=TotalValue)) +
+    geom_jitter(shape=1, size=1, alpha=1/3, width=.35, aes(color=LotArea)) + 
+    geom_violin(alpha=1/2, color='grey50', draw_quantiles=c(.25, .5, .75)) +
+    scale_color_gradient('Area', low='#56B1F7', high='#C91010') +
+    labs(x='Borough', y='Value')
+
+
+## we will now load ggthemes
+library(ggthemes)
+
+# let's assign our plot to a variable p
+p <- ggplot(NYC_Lots, aes(x=LotArea, y=TotalValue)) + geom_point(aes(color=Borough))
+
+p + theme_minimal
+
+# this time let's also add scale_color_economist()
+p + theme_economist()
+
+p + theme_economist() + scale_color_economist()
+
+
+# let's look at theme_fivethirtyeight()
+p + theme_fivethirtyeight()
+
+p + theme_fivethirtyeight() + scale_color_fivethirtyeight()
+
+# this time with theme_tufte()
+p + theme_tufte() + scale_color_fivethirtyeight()
+
+# theme_excel()
+p + theme_excel()
+
+# now with right colors using scale_color_excel()
+p + theme_excel() + scale_color_excel()
+
+
+## we can also break our plots by variables
+## let's add facet_wrap(~ Borough) to create
+## individual plots for each Borough
+ggplot(NYC_Lots, aes(x=LotArea, y=TotalValue, color=Borough)) + 
+    geom_point(shape=1, size=1, alpha=1/4) + facet_wrap(~ Borough)
+
+## So far we only used one variable Borough
+## we can also plot against another variable
+## let's add NumBldgs
+
+ggplot(NYC_Lots, aes(x=LotArea, y=TotalValue, color=Borough)) + 
+    geom_point(shape=1, size=1, alpha=1/4) +
+    facet_grid(Borough ~ NumBldgs)
+```
+
+## Rmarkdown
