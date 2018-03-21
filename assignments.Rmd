@@ -6,4 +6,4 @@ Please upload to [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F
 
 ## [Assignment 1](assignments/Assignment1.html)
 
-## [Assigntment 2](assignments/Assignment2.html)
+## [Assigntment 2](assignments/assignment2.html)
