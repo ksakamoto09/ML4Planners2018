@@ -17,20 +17,15 @@ their data, as well as showing others their work, and it facilitates information
 First we will call the library and load in data.
 ```{r}
 library(ggplot2)
-library(readxl)
-download.file("https://kazsakamoto.com/data/NY_Lots_train.xlsx", 
-              "Data/NY_Lots_train.xlsx", mode = "wb")
+download.file("http://kazsakamoto.com/data/NYC_Lots.csv", 
+              "Data/NYC_Lots.csv")
 
 root <- rprojroot::find_rstudio_root_file()
 dataDir <- file.path(root, 'Data')
 
-# we are now going to load one table in using read_excel
-Boroughs <- excel_sheets(file.path(dataDir, "NY_Lots_train.xlsx"))
+# we are now going to load one table in using read_csv
+NYC_Lots <- readr::read_csv(file.path(dataDir, "NYC_Lots.csv"))
 
-# we will now combine all the tables in one line
-NYC_Lots <- map_df(Boroughs, ~read_excel(file.path(dataDir, "NY_Lots_train.xlsx") ,sheet = .x, na = '-')) 
-
-#Sample data
 NYC_Lots %>% 
 group_by(Borough) %>% 
 sample_frac(.05) %>% filter(LotArea<20000) -> NYC_Lots
@@ -64,7 +59,7 @@ ggplot(NYC_Lots, aes(x = LotArea)) + geom_density(color='red', fill = "blue")
 ggplot(NYC_Lots, aes(LotArea, TotalValue)) + geom_point()
 
 ## we can also add x=LotArea, y=TotalValue  in geom_point()
-ggplot(NYC_Lots) + aes(LotArea, TotalValue))
+ggplot(NYC_Lots) + aes(LotArea, TotalValue)
 
 
 # we will now color our scatterplot by color=Borough

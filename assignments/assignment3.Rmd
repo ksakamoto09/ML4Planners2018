@@ -1,0 +1,43 @@
+---
+title: "Assignment3"
+author: "Kaz Sakamoto"
+date: "3/26/2018"
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
+```
+
+For this assignment I would like you to load the MN_pluto.csv(Manhattan PLUTO Data) and run some EDA. for this assignment we will be looking at the variable YearBuilt, please take values greater than 0 to filter out the dataframe. 
+
+
+## Task 1
+
+Create your own function mean_N to calculate the mean of yearBuilt
+
+## Task 2
+
+Create your own function median_N to calculate the median of yearBuilt
+
+## Task 3
+
+Create your own function range_N to return the range ofyearBuilt(should be a vector of two numbers)
+
+## Task 4
+What is the standard deviation and variance of yearBuilt
+
+
+## Task 5
+
+Print the mean(using your function), median(using your function), min, max, grouped into
+landuse types.
+
+## Task 6
+Create a box plot of yearBuilt, and describe the box plot and what you see. (interquartile range? mean? median? what do you see?)
+
+## Task 7
+Create a violin plot of yearBuilt on the y axis and landuse on the y axis.
+
+## Task 8
+If you were predicting year built what other variables might be important to look at in PLUTO, in other data sources?
