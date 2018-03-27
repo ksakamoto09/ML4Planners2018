@@ -127,20 +127,15 @@ $(document).ready(function () {
 <p>Now we will need to learn how to make some charts. Often times it is good for data scientists to understand their data, as well as showing others their work, and it facilitates information gain.</p>
 <p>First we will call the library and load in data.</p>
 <pre class="r"><code>library(ggplot2)
-library(readxl)
-download.file(&quot;https://kazsakamoto.com/data/NY_Lots_train.xlsx&quot;, 
-              &quot;Data/NY_Lots_train.xlsx&quot;, mode = &quot;wb&quot;)
+download.file(&quot;http://kazsakamoto.com/data/NYC_Lots.csv&quot;, 
+              &quot;Data/NYC_Lots.csv&quot;)
 
 root &lt;- rprojroot::find_rstudio_root_file()
 dataDir &lt;- file.path(root, 'Data')
 
-# we are now going to load one table in using read_excel
-Boroughs &lt;- excel_sheets(file.path(dataDir, &quot;NY_Lots_train.xlsx&quot;))
+# we are now going to load one table in using read_csv
+NYC_Lots &lt;- readr::read_csv(file.path(dataDir, &quot;NYC_Lots.csv&quot;))
 
-# we will now combine all the tables in one line
-NYC_Lots &lt;- map_df(Boroughs, ~read_excel(file.path(dataDir, &quot;NY_Lots_train.xlsx&quot;) ,sheet = .x, na = '-')) 
-
-#Sample data
 NYC_Lots %&gt;% 
 group_by(Borough) %&gt;% 
 sample_frac(.05) %&gt;% filter(LotArea&lt;20000) -&gt; NYC_Lots</code></pre>
@@ -167,7 +162,7 @@ ggplot(NYC_Lots, aes(x = LotArea)) + geom_density(color='red', fill = &quot;blue
 ggplot(NYC_Lots, aes(LotArea, TotalValue)) + geom_point()
 
 ## we can also add x=LotArea, y=TotalValue  in geom_point()
-ggplot(NYC_Lots) + aes(LotArea, TotalValue))
+ggplot(NYC_Lots) + aes(LotArea, TotalValue)
 
 
 # we will now color our scatterplot by color=Borough
