@@ -6,22 +6,30 @@ Here are a list of readings, please check [Canvas](https://cas.columbia.edu/cas/
 
 ## Computational Thinking
 
-[BBC Bitsize Introduction to Computational Thinking](https://www.bbc.co.uk/education/guides/zp92mp3/revision)
-[Identifying Emergent Behaviors of Complex Systems — In Nature and Computers](https://thenewstack.io/identifying-emergent-behaviors-complex-systems-nature-computers/)
-[Emergent Behavior](http://wiki.c2.com/?EmergentBehavior)
+* [BBC Bitsize Introduction to Computational Thinking](https://www.bbc.co.uk/education/guides/zp92mp3/revision)
+* [Identifying Emergent Behaviors of Complex Systems — In Nature and Computers](https://thenewstack.io/identifying-emergent-behaviors-complex-systems-nature-computers/)
+* [Emergent Behavior](http://wiki.c2.com/?EmergentBehavior)
 
 ## Artifical Intelligence
 
-[How to pass the Turing Artifical Intelligence Test](https://www.wired.com/2012/06/pass-turing-ai-test/)
-[Resisting Reduction: Designing our Complex Future with Machines](https://pubpub.ito.com/pub/resisting-reduction)
-[Toward ethical, transparent and fair AI/ML: a critical reading list](https://medium.com/@eirinimalliaraki/toward-ethical-transparent-and-fair-ai-ml-a-critical-reading-list-d950e70a70ea)
-[Let’s Just Replace Our Government With Slime Molds (No, Really)](https://www.fastcompany.com/40536092/lets-just-replace-our-government-with-slime-molds-no-really)
-[AI design for Emergent Behaviour](https://www.gamasutra.com/blogs/MikeDiskett/20130720/196675/AI_design_for_Emergent_Behaviour.php)
+* [How to pass the Turing Artifical Intelligence Test](https://www.wired.com/2012/06/pass-turing-ai-test/)
+* [Resisting Reduction: Designing our Complex Future with Machines](https://pubpub.ito.com/pub/resisting-reduction)
+* [Toward ethical, transparent and fair AI/ML: a critical reading list](https://medium.com/@eirinimalliaraki/toward-ethical-transparent-and-fair-ai-ml-a-critical-reading-list-d950e70a70ea)
+* [Let’s Just Replace Our Government With Slime Molds (No, Really)](https://www.fastcompany.com/40536092/lets-just-replace-our-government-with-slime-molds-no-really)
+* [AI design for Emergent Behaviour](https://www.gamasutra.com/blogs/MikeDiskett/20130720/196675/AI_design_for_Emergent_Behaviour.php)
+* [Machine Learning for Humans](https://medium.com/machine-learning-for-humans/why-machine-learning-matters-6164faf1df12)
 
+## Critical AI
+* [Musk and Zuckerberg are fighting over whether we rule technology—or it rules us](https://qz.com/1242331/musk-and-zuckerberg-are-fighting-over-whether-we-rule-technology-or-it-rules-us/#ampshare=https://qz.com/1242331/musk-and-zuckerberg-are-fighting-over-whether-we-rule-technology-or-it-rules-us/)
 
 ## Biased Algorithms?
 
-[Weapons of Math Destruction](https://weaponsofmathdestructionbook.com/) (selected chapters on canvas)
-[Machine Bias](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
-[New York City Passes Bill to Study Biases in Algorithms Used by the City](https://motherboard.vice.com/en_us/article/xw4xdw/new-york-city-algorithmic-bias-bill-law)
-[Big Data will be biased, if we let it](https://towardsdatascience.com/bias-in-big-data-for-the-non-tech-90fc53729025)
+* [Weapons of Math Destruction](https://weaponsofmathdestructionbook.com/) (selected chapters on canvas)
+* [Machine Bias](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
+* [New York City Passes Bill to Study Biases in Algorithms Used by the City](https://motherboard.vice.com/en_us/article/xw4xdw/new-york-city-algorithmic-bias-bill-law)
+* [Big Data will be biased, if we let it](https://towardsdatascience.com/bias-in-big-data-for-the-non-tech-90fc53729025)
+
+
+## Projects
+
+* [NYC Mayor's office of analytics](https://moda-nyc.github.io/Project-Library/analytics/)

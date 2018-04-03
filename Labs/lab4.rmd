@@ -1,0 +1,111 @@
+---
+title: "Lab 4"
+author: "Kaz Sakamoto"
+date: "4/1/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+
+# K-means clustering
+
+Let's load some packages that we will be using
+```{r}
+library(GGally)
+library(dplyr)
+library(ggplot2)
+```
+
+we will load our data that we need which comes from the ACS. We have taken four
+demographic data points.
+
+- Average Household Size
+- Median Household Income
+- Median Gross Rent
+- Average Commute time in min
+
+```{r}
+readr::read_csv("../Data/ACS2016Counties.csv") %>% 
+    select(Geo_COUNTY, starts_with("SE")) %>% 
+    filter(complete.cases(.))-> counties 
+
+names(counties) <- c("countyID", "AvgHHSize", 
+                     "MedHHIncome", "MedGrossRent", "AvgCommute")
+```
+
+let's first normalize our data so it's easier to compare.
+```{r}
+df <- scale(counties[-1]) %>% as.data.frame()
+```
+
+Here is a calculation to create a chart of the total within-groups sums of squares against the number of clusters in a K-means solution.
+The output will start to look like a curve, and where the bend happens should be where we choose the number of K.
+```{r}
+kMax <- 13 # Maximal number of clusters
+wss <- sapply(1:kMax, 
+        function(k){kmeans(df, k)$tot.withinss})
+
+data.frame(wss, clusters = 1:kMax) %>% 
+    ggplot(aes(x = clusters, y = wss)) + geom_point() +
+    geom_line() + xlab("Number of clusters K") +
+       ylab("Total within-clusters sum of squares") + theme_minimal()
+
+```
+
+Here is another method to find the best K for clusters.
+
+```{r}
+library(NbClust)
+set.seed(222)
+nc <- NbClust(df %>% sample_frac(.35), min.nc=2, max.nc=10, method="kmeans")
+```
+
+let's check to see which k performed the best
+
+```{r}
+table(nc$Best.n[1,])
+```
+
+if we plot it out we can see that 2 and 3 are being recommended 
+
+```{r}
+barplot(table(nc$Best.n[1,]),
+          xlab="Numer of Clusters", ylab="Number of Criteria",
+          main="Number of Clusters Chosen by 26 Criteria")
+```
+
+running kmeans with 3 clusters
+
+```{r}
+kmeans(df, 3) -> k3
+```
+checking the size and centers of the clusters
+
+```{r}
+k3$size
+k3$centers
+```
+
+adding back labels to our dataset
+
+```{r}
+df$cluster <- as.factor(k3$cluster)
+```
+
+Let's plot our results
+
+```{r}
+
+ggally_mysmooth <- function(data, mapping, ...){
+    ggplot(data = data, mapping=mapping) +
+        geom_density(fill=NA)
+}
+
+ggpairs(df, 1:4, mapping = ggplot2::aes(color = cluster),
+        lower = list(continuous = wrap("points", shape = 1, alpha = .25)),
+        diag = list(continuous = ggally_mysmooth))
+
+```
+

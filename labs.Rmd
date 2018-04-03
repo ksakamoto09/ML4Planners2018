@@ -11,7 +11,9 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 
 ### [Reports with R Markdown](Labs/lab3.html)
 
-### Machine Learning part 1
+###[Marchine Learning part Lecture](Labs/lab4Lect.html)
+
+### [Machine Learning part 1](Labs/lab4.html)
 
 ### Machine Learning part 2
 

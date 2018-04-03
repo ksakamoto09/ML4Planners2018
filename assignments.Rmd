@@ -9,3 +9,5 @@ Please upload to [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F
 ## [Assigntment 2](assignments/assignment2.html)
 
 ## [Assignment 3](assignments/assignment3.html)
+
+## [Assignment 4](assignments/assignment4.html)

@@ -101,24 +101,25 @@ Final Project 40%
 * [Assignment 2](assignments/assignment2.html) - data munging
 
 #### Week 4 
-* What is machine learning?
-* Rmarkdown + EDA
+* Rmarkdown
+* Exploratory Data Analysis
 * Reading (Technological Utopianism in American Culture)
 * assignment 3 - reports
 
 ####Week 5 
-* Regression
-* Classification
+* What is machine learning?
+* Clustering
 * Reading(Rethinking Objectivity)
-* assignment 4 - classification
+* assignment 4 - clustering
 
 #### Week 6 
-* Clustering
-* Text Mining
+* Regression
+* Classification
 * Reading(Trust in Numbers)
-* assignment 5 - NLP
+* assignment 5 - classification
 
 #### Week 7 
+* Text Mining
 * Model Evaluation
 * Work day
 * Reading(Weapons of Math Destruction)

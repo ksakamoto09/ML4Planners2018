@@ -1,0 +1,249 @@
+---
+title: "Lab 4 Presentation"
+author: "Kaz Sakamoto"
+date: "4/1/2018"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, error = FALSE)
+```
+```{r, include = FALSE}
+library(png)
+library(grid)
+library(RCurl)
+```
+
+## Artificial Intelligence
+
+**AI is a large umbrella term encompassing:**
+
+- Computer vision
+- Robotics
+- Machine learning
+- Natural language processing
+
+## AI History
+
+Humans have been pondering intelligent artificial beings since antiquity. Modern AI is built on the foundation of math, philipsohy, and logic to name a few fields. By exploring the human reasoning and thought through symbols, inventions such as the digital computer were created to create an electronic brain.
+
+[link](https://en.wikipedia.org/wiki/History_of_artificial_intelligence#The_first_AI_winter_1974.E2.80.931980)
+
+## Machine Learning
+
+ML is a subtopic within AI. The goal is to program computers how to learn without explicit rules.
+<img src= "https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAd9AAAAJGZkMmVmM2QzLTZmZDEtNGNmMy05NmJjLTFjNjI0NDkzNTI3OQ.jpg",
+style = "height:450px">
+
+</div>
+
+## Big Data
+The concept of Big Data is one that is hard to define, because it is a moving target. What used to be "big" say in 1999 no longer could be categorized as such today. The 3Vs have been used to describe Big Data.  
+
+- Volume: amount of data
+- Variety: types of data
+- Velocity: speed of data processing
+
+## Big Data Chart
+
+![""](http://itknowledgeexchange.techtarget.com/writing-for-business/files/2013/02/BigData.001.jpg)
+
+## Machine Learning
+- Data Storage: Short/long term memory, and CPU. Storing and retreiving data is foundational
+- Abstraction: Assigning meaning to stored data. Modes can be mathematical, relational, logical, clustered.
+- Generalization: Turn abstracted knowledge into a reuseable form. 
+- Evaluation: was the model succesful or not?
+
+## Machine Learning Examples
+- Classifying spam messages
+- Cancer Diagnosis
+- Weather Forecast
+- Loan default prediction
+- Credit card fraudulent charges
+
+
+## Machine Learning
+
+With the influx of data we need to utilize computers to gain insights out of the data. We can utilize statistical methods that model data with this growth of data and computation to our advantage. 
+
+Data Mining vs. Machine Learning...  
+There are overlap between the two but ML focuses on teaching computers how to use data to solve a problem where DM identifies patterns that humans then use to solve problems. 
+
+## Machine Learning
+
+ML is useful to augment, rather than replace subject matter experts(SME). ML algorithms succefully filter spam from your email inboxes, can detect fardulent credit card charges, and even recommend tv shows and movies. ML algorithms are powerful and fast, but currently most models have very little flexibility to extrapolate outside of their narrow scopes. How many times are you still disappointed with your Google/Alexa/Siri questions? We have come a long way since predictive text but we still live in a world of autocorrect errors. 
+
+## Machine Learning Ethics
+At its core, machine learning is simply a tool that assists us in making sense of the
+world's complex data. Like any tool, it can be used for good or evil. Machine learning
+may lead to problems when it is applied so broadly or callously that humans are
+treated as lab rats, automata, or mindless consumers. A process that may seem
+harmless may lead to unintended consequences when automated by an emotionless
+computer. For this reason, those using machine learning or data mining would be
+remiss not to consider the ethical implications of the art. - Brett Lantz
+
+## Machine Learning Ethics
+(https://www.forbes.com/sites/kashmirhill/2012/02/16/how-target-figured-out-a-teen-girl-was-pregnant-before-her-father-did/#26fbc4f16668)
+
+## Supervised vs. Unsupervised Learning
+
+Majority of ML you come across will be supervised compare to unsupervised ones. During supervised learning you have input variable(s) and an output variable that you are trying to map with an algorithm. The goal is to find a model that can best describe the outcomes. We know the correct answers so we can supervise the ML algorithm towards a better model. In unsupervised, there are no output variables. Classification and Regression are forms of Supervised learning, while clustering and association are types of unsupervised learning.
+
+## Lazy Learning
+
+Say that you are trying to classify different types of 311 calls that are coming into your government office. What kind of themes would be look for? Could this call be about parking, the subway, graffiti, rats? and how many of these topics are most closely related to eachother?
+
+What about whether or not an apartment listing is in Manhattan or in the Bronx? What attributes would you need to make this classification... price, sq footage, amenities, elevation, number of floors, number of units in building, single family or not?
+
+## Nearest Neighbor Classification
+
+This technique is used when you have unlabeled data and are looking to classify them by simialrity. It implores mathematical distances to cluster like results.
+
+
+## K-nearest neighbors (k-NN)
+
+this algorithm can be used for classification and is quite simple. While it is fast and simple, the output isn't a model but rather a one-time snapshot of realtionships of different variables. 
+
+The letter *k* in the name comes from the variable number of nearest neighbors you can use to classify your data. 
+
+The easiest way to envision the process of k-NN is through a two-dimensional space. Say that you have two variables, literacy rate and life e expectancy which might help determine a quality of life score.  You can plot these countries out and by varying the number of *k* you can see how many groups are being formed. 
+
+## scaling
+when you are measuring distances from the data, make sure that you understand the scale at which you are working with. For instance if you want to classify on income and number of bedrooms, which do you think will have a larger effect? 
+
+## choosing an appropriate K
+
+How many neighbors should you use? You have to balance over-fitting (too specialized) and under-fitting (too inaccurate). Choosing a large k reduces the impact or variance caused by noisy data, but can
+bias the learner so that it runs the risk of ignoring small, but important patterns.
+Square root of population is a good place to start. 
+
+## Bias-Variance tradeoff
+This is a good way to view supervised learning algorithms. The Prediction error for any algorithm can be broken into bias error, variance error, and irreducible error. The irreducible error like the name suggests cannot be reduced which accounts for unkown factors that can arise from the way we frame the problem. 
+
+## Bias Error
+Bias are the simplifying assumptions made by a model to make the target function easier to learn.
+
+Generally, parametric algorithms have a high bias making them fast to learn and easier to understand but generally less flexible. In turn, they have lower predictive performance on complex problems that fail to meet the simplifying assumptions of the algorithms bias.
+
+-Low Bias: Suggests less assumptions about the form of the target function.
+-High Bias: Suggests more assumptions about the form of the target function.
+
+## Variance Error
+Variance is the amount that the estimate of the target function will change if different training data was used.
+
+The target function is estimated from the training data by a machine learning algorithm, so we should expect the algorithm to have some variance. Ideally, it should not change too much from one training dataset to the next, meaning that the algorithm is good at picking out the hidden underlying mapping between the inputs and the output variables.
+
+Machine learning algorithms that have a high variance are strongly influenced by the specifics of the training data. This means that the specifics of the training have influences the number and types of parameters used to characterize the mapping function.
+
+## Bias Variance Tradeoff Viz
+![""](http://www.kdnuggets.com/wp-content/uploads/bias-and-variance.jpg)
+
+## cont.
+
+![""](http://www.bogotobogo.com/python/scikit-learn/images/Bias-Tradeoff/Overfitting.png)
+
+## KNN Exmaple
+```{r, eval=F}
+facilities <- read.csv("~/Documents/Spring2017/facilities.csv", stringsAsFactors = F)
+df <- facilities[,c("boro", "latitude", "longitude")]
+
+smp_size <- floor(0.75 * nrow(df))
+
+## set the seed to make your partition reproductible
+set.seed(123)
+train_ind <- sample(seq_len(nrow(df)), size = smp_size)
+
+train <- df[train_ind,2:3 ]
+test <- df[-train_ind, 2:3]
+train_label <- df[train_ind, 1]
+test_label <- df[-train_ind, 1]
+
+```
+
+## cont.
+```{r, eval=F}
+library(ggplot2)
+ggplot(test, aes(x = longitude, y = latitude)) + geom_point()
+
+library(class)
+Boro_Pred <- knn(train, test, train_label, k = 300)
+
+library(gmodels)
+
+CrossTable(x = test_label, y = Boro_Pred, prop.chisq = F)
+```
+
+## K-Means Clustering
+A clustering algorithm is no different than spotting patterns in your data. clustering again is a type of unsupervised learning algorithm. Without advance knowledge of what comprises a cluster, how can a computer
+possibly know where one group ends and another begins? The answer is simple.
+Clustering is guided by the principle that items inside a cluster should be very
+similar to each other, but very different from those outside. The definition of
+similarity might vary across applications, but the basic idea is always the same—
+group the data so that the related elements are placed together.
+
+## Clustering examples
+- Customer segmentation
+- anomaly detection that falls outside of clusters
+- finding patterns of crime
+
+## K-Means Viz
+<img src = "http://pypr.sourceforge.net/_images/kmeans_2d.png", style = "height:400px;">
+
+## why k again?
+The k-means algorithm assigns each of the n examples to one of the k clusters, where
+k is a number that has been determined ahead of time. The goal is to minimize the
+differences within each cluster and maximize the differences between the clusters.
+
+Unless k and n are extremely small, it is not feasible to compute the optimal clusters
+across all the possible combinations of examples. Instead, the algorithm uses a
+heuristic process that finds locally optimal solutions. Put simply, this means that
+it starts with an initial guess for the cluster assignments, and then modifies the
+assignments slightly to see whether the changes improve the homogeneity within
+the clusters.
+
+## choosing k
+In the introduction to k-means, we learned that the algorithm is sensitive to the
+randomly-chosen cluster centers. Indeed, if we had selected a different combination
+of three starting points in the previous example, we may have found clusters that
+split the data differently from what we had expected. Similarly, k-means is sensitive
+to the number of clusters; the choice requires a delicate balance. Setting k to be very
+large will improve the homogeneity of the clusters, and at the same time, it risks
+overfitting the data.
+Ideally, you will have a priori knowledge (a prior belief) about the true groupings
+and you can apply this information to choosing the number of clusters. For instance,
+if you were clustering movies, you might begin by setting k equal to the number of
+genres considered for the Academy Awards. In the data science conference seating
+problem that we worked through previously, k might reflect the number of academic
+fields of study that were invited.
+
+## elbow method
+A technique known as the elbow method attempts to gauge how the homogeneity
+or heterogeneity within the clusters changes for various values of k. As illustrated
+in the following diagrams, the homogeneity within clusters is expected to increase
+as additional clusters are added; similarly, heterogeneity will also continue to
+decrease with more clusters. As you could continue to see improvements until each
+example is in its own cluster, the goal is not to maximize homogeneity or minimize
+heterogeneity, but rather to find k so that there are diminishing returns beyond that
+point. This value of k is known as the elbow point because it looks like an elbow.
+
+## elbow viz
+
+<img src = "https://www.packtpub.com/sites/default/files/Article-Images/B03905_01_09.png" width = "800px"/>
+
+## elbow method in practice
+
+you will programatically run k-means with numerous k values like 1-10 and calculat the sum of squared errors (SSE). Once you have the SSEs for the k values, you can plot them out. We does this because we want to minimized distance from the mean.
+
+## example
+```{r, eval=F}
+## k-means
+clusterdf <- df[,2:3]
+kmeans(clusterdf, 5) -> k5
+k5$size
+k5$centers
+clusterdf$cluster <- as.factor(k5$cluster)
+
+ggplot(clusterdf, aes(x= longitude, y = latitude, colour = cluster)) + geom_point()
+```
+
+
