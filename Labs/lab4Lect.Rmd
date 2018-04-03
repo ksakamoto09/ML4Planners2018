@@ -14,30 +14,8 @@ library(grid)
 library(RCurl)
 ```
 
-## Artificial Intelligence
-
-**AI is a large umbrella term encompassing:**
-
-- Computer vision
-- Robotics
-- Machine learning
-- Natural language processing
-
-## AI History
-
-Humans have been pondering intelligent artificial beings since antiquity. Modern AI is built on the foundation of math, philipsohy, and logic to name a few fields. By exploring the human reasoning and thought through symbols, inventions such as the digital computer were created to create an electronic brain.
-
-[link](https://en.wikipedia.org/wiki/History_of_artificial_intelligence#The_first_AI_winter_1974.E2.80.931980)
-
-## Machine Learning
-
-ML is a subtopic within AI. The goal is to program computers how to learn without explicit rules.
-<img src= "https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAd9AAAAJGZkMmVmM2QzLTZmZDEtNGNmMy05NmJjLTFjNjI0NDkzNTI3OQ.jpg",
-style = "height:450px">
-
-</div>
-
 ## Big Data
+
 The concept of Big Data is one that is hard to define, because it is a moving target. What used to be "big" say in 1999 no longer could be categorized as such today. The 3Vs have been used to describe Big Data.  
 
 - Volume: amount of data
@@ -48,11 +26,45 @@ The concept of Big Data is one that is hard to define, because it is a moving ta
 
 ![""](http://itknowledgeexchange.techtarget.com/writing-for-business/files/2013/02/BigData.001.jpg)
 
+## Artificial Intelligence
+
+**AI is a large umbrella term encompassing:**
+
+- Computer vision
+- Robotics
+- Machine learning
+- Natural language processing
+
+<div class='notes'>
+- it's a buzzword right now but it's broad term
+</div>
+
+## AI History
+![""](https://upload.wikimedia.org/wikipedia/commons/8/87/Capek_play.jpg)
+
+[link](https://en.wikipedia.org/wiki/History_of_artificial_intelligence#The_first_AI_winter_1974.E2.80.931980)
+
+<div class='notes'>
+Humans have been pondering intelligent artificial beings since antiquity. Modern AI is built on the foundation of math, philosophy, and logic to name a few fields. By exploring the human reasoning and thought through symbols, inventions such as the digital computer were created to create an electronic brain.
+</div>
+
+
 ## Machine Learning
-- Data Storage: Short/long term memory, and CPU. Storing and retreiving data is foundational
+
+ML is a subtopic within AI. The goal is to program computers how to learn without explicit rules.
+<img src= "https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAd9AAAAJGZkMmVmM2QzLTZmZDEtNGNmMy05NmJjLTFjNjI0NDkzNTI3OQ.jpg",
+style = "height:450px">
+
+<div class='notes'>
+- explicitly how would you teach a computer patterns. most of these are done by mathematical or algorithmic fashions.
+</div>
+
+
+## ML Framework
+- Data Storage: Short/long term memory, and CPU. Storing and retrieving data is foundational
 - Abstraction: Assigning meaning to stored data. Modes can be mathematical, relational, logical, clustered.
-- Generalization: Turn abstracted knowledge into a reuseable form. 
-- Evaluation: was the model succesful or not?
+- Generalization: Turn abstracted knowledge into a reusable form. 
+- Evaluation: was the model successful or not?
 
 ## Machine Learning Examples
 - Classifying spam messages
@@ -71,10 +83,10 @@ There are overlap between the two but ML focuses on teaching computers how to us
 
 ## Machine Learning
 
-ML is useful to augment, rather than replace subject matter experts(SME). ML algorithms succefully filter spam from your email inboxes, can detect fardulent credit card charges, and even recommend tv shows and movies. ML algorithms are powerful and fast, but currently most models have very little flexibility to extrapolate outside of their narrow scopes. How many times are you still disappointed with your Google/Alexa/Siri questions? We have come a long way since predictive text but we still live in a world of autocorrect errors. 
+ML is useful to augment, rather than replace subject matter experts(SME). ML algorithms successfully filter spam from your email inboxes, can detect fraudulent credit card charges, and even recommend tv shows and movies. ML algorithms are powerful and fast, but currently most models have very little flexibility to extrapolate outside of their narrow scopes. How many times are you still disappointed with your Google/Alexa/Siri questions? We have come a long way since predictive text but we still live in a world of autocorrect errors. 
 
 ## Machine Learning Ethics
-At its core, machine learning is simply a tool that assists us in making sense of the
+At its core, machine learning is a technique that assists us in making sense of the
 world's complex data. Like any tool, it can be used for good or evil. Machine learning
 may lead to problems when it is applied so broadly or callously that humans are
 treated as lab rats, automata, or mindless consumers. A process that may seem
@@ -83,42 +95,20 @@ computer. For this reason, those using machine learning or data mining would be
 remiss not to consider the ethical implications of the art. - Brett Lantz
 
 ## Machine Learning Ethics
-(https://www.forbes.com/sites/kashmirhill/2012/02/16/how-target-figured-out-a-teen-girl-was-pregnant-before-her-father-did/#26fbc4f16668)
+<img src= "https://h2savecom.files.wordpress.com/2018/01/target-mailer.jpg?w=1024&h=538" ,
+style = "height:400px"> 
+[link](https://www.forbes.com/sites/kashmirhill/2012/02/16/how-target-figured-out-a-teen-girl-was-pregnant-before-her-father-did/#26fbc4f16668)
 
 ## Supervised vs. Unsupervised Learning
 
 Majority of ML you come across will be supervised compare to unsupervised ones. During supervised learning you have input variable(s) and an output variable that you are trying to map with an algorithm. The goal is to find a model that can best describe the outcomes. We know the correct answers so we can supervise the ML algorithm towards a better model. In unsupervised, there are no output variables. Classification and Regression are forms of Supervised learning, while clustering and association are types of unsupervised learning.
 
-## Lazy Learning
-
-Say that you are trying to classify different types of 311 calls that are coming into your government office. What kind of themes would be look for? Could this call be about parking, the subway, graffiti, rats? and how many of these topics are most closely related to eachother?
-
-What about whether or not an apartment listing is in Manhattan or in the Bronx? What attributes would you need to make this classification... price, sq footage, amenities, elevation, number of floors, number of units in building, single family or not?
-
-## Nearest Neighbor Classification
-
-This technique is used when you have unlabeled data and are looking to classify them by simialrity. It implores mathematical distances to cluster like results.
-
-
-## K-nearest neighbors (k-NN)
-
-this algorithm can be used for classification and is quite simple. While it is fast and simple, the output isn't a model but rather a one-time snapshot of realtionships of different variables. 
-
-The letter *k* in the name comes from the variable number of nearest neighbors you can use to classify your data. 
-
-The easiest way to envision the process of k-NN is through a two-dimensional space. Say that you have two variables, literacy rate and life e expectancy which might help determine a quality of life score.  You can plot these countries out and by varying the number of *k* you can see how many groups are being formed. 
-
 ## scaling
+
 when you are measuring distances from the data, make sure that you understand the scale at which you are working with. For instance if you want to classify on income and number of bedrooms, which do you think will have a larger effect? 
 
-## choosing an appropriate K
-
-How many neighbors should you use? You have to balance over-fitting (too specialized) and under-fitting (too inaccurate). Choosing a large k reduces the impact or variance caused by noisy data, but can
-bias the learner so that it runs the risk of ignoring small, but important patterns.
-Square root of population is a good place to start. 
-
 ## Bias-Variance tradeoff
-This is a good way to view supervised learning algorithms. The Prediction error for any algorithm can be broken into bias error, variance error, and irreducible error. The irreducible error like the name suggests cannot be reduced which accounts for unkown factors that can arise from the way we frame the problem. 
+This is a good way to view supervised learning algorithms. The Prediction error for any algorithm can be broken into bias error, variance error, and irreducible error. The irreducible error like the name suggests cannot be reduced which accounts for unknown factors that can arise from the way we frame the problem. 
 
 ## Bias Error
 Bias are the simplifying assumptions made by a model to make the target function easier to learn.
@@ -142,36 +132,6 @@ Machine learning algorithms that have a high variance are strongly influenced by
 
 ![""](http://www.bogotobogo.com/python/scikit-learn/images/Bias-Tradeoff/Overfitting.png)
 
-## KNN Exmaple
-```{r, eval=F}
-facilities <- read.csv("~/Documents/Spring2017/facilities.csv", stringsAsFactors = F)
-df <- facilities[,c("boro", "latitude", "longitude")]
-
-smp_size <- floor(0.75 * nrow(df))
-
-## set the seed to make your partition reproductible
-set.seed(123)
-train_ind <- sample(seq_len(nrow(df)), size = smp_size)
-
-train <- df[train_ind,2:3 ]
-test <- df[-train_ind, 2:3]
-train_label <- df[train_ind, 1]
-test_label <- df[-train_ind, 1]
-
-```
-
-## cont.
-```{r, eval=F}
-library(ggplot2)
-ggplot(test, aes(x = longitude, y = latitude)) + geom_point()
-
-library(class)
-Boro_Pred <- knn(train, test, train_label, k = 300)
-
-library(gmodels)
-
-CrossTable(x = test_label, y = Boro_Pred, prop.chisq = F)
-```
 
 ## K-Means Clustering
 A clustering algorithm is no different than spotting patterns in your data. clustering again is a type of unsupervised learning algorithm. Without advance knowledge of what comprises a cluster, how can a computer
@@ -208,7 +168,7 @@ of three starting points in the previous example, we may have found clusters tha
 split the data differently from what we had expected. Similarly, k-means is sensitive
 to the number of clusters; the choice requires a delicate balance. Setting k to be very
 large will improve the homogeneity of the clusters, and at the same time, it risks
-overfitting the data.
+over fitting the data.
 Ideally, you will have a priori knowledge (a prior belief) about the true groupings
 and you can apply this information to choosing the number of clusters. For instance,
 if you were clustering movies, you might begin by setting k equal to the number of
@@ -232,18 +192,30 @@ point. This value of k is known as the elbow point because it looks like an elbo
 
 ## elbow method in practice
 
-you will programatically run k-means with numerous k values like 1-10 and calculat the sum of squared errors (SSE). Once you have the SSEs for the k values, you can plot them out. We does this because we want to minimized distance from the mean.
-
-## example
-```{r, eval=F}
-## k-means
-clusterdf <- df[,2:3]
-kmeans(clusterdf, 5) -> k5
-k5$size
-k5$centers
-clusterdf$cluster <- as.factor(k5$cluster)
-
-ggplot(clusterdf, aes(x= longitude, y = latitude, colour = cluster)) + geom_point()
-```
+you will programatically run k-means with numerous k values like 1-10 and calculate the sum of squared errors (SSE). Once you have the SSEs for the k values, you can plot them out. We does this because we want to minimized distance from the mean.
 
 
+## Lazy Learning -  KNN
+
+<img src = "http://atm.amegroups.com/article/viewFile/10170/html/63653", style = "height:400px"
+
+<div class='notes'>
+Where the function is only approximated locally and all computation is deferred until classification. The k-NN algorithm is among the simplest of all machine learning algorithms.
+
+This technique is used when you have unlabeled data and are looking to classify them by similarity. It implores mathematical distances to cluster like results.
+</div>
+
+
+## K-nearest neighbors (k-NN)
+
+this algorithm can be used for classification and is quite simple. While it is fast and simple, the output isn't a model but rather a one-time snapshot of relationships of different variables. 
+
+The letter *k* in the name comes from the variable number of nearest neighbors you can use to classify your data. 
+
+The easiest way to envision the process of k-NN is through a two-dimensional space. Say that you have two variables, literacy rate and life e expectancy which might help determine a quality of life score.  You can plot these countries out and by varying the number of *k* you can see how many groups are being formed. 
+
+## choosing an appropriate K
+
+How many neighbors should you use? You have to balance over-fitting (too specialized) and under-fitting (too inaccurate). Choosing a large k reduces the impact or variance caused by noisy data, but can
+bias the learner so that it runs the risk of ignoring small, but important patterns.
+Square root of population is a good place to start. 
