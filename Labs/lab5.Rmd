@@ -1,0 +1,253 @@
+---
+title: "Lab 5"
+author: "Kaz Sakamoto"
+date: "4/9/2018"
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+```{r}
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+```
+
+
+We will first read data from Jared Lander's website. This data comes from the NYC open data portal
+but has already been cleaned. It represents housing sales between 2011-2021 in NYC. 
+```{r}
+housing <- readr::read_csv("http://www.jaredlander.com/data/housing.csv")
+```
+
+let's make the names something more readable:
+```{r}
+names(housing) <- c("Neighborhood", "Class", "Units", "YearBuilt",
+                    "SqFt", "Income", "IncomePerSqFt", "Expense",
+                    "ExpensePerSqFt", "NetIncome", "Value", 
+                    "ValuePerSqFt", "Boro")
+```
+
+## Correlation
+
+One measure of the relationship between two vairbales is called correlation. The correlation output
+is between -1 and 1 with negative meaning an inverse relationship and postive meeaning closer relationship.
+
+```{r correlation}
+cor(housing$SqFt, housing$Income)
+```
+
+we can even see the correlation between multiple variables.
+
+```{r}
+cor(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
+```
+
+We have already seen this plot but let's plot our new data with `ggpairs`
+```{r}
+GGally::ggpairs(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
+```
+
+
+## Covariance
+
+Related to correlation, coviarnace is like a variance between variables. 
+It provides a measure of the strength of the correlation between two or more sets of random variates.
+Unlike correlation which is divided by the standard deviation the numbers can be outside of -1 and 1. 
+
+```{r covariance}
+cov(housing$Income, housing$ValuePerSqFt)
+```
+
+Like correlation, we can compare the covariance between multiple variables.
+```{r}
+cov(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
+```
+
+
+## Simple Linear Regression
+
+Let's take a look at square feet and possible rental income. 
+```{r}
+housing %>% select(Income, SqFt) %>% head
+```
+
+And we can plot the two variables and draw the regression line. 
+
+```{r}
+ggplot(housing, aes(x = SqFt, y = Income)) + geom_point(alpha = 1/6, shape = 1) + geom_smooth(method = 'lm') + theme_minimal() +
+    ylab("Square Feet") + xlab("Income")
+```
+
+let's actually get the model using the lm function.
+
+We are using *formula* notation. On the left of the `~` we are adding our response variable (income),
+and on the right we are adding our one predictor variable(SqFt). 
+
+The results show two coefficients. One for the intercept 
+```{r}
+sqftLM <- lm(Income ~ SqFt, data = housing)
+
+sqftLM
+
+summary(sqftLM) -> sqftInfo
+sqftCoef <- as.data.frame(sqftInfo$coefficients[,1:2])
+sqftCoef <- within(sqftCoef, {
+    Lower <- Estimate - qt(p=.9, df = sqftInfo$df[2]) * `Std. Error`
+    Upper <- Estimate + qt(p=.9, df = sqftInfo$df[2]) * `Std. Error`
+    coef <- row.names(sqftCoef)
+})
+
+ggplot(sqftCoef, aes(Estimate, coef)) + geom_point() + geom_errorbarh(aes(xmin=Lower, xmax = Upper), height = .3) +
+    ggtitle("Rental Comparble Income by Square Feet")
+```
+
+
+## Multiple Regression
+
+What happens if you have more than one predictor? you'll have to use multiple regrssion. 
+
+and we'll have to explore our data. Let's 
+```{r}
+ggplot(housing, aes(x = ValuePerSqFt)) + geom_histogram()
+```
+
+There seems to be a bimodal distribution with peaks at around 80 and 200. We can explore further
+by mapping colors with boroughs. We can see that Manhattan abd Brooklyn accounted for the main 
+peaks exhibiting different distributions. 
+```{r}
+ggplot(housing, aes(x = ValuePerSqFt, fill = Boro)) + geom_histogram(binwidth = 10) + 
+    facet_wrap(~ Boro)
+```
+
+How about other variables? what does square footage or units look like?
+
+We can see that for sq footage, there are some with extremely large area. For the
+number of units, it follows the same distribution, where most of the sales are in the lower ranges
+and a few outliers with large numbers. 
+
+```{r}
+ggplot(housing, aes(SqFt)) + geom_histogram()
+```
+
+```{r}
+ggplot(housing, aes(Units)) + geom_histogram()
+```
+
+If we plot SqFt and Units against ValuePerSqFt, we can see if we can trim some outliers.
+```{r}
+ggplot(housing, aes(SqFt, ValuePerSqFt)) + geom_point()
+```
+
+```{r}
+ggplot(housing, aes(Units, ValuePerSqFt)) + geom_point()
+```
+
+Based on the previous graphs if we can trim units below 1000 and sqft below.
+
+```{r}
+ggplot(housing %>% filter(Units < 1000), aes(Units, ValuePerSqFt)) + geom_point()
+```
+
+```{r}
+housing <- housing %>% filter(Units < 1000)
+```
+
+now let's fit a model `condo1` with our response variable being ValuePerSqFt and
+predictor variables Units, SqFt, and Boro.
+```{r}
+condo1 <- lm(ValuePerSqFt ~ Units + SqFt + Boro, data = housing)
+```
+
+We can view the summary of the model
+```{r}
+summary(condo1)
+```
+and view only the coefficients
+
+```{r}
+condo1$coefficients
+```
+
+with the coefplot library we can view the coefficients of out model
+```{r}
+library(coefplot)
+coefplot(condo1, sort = 'mag')
+```
+
+We can now see what difference scale has on our data for Units and SqFt.
+```{r}
+condo2 <- lm(ValuePerSqFt ~ scale(Units) + scale(SqFt) + Boro, data = housing)
+summary(condo2)
+```
+
+```{r}
+coefplot(condo2, sort = 'mag')
+```
+
+```{r}
+multiplot(condo1, condo2)
+```
+
+## Generalized Linear Models
+
++ Logistic Regression can be used when you have a binary regression task.
++ Posson Regression can be used when count data is being used. 
+
+```{r}
+MN <- readr::read_csv("../Data/PLUTO/MN_pluto.csv")
+MN %>% filter(LandUse %in% c(10, 06)) %>% 
+    mutate(Parking = if_else(LandUse == 10, "Parking", "Manufacturing") %>% as.factor) %>% 
+    mutate(LandUse = as.character(LandUse)) %>% 
+    select( LandUse, LotArea, AssessLand, NumFloors, Parking) -> MN_Model
+```
+
+```{r}
+parking1 <- glm(Parking ~  scale(LotArea) + scale(AssessLand) + NumFloors , data = MN_Model,
+             family = binomial(link="logit"))
+summary(parking1)
+```
+
+```{r}
+coefplot(parking1, sort = 'mag')
+```
+
+
+## Descision Trees
+
+Sometimes you need a non-linear model to fit your data. Decision trees are quite
+flexible taking on both regression and classification tasks.
+
+```{r}
+library(rpart)
+
+parking2 <- rpart(Parking ~ LotArea + AssessLand + NumFloors, data = MN_Model, method = "class")
+```
+
+```{r}
+library(rpart.plot)
+rpart.plot(parking2, extra = 104)
+```
+
+```{r}
+ggplot(MN_Model, aes(LotArea, NumFloors, color = Parking)) + geom_point()
+```
+```{r}
+ggplot(MN_Model, aes(AssessLand, NumFloors, color = Parking)) + geom_point()
+```
+```{r}
+ggplot(MN_Model, aes(LotArea, AssessLand, color = Parking)) + geom_point()
+```
+
+
+```{r}
+# Random Forest prediction of Kyphosis data
+library(randomForest)
+parking3 <- randomForest(Parking ~ LotArea + AssessLand + NumFloors, data = MN_Model)
+print(parking3) # view results 
+importance(parking3) # importance of each predictor
+
+plot(parking3)
+```
+
