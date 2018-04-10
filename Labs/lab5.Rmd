@@ -31,8 +31,8 @@ names(housing) <- c("Neighborhood", "Class", "Units", "YearBuilt",
 
 ## Correlation
 
-One measure of the relationship between two vairbales is called correlation. The correlation output
-is between -1 and 1 with negative meaning an inverse relationship and postive meeaning closer relationship.
+One measure of the relationship between two Variables is called correlation. The correlation output
+is between -1 and 1 with negative meaning an inverse relationship and positive meaning closer relationship.
 
 ```{r correlation}
 cor(housing$SqFt, housing$Income)
@@ -52,7 +52,7 @@ GGally::ggpairs(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
 
 ## Covariance
 
-Related to correlation, coviarnace is like a variance between variables. 
+Related to correlation, covariance is like a variance between variables. 
 It provides a measure of the strength of the correlation between two or more sets of random variates.
 Unlike correlation which is divided by the standard deviation the numbers can be outside of -1 and 1. 
 
@@ -106,7 +106,7 @@ ggplot(sqftCoef, aes(Estimate, coef)) + geom_point() + geom_errorbarh(aes(xmin=L
 
 ## Multiple Regression
 
-What happens if you have more than one predictor? you'll have to use multiple regrssion. 
+What happens if you have more than one predictor? you'll have to use multiple regression. 
 
 and we'll have to explore our data. Let's 
 ```{r}
@@ -114,7 +114,7 @@ ggplot(housing, aes(x = ValuePerSqFt)) + geom_histogram()
 ```
 
 There seems to be a bimodal distribution with peaks at around 80 and 200. We can explore further
-by mapping colors with boroughs. We can see that Manhattan abd Brooklyn accounted for the main 
+by mapping colors with boroughs. We can see that Manhattan and Brooklyn accounted for the main 
 peaks exhibiting different distributions. 
 ```{r}
 ggplot(housing, aes(x = ValuePerSqFt, fill = Boro)) + geom_histogram(binwidth = 10) + 
