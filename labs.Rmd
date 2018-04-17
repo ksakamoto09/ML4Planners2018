@@ -17,6 +17,6 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 
 ### [Machine Learning part 2](Labs/lab5.html)
 
-### Model Evaluation
+### [Model Evaluation](Labs/lab6.html)
 
 

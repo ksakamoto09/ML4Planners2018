@@ -1,0 +1,168 @@
+---
+title: "Lab 6"
+author: "Kaz Sakamoto"
+date: "4/9/2018"
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+```{r}
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+```
+
+## Model Evaluation
+
+It is much easier to create a model and make a prediction than to assess how good the model is, and whether it is can be used for a specific purpose. Most model types have different measures that can help to assess how good the model fits the data. It is worth becoming familiar with these and understanding their role, because they help you to assess whether there is anything substantially wrong with your model. Most statistics or machine learning texts will provide some details. For instance, for a GLM one can look at how much deviance is explained, whether there are patterns in the residuals, whether there are points with high leverage and so on. However, since many models are to be used for prediction, much evaluation is focused on how well the model predicts to points not used in model training.[^1]
+
+
+## Classification
+
+For classification, often times a confusion matrix is the easiest way to visualize your results.
+
+![](https://i.stack.imgur.com/OW5Lt.jpg)
+
+### Accuracy
+
+Accuracy is the measure all the correctly classified observations over the total observations.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Precisionrecall.svg/350px-Precisionrecall.svg.png)
+
+### Precision
+
+Precision is measured by the true positives divided by the true and false positives. It is the rate of true predictions being correctly classified.
+
+## Recall 
+
+Recall is measured by the true positives divided by the true positives and false negatives. It is the rate of Actual predictions are being correctly classified.
+
+## Regression
+
+Linear regression calculates an equation that minimizes the distance between the fitted line and all of the data points. Technically, ordinary least squares (OLS) regression minimizes the sum of the squared residuals.
+
+### P value
+
+### Residuals
+
+Residuals are the difference between the observed values and the predicted values.
+
+![](https://www.unc.edu/~nielsen/soci708/m15/m15010.gif)
+
+### Residual plots
+
+Residuals can be plotted against the response variable. A random distrubution indicates a good fit for a linear model.
+
+![Random Pattern](http://stattrek.com/img/Sp16.gif)
+
+While a non-random pattern may indicate a non-linear model may be more appropriate.
+
+![Non-Random](http://stattrek.com/img/Sp17.gif)
+
+Another plot that is useful is a histogram of the distubution of residuals. 
+![](https://www.itl.nist.gov/div898/handbook/pri/section2/gifs/reshist.gif)
+
+Lastly there is teh Q-Q plot showing two probability distributions. By plotting their quantiles you would want a y = x linear relationship.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Normal_normal_qq.svg/300px-Normal_normal_qq.svg.png)
+### $R^{2}$ 
+
+R-squared is a statistical measure of how close the data are to the fitted regression line. It is also known as the coefficient of determination, or the coefficient of multiple determination for multiple regression.
+
+The definition of R-squared is fairly straight-forward; it is the percentage of the response variable variation that is explained by a linear model. R Squared values are always between 0 and 1.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Coefficient_of_Determination.svg/800px-Coefficient_of_Determination.svg.png)
+
+
+### AIC
+
+Akaikie Information Criterion is
+$${AIC} =-2\ln( {L}) + 2p$$
+the ${L}$  is equal to the maximized log-lieklihood and *p* is the number of coefficients in the model. As the model imporved the log-likelihood gets bigger, and because that is negated the AIC gets lower. But adding coefficients increase the AIC which penalizes the score due to adding complexity.
+
+### BIC
+
+Bayesian Information Criterion is
+$${BIC} = -2\ln({L}) + \ln(n) * p$$ it's very similar to the AIC except that instead of multiplying the number of coefficients by 2 it uses the natual log of the number of rows. 
+
+### Cross Validation
+
+The preferred method to assess models are cross validation.  k-fold cross-calidation is most common, where *k* represents the number of partitions the data will be divided into. The most common *k* values are 5 and 10. The model is fitted on *k* - 1 sections of the data and then evaluated on the *k*th section. 
+![](images/CV.gif)
+
+We will first read data from Jared Lander's website. This data comes from the NYC open data portal
+but has already been cleaned. It represents housing sales between 2011-2021 in NYC. 
+
+```{r}
+housing <- readr::read_csv("http://www.jaredlander.com/data/housing.csv")
+```
+
+let's make the names something more readable:
+
+```{r}
+names(housing) <- c("Neighborhood", "Class", "Units", "YearBuilt",
+                    "SqFt", "Income", "IncomePerSqFt", "Expense",
+                    "ExpensePerSqFt", "NetIncome", "Value", 
+                    "ValuePerSqFt", "Boro")
+```
+
+```{r}
+library(caret)
+set.seed(3456)
+trainIndex <- createDataPartition(housing$ValuePerSqFt, p = .8, 
+                                  list = FALSE, 
+                                  times = 1)
+train <- housing[ trainIndex,]
+validate  <- housing[-trainIndex,]
+folds <- createFolds(train$Income)
+```
+
+We will use mean squared error (MSE) as the cost function for all the folds. $${MSE} ={\frac {1}{n}}\sum _{i=1}^{n}(y_{i}-{\hat {y_{i}}})^{2}$$ 
+
+We cam map through our `cvFunc` to calcluate each MSE and compare the mean of the MSEs. The model with the lowest
+MSEs will be the best model to select.
+
+```{r} 
+library(purrr)
+cvFunc <- function(data, x, formula){
+    train <- data[-x, ]
+    test <- data[x, ]
+    model <- lm(as.formula(formula), data = train)
+    pred <- predict(model, test)
+    mse <- (test$ValuePerSqFt - pred)^2 %>% mean
+    mse
+}
+cv1 <- folds %>% map_dbl( ~ cvFunc(train, .x, "ValuePerSqFt ~ SqFt + Income"))
+cv2 <- folds %>% map_dbl( ~ cvFunc(train, .x, "ValuePerSqFt ~ SqFt"))
+
+mean(cv1)
+mean(cv2)
+```
+
+```{r}
+library(tidyr)
+mod1 <- lm(ValuePerSqFt ~ SqFt + Income, data = train)
+
+mod2 <- lm(ValuePerSqFt ~ SqFt, data = train)
+pred1 <- predict(mod1, validate)
+pred2 <- predict(mod2, validate)
+plotdf <- data.frame(mod1 = pred1, mod2 = pred2, actual = validate$ValuePerSqFt) %>% 
+    gather(key = mod, value = pred, -actual)
+
+```
+
+```{r}
+ggplot(plotdf, aes(x = pred, y = actual, color = mod)) + geom_point(alpha = 1/2, shape = 1) + 
+    theme_minimal()
+```
+
+## Recommended next steps
+
+If you want to learn more about models check out [XGBoost](http://xgboost.readthedocs.io/en/latest/model.html), and [GLMNET](https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html).
+
+A great framework for modelling in the [caret](http://topepo.github.io/caret/index.html) package. 
+
+
+[^1]: "http://rspatial.org/sdm/rst/5_sdm_models.html" 

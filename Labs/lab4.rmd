@@ -113,7 +113,7 @@ ggpairs(df, 1:4, mapping = ggplot2::aes(color = cluster),
 
 Let's first read in the data
 ```{r}
-MN <- readr::read_csv("../Data/PLUTO/MN_pluto.csv")
+ MN <- readr::read_csv("../Data/PLUTO/MN_pluto.csv")
 ```
 
 Let's take a few columns and Multi-Family Elevator buildings and Industrial/Manufacturing Lots
@@ -160,7 +160,7 @@ smp <- sample(2, nrow(MNSamp), replace=TRUE, prob=c(0.7, 0.3))
 
 ```
 
-We will now take this sample vector and filter through our data
+We will now take  this sample vector and filter through our data
 ```{r}
 trainDF <- MNSamp %>% filter(smp == 1) %>% 
     select(AssessTot, NumFloors)

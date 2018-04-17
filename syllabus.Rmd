@@ -119,11 +119,10 @@ Final Project 40%
 * assignment 5 - classification
 
 #### Week 7 
-* Text Mining
 * Model Evaluation
-* Work day
 * Reading(Weapons of Math Destruction)
+* Discussion on Final Competition
 
 #### Week 8
-* Discussion on Final Competition
-Bias in Machine Learning - Guest Speaker
+* Text Mining
+* Bias in Machine Learning - Guest Speaker
