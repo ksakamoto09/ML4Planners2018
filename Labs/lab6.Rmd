@@ -12,6 +12,9 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE,
 library(dplyr)
 library(magrittr)
 library(ggplot2)
+library(purrr)
+library(caret)
+library(tidyr)
 ```
 
 ## Model Evaluation
@@ -109,7 +112,6 @@ names(housing) <- c("Neighborhood", "Class", "Units", "YearBuilt",
 ```
 
 ```{r}
-library(caret)
 set.seed(3456)
 trainIndex <- createDataPartition(housing$ValuePerSqFt, p = .8, 
                                   list = FALSE, 
@@ -125,7 +127,6 @@ We cam map through our `cvFunc` to calcluate each MSE and compare the mean of th
 MSEs will be the best model to select.
 
 ```{r} 
-library(purrr)
 cvFunc <- function(data, x, formula){
     train <- data[-x, ]
     test <- data[x, ]
@@ -142,7 +143,6 @@ mean(cv2)
 ```
 
 ```{r}
-library(tidyr)
 mod1 <- lm(ValuePerSqFt ~ SqFt + Income, data = train)
 
 mod2 <- lm(ValuePerSqFt ~ SqFt, data = train)

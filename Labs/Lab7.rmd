@@ -1,0 +1,246 @@
+---
+title: "Lab 7"
+author: "Kaz Sakamoto"
+date: "4/9/2018"
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE, eval  = FALSE)
+```
+
+```{r}
+library(dplyr)
+library(magrittr)
+library(purrr)
+library(caret)
+library(tidyr)
+library(lubridate)
+library(rwunderground)
+library(acs)
+library(tigris)
+library(sf)
+library(stringr)
+```
+
+## Data
+
+If we are going to make some predictions we need to for get some data. 
+
+## Citi Bike Data
+
+```{r}
+prepBikeData <- function(csvPath){
+   readr::read_csv(csvPath) -> bikeDF
+    bikeDF %>% mutate(
+                      day = day(starttime), 
+                      month = month(starttime), 
+                      weekdays(starttime),
+                      duration = as.numeric(stoptime - starttime),
+                      ymd = paste0(year(starttime), str_pad(month(starttime), 2, "left", pad="0"),
+                                   str_pad(day(starttime), 2, "left", pad="0"))
+                      ) %>% 
+        group_by(ymd, month, day, `start station id`, `start station latitude`, `start station longitude`) %>% 
+        summarise(avgDur = mean(duration),
+                  count = n()) -> outdf 
+    outdf
+}
+```
+
+```{r}
+# get csvs
+csvs <- dir("../Data/CitiBike")
+
+paths <- file.path("../Data/CitiBike", csvs)
+df <- paths %>% map_df(~prepBikeData(.x))
+```
+
+```{r}
+stations <- df %>% group_by(`start station id`) %>% 
+    summarise(lat = first(`start station latitude`), lon = first(`start station longitude`)) %>% 
+    ungroup() %>% rename(stationId = `start station id`) %>% filter(lat < 45)
+```
+
+
+
+## ACS data
+
+let's get ACS data now, please use your own key to pull data.
+
+```{r}
+# api key
+api.key.install(key="YourKey")
+
+# setting geography
+nycGeo = geo.make(state="NY", county=c(47, 5, 61, 81, 85), tract = "*", block.group = "*")
+```
+
+ we will pull sex by age and median income
+
+```{r}
+acs.fetch(endyear = 2015, geography=nycGeo, table.number=c("B01001","B19013"),col.names = "pretty") -> outDF
+outDF <- data.frame("GEOID" = paste0(str_pad(outDF@geography$state, 2, "left", pad="0"), 
+                                        str_pad(outDF@geography$county, 3, "left", pad="0"), 
+                                        str_pad(outDF@geography$tract, 6, "left", pad="0"),
+                                     outDF@geography$blockgroup), 
+                       outDF@estimate)
+rownames(outDF) <- 1:nrow(outDF)
+outDF %>% select(GEOID, Sex.by.Age..Total., Sex.by.Age..Male., Sex.by.Age..Female., B19013..Median.Household.Income.in.the.Past.12.Months..in.2015.Inflation.Adjusted.Dollars...Median.household.income.in.the.past.12.months..in.2015.Inflation.adjusted.dollars.) -> acsDF
+names(acsDF) <- c("GEOID", "TotPop", "MalePop", "FemalePop", "MedInc")
+```
+
+##  geography
+
+now we will pull block groups to add our ACS data.
+
+```{r}
+
+NYC_Blocks <- tigris::block_groups(state = "NY", county = c(47, 5, 61, 81, 85)) 
+# Convert to sf-objects
+NYC_Blocks <- st_as_sf(NYC_Blocks)
+
+# Join ACS Data to blocks
+NYC_Blocks <- NYC_Blocks %>% left_join(acsDF, by = c("GEOID", "GEOID"))
+
+# there are some tracts with no land that we should exclude
+NYC_Blocks <- NYC_Blocks %>% filter(ALAND > 0)
+```
+
+We can now map our results to do a gut check.
+
+```{r}
+library(leaflet)
+# Leaflet Map
+popup <- paste0("GEOID: ", NYC_Blocks$GEOID, "<br>", "Total Population:  ", NYC_Blocks$TotPop)
+pal <- colorNumeric(
+  palette = "YlGnBu",
+  domain = NYC_Blocks$TotPop
+)
+
+map3 <- leaflet() %>%
+  addProviderTiles("CartoDB.Positron") %>%
+    setView(lng = -73.96351, lat = 40.61562, zoom = 10) %>% 
+  addPolygons(data = NYC_Blocks, 
+              fillColor = ~pal(TotPop), 
+              color = "#b2aeae", # you need to use hex colors
+              fillOpacity = 0.7, 
+              weight = 1, 
+              smoothFactor = 0.2,
+              popup = popup, group = "Population") %>%
+    addCircleMarkers(data = stations, lng = stations$lon, lat = stations$lat, 
+                     radius = 1, group = "Stations") %>% 
+  addLegend(pal = pal, 
+            values = NYC_Blocks$TotPop, 
+            position = "bottomright", 
+            title = "Population") %>% 
+      addLayersControl(
+          overlayGroups = c("Population", "Stations"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+map3
+```
+
+
+## Weather
+
+to get weather data we are going to use the rwunderground package
+
+```{r}
+
+weatherKey <-"YourKey"
+rwunderground::set_api_key(weatherKey)
+
+getWeather <- function(date){
+    rwunderground::history_daily(rwunderground::set_location(territory = "New York", city = "New York"), date)
+}
+
+dates <- unique(df$ymd)
+weatherDF <- dates %>% map_df(~getWeather(.x))
+
+```
+
+```{r}
+weatherDF <- weatherDF %>%
+    dplyr::mutate(ymd = paste0(lubridate::year(date),
+                               str_pad(lubridate::month(date), 2, "left", pad="0"),
+                                   str_pad(lubridate::day(date), 2, "left", pad="0"))) %>%
+    dplyr::select(ymd, rain, precip, mean_temp) %>%
+    dplyr::mutate(precip = if_else(is.na(precip), 0, precip))
+```
+
+## Joining Data
+
+This part joins the blocks with stations where they intersect through a "left join".
+```{r}
+stationLoc <- sf::st_as_sf(x = stations,
+                        coords = c("lon", "lat"),
+                        crs = "+proj=longlat +datum=WGS84")
+# transform projection
+NYC_Blocks <- st_transform(NYC_Blocks,crs = 4326)
+
+stationJoin <- stationLoc %>% sf::st_join(NYC_Blocks)
+```
+
+```{r}
+weatherJoin <- df %>% left_join(weatherDF, by=c("ymd", "ymd")) %>% rename(stationId = `start station id`)
+```
+
+```{r}
+modelDF <- weatherJoin %>% left_join(stationJoin, by = c("stationId", "stationId"))
+
+modelDF <- modelDF %>% ungroup %>% select(c(month, day, avgDur, count, rain, precip, mean_temp, TotPop,
+                     MalePop, FemalePop, MedInc)) %>%
+    mutate(malePercent = if_else(TotPop > 0, MalePop/TotPop, 0)) %>%
+    mutate_at(vars(precip, MedInc, MalePop, TotPop, FemalePop), function(x)if_else(is.na(x), 0, x))
+```
+
+
+## Modeling
+
+creating train/test set
+```{r}
+library(caret)
+set.seed(3456)
+trainIndex <- createDataPartition(modelDF$count, p = .8,
+                                  list = FALSE,
+                                  times = 1)
+modelDF <- modelDF %>% mutate(avgDur = as.numeric(avgDur))
+testModel <- modelDF[-trainIndex,]
+trainModel <- modelDF[trainIndex,] %>% na.exclude()
+
+```
+
+
+```{r}
+fitControl <- trainControl(## 10-fold CV
+                           method = "repeatedcv",
+                           number = 5,
+                           ## repeated 2 times
+                           repeats = 2)
+```
+
+```{r}
+glmnet1 <- train(count ~ ., data = trainModel,
+                 method = "glmnet",
+                 trControl = fitControl
+                )
+```
+
+```{r}
+trellis.par.set(caretTheme())
+plot(glmnet1)
+```
+
+```{r}
+xgbtree1 <- train(count ~ ., data = trainModel,
+                 method = "xgbTree",
+                 trControl = fitControl
+                )
+```
+
+```{r}
+trellis.par.set(caretTheme())
+plot(xgbtree1)
+```
+
+
