@@ -19,6 +19,6 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 
 ### [Model Evaluation](Labs/lab6.html)
 
-### [CitiBike Tutorial](Labs/lab7.html)
+### [CitiBike Tutorial](Labs/Lab7.html)
 
 
