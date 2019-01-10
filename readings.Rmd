@@ -14,3 +14,10 @@ title: "Readings"
 [Machine Bias](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
 [New York City Passes Bill to Study Biases in Algorithms Used by the City](https://motherboard.vice.com/en_us/article/xw4xdw/new-york-city-algorithmic-bias-bill-law)
 [Big Data will be biased, if we let it](https://towardsdatascience.com/bias-in-big-data-for-the-non-tech-90fc53729025)
+
+The politics of large numbers : a history of statistical reasoning -Desrosières, Alain.
+Participation : the new tyranny? - edited by Bill Cooke and Uma Kothari.
+Making Technology Masculine - Ruth Oldenziel
+Education and the Cult of Efficiency - Callahan, Raymond E
+A calculating people : the spread of numeracy in early America - Patricia Kline Cohen
+Making Social Science Matter - Flyvbjerg, Bent.

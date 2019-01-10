@@ -1,33 +1,53 @@
 ---
-title: "Syllabus"
+title: "Syllabus - Draft"
 ---
 --------
 
-## Text Book
+*Urban planning decisions are inherently difficult, as cities comprise systems of immense complexity and increasingly large volumes of data. While planners aren’t new to qualitative and quantitative tools to model such decisions, this course will engage the role of technologies in the planning process by focusing on challenges and advantages gained from three new skills in particular: data munging, machine learning, and data visualization. Students will learn to apply the skills and techniques necessary to describe, model, and evaluate their results alongside the history and theory intersecting technocracy and urban planning.*
 
-R for Everyone: Advanced Analytics and Graphics by Jared Lander ([amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&qid=1518561244&sr=8-1&keywords=r+for+everyone))
+## Text Books
 
-R: Unleash Machine Learning Techniques by Brett Lantz, Cory Lesmeister, Dipanjan Sarkar, and Raghav Bali ([Safari Online](http://proquest.safaribooksonline.com.ezproxy.cul.columbia.edu/))
+**R for Everyone: Advanced Analytics and Graphics** by *Jared Lander* ([amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&qid=1518561244&sr=8-1&keywords=r+for+everyone))
+
+**R for Data Science** by *Hadley Wickhham*
+([Online](https://r4ds.had.co.nz/))
+
+**Applied Predictive Modeling** by *Max Kuhn and Kjell Johnson*
+([Online](https://link-springer-com.ezproxy.cul.columbia.edu/book/10.1007%2F978-1-4614-6849-3))
+
+**Text Mining with R** by *Julia Silge and David Robinson*
+([Online](https://www.tidytextmining.com/))
+
 
 ## Online Resources
 
 [Online Stat Book](http://onlinestatbook.com/2/index.html) -Basic stats knowledge
 
- 
-
 ## Assignments
 
-There will be weekly [assignments](assignments.html), reinforcing and pushing topics covered inc class.
+There will be weekly [assignments](assignments.html), consisting of problem sets and reading responses that reinforce and propel topics covered in class.
+
+## Late Assignments
+
+Assignments will drop a letter grade for handing in assignments 1 day late, 50%  2-7 days and assignments later than a week will not be accepted. 
 
 ## Readings
 
-There will also be weekly [readings](readings.html) assigned.
+There will also be bi-weekly [readings](readings.html) assigned.
+
+## Final Deliverable
+
+The end of the class will be a [Kaggle InClass](https://www.kaggle.com/about/inclass/overview) competition, accompanied by a report. The final report will document data/methods, including commented code, and description of analysis and conclusions. 
 
 ## Grading
 
-Assignments 50%
-Reading Discussion 10%
-Final Project 40%
+* Assignments 40%
+* Reading Responses 20%
+* Final Deliverable 40%
+
+## GSAPP Honor System and Plagiarism 
+
+Students must adhere to the principles of [academic honesty](https://www.arch.columbia.edu/honor-system) and ensure that all work submitted is fully theirs and adhere to the [GSAPP Plagarism Policy](https://www.arch.columbia.edu/plagiarism-policy) set forth. Students found guilty of plagiarism or academic dishonesty will be subject to appropriate disciplinary action.
 
 ## Topics
 
@@ -36,25 +56,27 @@ Final Project 40%
 * Getting started with R
 * R Environment - intro to RStudio
 * Essential R Programming
+* Packages
 * Data Types
 * Data Structure
 * Functions
 * Logical Operators
 
-### Part II - Machine Learning
+### Part II - Working with Data
 
 * Data Munging
-* Reading in data
+* Simple Web Scraping
+* Reading in Data
 * Grep (regular expressions)
 * Dplyr
 * Reshape
 * Missing Data
 * Exploratory Data Analysis
 * Getting started with ggplot2
-* Histograms and distributions
+* Histograms and Distributions
 * Rmarkdown
 
-### Introduction to ML
+### Part III - Machine Learning
 
 * What is machine learning?
 * Machine learning problems
@@ -71,6 +93,12 @@ Final Project 40%
     + GLM exercise 
     + Regression with trees
     + Regression trees exercise
+    + Elastic Net
+* Timeseries Modeling
+    + Autoregression
+    + ARIMA
+    + SARIMA
+* Ensemble Models
 * Model Evaluation
     + Confusion matrix
     + Sensitivity, specificity, precision, recall
@@ -78,8 +106,9 @@ Final Project 40%
     + Residuals
     + P-value
     + RMSE
+    + Cross Validation
 
-## Part III - Final Projects
+## Part IV - Final Projects
 
 * Inclass Kaggle + Report
 
@@ -87,42 +116,98 @@ Final Project 40%
 
 # Calendar
 
-#### Week 1 
-* Course Intro
+#### Week 1 - 1/22/2019
+* **Intro Week**
 * Computational thinking
-* [Intro to R](labs/lab1.html)
-* assignment 1 - functions
-
-#### Week 2 - **SPRING BREAK**
-
-#### Week 3 
-* Munging
-* EDA
-* Reading (Critical Theory of Technology)
-* Assignment 2 - data munging
-
-#### Week 4 
 * What is machine learning?
+* Machine learning applications
+* [Intro to R part 1](labs/lab1.html)
+* Assignment 1 - Intro R
+* Reading (Critical Theory of Technology)
+* Reading Response 1
+
+#### Week 2 - 1/29/2019
+* **Intro Week**
+* [Intro to R part 2](labs/lab1.html)
+* Assignment 2 - Functions
+
+#### Week 3 - 2/5/2019
+* **Data Week**
+* APIs
+* Data Munging
+* Assignment 3 - Data Munging
+* Reading Reponse 2 
+
+#### Week 4 - 2/12/2019
+* **Data Week**
+* Exploratory Data Analysis
 * Rmarkdown
 * Reading (Technological Utopianism in American Culture)
-* assignment 3 - reports
+* Assignment 4 - EDA/Reports
 
-####Week 5 
-* Regression
-* Classification
+
+#### Week 5 - 2/19/2019
+* **Regression Week**
+* Linear Regression
+* Assignment 5 - Mulitvariate Regression
+* Reading Reponse 3
+
+#### Week 6 - 2/26/2019
+* **Regression Week**
+* Generalized Linear Models
+* Assignment 6 - ElasticNet
+
+#### Week 7 - 3/5/2019
+* **Forecasting Week**
+* Seasonality
+* Trends
+* Cycles
+* Assignment 7 - Forecasting
+* Reading Reponse 4
+
+#### Week 8 - 3/12/2019
+* **Classification Week**
+* Decision Trees
 * Reading(Rethinking Objectivity)
-* assignment 4 - classification
+* Assignment 8 - Classification
 
-#### Week 6 
-* Clustering
-* Text Mining
+#### Week 9 - 3/19/2019 **Spring Break**
+
+#### Week 10 - 3/26/2019
+* **Classification Week**
+* SVM
+* Random Forest
+* PCA
+* Reading Reponse 5
+* Assignment 9 - PCA
+
+#### Week 11 - 4/2/2019
+* **Unsupervised Learning Week**
+* Kmeans
+* Heirarchical Clustering
+* Assignment 10 - Labeling
+
+#### Week 12 - 4/9/2019
+* **Text Mining Week**
+* Tidy Text
 * Reading(Trust in Numbers, Weapons of Math Destruction)
-* assignment 5 - NLP
+* Assignment 11 - Text Mining
+* Reading Reponse 6
 
-#### Week 7 
-* Model Evaluation
+#### Week 13 - 4/16/2019
+* **Text Mining Week**
+* Natural Langange Processing/Understanding
+* Discussion on Final Competition
+* Assignment 12 - NLP
+
+#### Week 14 - 4/23/2019
+* **Model Evaluation Week**
+* RMSE
+* AUC
+* Confusion Matrix
+* Cross Validation
+* Reading Reponse 7
+
+#### Week 15 - 4/30/2019
 * Work day
 
-#### Week 8
-* Discussion on Final Competition
-Bias in Machine Learning - Guest Speaker

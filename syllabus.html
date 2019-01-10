@@ -11,7 +11,7 @@
 
 
 
-<title>Syllabus</title>
+<title>Syllabus - Draft</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -89,6 +89,9 @@ img {
 }
 .tabbed-pane {
   padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
 }
 button.code-folding-btn:focus {
   outline: none;
@@ -204,16 +207,19 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Syllabus</h1>
+<h1 class="title toc-ignore">Syllabus - Draft</h1>
 
 </div>
 
 
 <hr />
-<div id="text-book" class="section level2">
-<h2>Text Book</h2>
-<p>R for Everyone: Advanced Analytics and Graphics by Jared Lander (<a href="https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&amp;qid=1518561244&amp;sr=8-1&amp;keywords=r+for+everyone">amazon</a>)</p>
-<p>R: Unleash Machine Learning Techniques by Brett Lantz, Cory Lesmeister, Dipanjan Sarkar, and Raghav Bali (<a href="http://proquest.safaribooksonline.com.ezproxy.cul.columbia.edu/">Safari Online</a>)</p>
+<p><em>Urban planning decisions are inherently difficult, as cities comprise systems of immense complexity and increasingly large volumes of data. While planners aren’t new to qualitative and quantitative tools to model such decisions, this course will engage the role of technologies in the planning process by focusing on challenges and advantages gained from three new skills in particular: data munging, machine learning, and data visualization. Students will learn to apply the skills and techniques necessary to describe, model, and evaluate their results alongside the history and theory intersecting technocracy and urban planning.</em></p>
+<div id="text-books" class="section level2">
+<h2>Text Books</h2>
+<p><strong>R for Everyone: Advanced Analytics and Graphics</strong> by <em>Jared Lander</em> (<a href="https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&amp;qid=1518561244&amp;sr=8-1&amp;keywords=r+for+everyone">amazon</a>)</p>
+<p><strong>R for Data Science</strong> by <em>Hadley Wickhham</em> (<a href="https://r4ds.had.co.nz/">Online</a>)</p>
+<p><strong>Applied Predictive Modeling</strong> by <em>Max Kuhn and Kjell Johnson</em> (<a href="https://link-springer-com.ezproxy.cul.columbia.edu/book/10.1007%2F978-1-4614-6849-3">Online</a>)</p>
+<p><strong>Text Mining with R</strong> by <em>Julia Silge and David Robinson</em> (<a href="https://www.tidytextmining.com/">Online</a>)</p>
 </div>
 <div id="online-resources" class="section level2">
 <h2>Online Resources</h2>
@@ -221,15 +227,31 @@ $(document).ready(function () {
 </div>
 <div id="assignments" class="section level2">
 <h2>Assignments</h2>
-<p>There will be weekly <a href="assignments.html">assignments</a>, reinforcing and pushing topics covered inc class.</p>
+<p>There will be weekly <a href="assignments.html">assignments</a>, consisting of problem sets and reading responses that reinforce and propel topics covered in class.</p>
+</div>
+<div id="late-assignments" class="section level2">
+<h2>Late Assignments</h2>
+<p>Assignments will drop a letter grade for handing in assignments 1 day late, 50% 2-7 days and assignments later than a week will not be accepted.</p>
 </div>
 <div id="readings" class="section level2">
 <h2>Readings</h2>
-<p>There will also be weekly <a href="readings.html">readings</a> assigned.</p>
+<p>There will also be bi-weekly <a href="readings.html">readings</a> assigned.</p>
+</div>
+<div id="final-deliverable" class="section level2">
+<h2>Final Deliverable</h2>
+<p>The end of the class will be a <a href="https://www.kaggle.com/about/inclass/overview">Kaggle InClass</a> competition, accompanied by a report. The final report will document data/methods, including commented code, and description of analysis and conclusions.</p>
 </div>
 <div id="grading" class="section level2">
 <h2>Grading</h2>
-<p>Assignments 50% Reading Discussion 10% Final Project 40%</p>
+<ul>
+<li>Assignments 40%</li>
+<li>Reading Responses 20%</li>
+<li>Final Deliverable 40%</li>
+</ul>
+</div>
+<div id="gsapp-honor-system-and-plagiarism" class="section level2">
+<h2>GSAPP Honor System and Plagiarism</h2>
+<p>Students must adhere to the principles of <a href="https://www.arch.columbia.edu/honor-system">academic honesty</a> and ensure that all work submitted is fully theirs and adhere to the <a href="https://www.arch.columbia.edu/plagiarism-policy">GSAPP Plagarism Policy</a> set forth. Students found guilty of plagiarism or academic dishonesty will be subject to appropriate disciplinary action.</p>
 </div>
 <div id="topics" class="section level2">
 <h2>Topics</h2>
@@ -239,29 +261,31 @@ $(document).ready(function () {
 <li>Getting started with R</li>
 <li>R Environment - intro to RStudio</li>
 <li>Essential R Programming</li>
+<li>Packages</li>
 <li>Data Types</li>
 <li>Data Structure</li>
 <li>Functions</li>
 <li>Logical Operators</li>
 </ul>
 </div>
-<div id="part-ii---machine-learning" class="section level3">
-<h3>Part II - Machine Learning</h3>
+<div id="part-ii---working-with-data" class="section level3">
+<h3>Part II - Working with Data</h3>
 <ul>
 <li>Data Munging</li>
-<li>Reading in data</li>
+<li>Simple Web Scraping</li>
+<li>Reading in Data</li>
 <li>Grep (regular expressions)</li>
 <li>Dplyr</li>
 <li>Reshape</li>
 <li>Missing Data</li>
 <li>Exploratory Data Analysis</li>
 <li>Getting started with ggplot2</li>
-<li>Histograms and distributions</li>
+<li>Histograms and Distributions</li>
 <li>Rmarkdown</li>
 </ul>
 </div>
-<div id="introduction-to-ml" class="section level3">
-<h3>Introduction to ML</h3>
+<div id="part-iii---machine-learning" class="section level3">
+<h3>Part III - Machine Learning</h3>
 <ul>
 <li>What is machine learning?</li>
 <li>Machine learning problems</li>
@@ -281,7 +305,15 @@ $(document).ready(function () {
 <li>GLM exercise</li>
 <li>Regression with trees</li>
 <li>Regression trees exercise</li>
+<li>Elastic Net</li>
 </ul></li>
+<li>Timeseries Modeling
+<ul>
+<li>Autoregression</li>
+<li>ARIMA</li>
+<li>SARIMA</li>
+</ul></li>
+<li>Ensemble Models</li>
 <li>Model Evaluation
 <ul>
 <li>Confusion matrix</li>
@@ -290,12 +322,13 @@ $(document).ready(function () {
 <li>Residuals</li>
 <li>P-value</li>
 <li>RMSE</li>
+<li>Cross Validation</li>
 </ul></li>
 </ul>
 </div>
 </div>
-<div id="part-iii---final-projects" class="section level2">
-<h2>Part III - Final Projects</h2>
+<div id="part-iv---final-projects" class="section level2">
+<h2>Part IV - Final Projects</h2>
 <ul>
 <li>Inclass Kaggle + Report</li>
 </ul>
@@ -303,65 +336,141 @@ $(document).ready(function () {
 </div>
 <div id="calendar" class="section level1">
 <h1>Calendar</h1>
-<div id="week-1" class="section level4">
-<h4>Week 1</h4>
+<div id="week-1---1222019" class="section level4">
+<h4>Week 1 - 1/22/2019</h4>
 <ul>
-<li>Course Intro</li>
+<li><strong>Intro Week</strong></li>
 <li>Computational thinking</li>
-<li><a href="labs/lab1.html">Intro to R</a></li>
-<li>assignment 1 - functions</li>
-</ul>
-</div>
-<div id="week-2---spring-break" class="section level4">
-<h4>Week 2 - <strong>SPRING BREAK</strong></h4>
-</div>
-<div id="week-3" class="section level4">
-<h4>Week 3</h4>
-<ul>
-<li>Munging</li>
-<li>EDA</li>
-<li>Reading (Critical Theory of Technology)</li>
-<li>Assignment 2 - data munging</li>
-</ul>
-</div>
-<div id="week-4" class="section level4">
-<h4>Week 4</h4>
-<ul>
 <li>What is machine learning?</li>
+<li>Machine learning applications</li>
+<li><a href="labs/lab1.html">Intro to R part 1</a></li>
+<li>Assignment 1 - Intro R</li>
+<li>Reading (Critical Theory of Technology)</li>
+<li>Reading Response 1</li>
+</ul>
+</div>
+<div id="week-2---1292019" class="section level4">
+<h4>Week 2 - 1/29/2019</h4>
+<ul>
+<li><strong>Intro Week</strong></li>
+<li><a href="labs/lab1.html">Intro to R part 2</a></li>
+<li>Assignment 2 - Functions</li>
+</ul>
+</div>
+<div id="week-3---252019" class="section level4">
+<h4>Week 3 - 2/5/2019</h4>
+<ul>
+<li><strong>Data Week</strong></li>
+<li>APIs</li>
+<li>Data Munging</li>
+<li>Assignment 3 - Data Munging</li>
+<li>Reading Reponse 2</li>
+</ul>
+</div>
+<div id="week-4---2122019" class="section level4">
+<h4>Week 4 - 2/12/2019</h4>
+<ul>
+<li><strong>Data Week</strong></li>
+<li>Exploratory Data Analysis</li>
 <li>Rmarkdown</li>
 <li>Reading (Technological Utopianism in American Culture)</li>
-<li>assignment 3 - reports</li>
+<li>Assignment 4 - EDA/Reports</li>
 </ul>
 </div>
-<div id="week-5" class="section level4">
-<h4>Week 5</h4>
+<div id="week-5---2192019" class="section level4">
+<h4>Week 5 - 2/19/2019</h4>
 <ul>
-<li>Regression</li>
-<li>Classification</li>
+<li><strong>Regression Week</strong></li>
+<li>Linear Regression</li>
+<li>Assignment 5 - Mulitvariate Regression</li>
+<li>Reading Reponse 3</li>
+</ul>
+</div>
+<div id="week-6---2262019" class="section level4">
+<h4>Week 6 - 2/26/2019</h4>
+<ul>
+<li><strong>Regression Week</strong></li>
+<li>Generalized Linear Models</li>
+<li>Assignment 6 - ElasticNet</li>
+</ul>
+</div>
+<div id="week-7---352019" class="section level4">
+<h4>Week 7 - 3/5/2019</h4>
+<ul>
+<li><strong>Forecasting Week</strong></li>
+<li>Seasonality</li>
+<li>Trends</li>
+<li>Cycles</li>
+<li>Assignment 7 - Forecasting</li>
+<li>Reading Reponse 4</li>
+</ul>
+</div>
+<div id="week-8---3122019" class="section level4">
+<h4>Week 8 - 3/12/2019</h4>
+<ul>
+<li><strong>Classification Week</strong></li>
+<li>Decision Trees</li>
 <li>Reading(Rethinking Objectivity)</li>
-<li>assignment 4 - classification</li>
+<li>Assignment 8 - Classification</li>
 </ul>
 </div>
-<div id="week-6" class="section level4">
-<h4>Week 6</h4>
+<div id="week-9---3192019-spring-break" class="section level4">
+<h4>Week 9 - 3/19/2019 <strong>Spring Break</strong></h4>
+</div>
+<div id="week-10---3262019" class="section level4">
+<h4>Week 10 - 3/26/2019</h4>
 <ul>
-<li>Clustering</li>
-<li>Text Mining</li>
+<li><strong>Classification Week</strong></li>
+<li>SVM</li>
+<li>Random Forest</li>
+<li>PCA</li>
+<li>Reading Reponse 5</li>
+<li>Assignment 9 - PCA</li>
+</ul>
+</div>
+<div id="week-11---422019" class="section level4">
+<h4>Week 11 - 4/2/2019</h4>
+<ul>
+<li><strong>Unsupervised Learning Week</strong></li>
+<li>Kmeans</li>
+<li>Heirarchical Clustering</li>
+<li>Assignment 10 - Labeling</li>
+</ul>
+</div>
+<div id="week-12---492019" class="section level4">
+<h4>Week 12 - 4/9/2019</h4>
+<ul>
+<li><strong>Text Mining Week</strong></li>
+<li>Tidy Text</li>
 <li>Reading(Trust in Numbers, Weapons of Math Destruction)</li>
-<li>assignment 5 - NLP</li>
+<li>Assignment 11 - Text Mining</li>
+<li>Reading Reponse 6</li>
 </ul>
 </div>
-<div id="week-7" class="section level4">
-<h4>Week 7</h4>
+<div id="week-13---4162019" class="section level4">
+<h4>Week 13 - 4/16/2019</h4>
 <ul>
-<li>Model Evaluation</li>
+<li><strong>Text Mining Week</strong></li>
+<li>Natural Langange Processing/Understanding</li>
+<li>Discussion on Final Competition</li>
+<li>Assignment 12 - NLP</li>
+</ul>
+</div>
+<div id="week-14---4232019" class="section level4">
+<h4>Week 14 - 4/23/2019</h4>
+<ul>
+<li><strong>Model Evaluation Week</strong></li>
+<li>RMSE</li>
+<li>AUC</li>
+<li>Confusion Matrix</li>
+<li>Cross Validation</li>
+<li>Reading Reponse 7</li>
+</ul>
+</div>
+<div id="week-15---4302019" class="section level4">
+<h4>Week 15 - 4/30/2019</h4>
+<ul>
 <li>Work day</li>
-</ul>
-</div>
-<div id="week-8" class="section level4">
-<h4>Week 8</h4>
-<ul>
-<li>Discussion on Final Competition Bias in Machine Learning - Guest Speaker</li>
 </ul>
 </div>
 </div>
