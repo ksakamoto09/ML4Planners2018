@@ -1,0 +1,60 @@
+---
+title: "Habits"
+author: John Doe
+date: March 22, 2005
+output: ioslides_presentation
+---
+
+# In the morning
+
+## Getting up
+
+- Turn off alarm
+- Get out of bed
+
+## nested section
+
+## Breakfast
+
+- Eat eggs
+- Drink coffee
+
+# In the evening
+
+## Dinner
+
+- Eat spaghetti
+- Drink wine
+
+---
+
+```{r, cars, fig.cap="A scatterplot.", echo=FALSE}
+plot(cars)
+```
+
+## Going to sleep
+
+>- Get in bed
+>- Count sheet
+
+
+<div class="notes">
+This is my *note*.
+
+- It can contain markdown
+- like this list
+
+</div>
+
+
+---
+
+new sections
+
+## with r
+```{r, eval = TRUE, echo = FALSE}
+library(leaflet)
+leaflet() %>% setView(lat = 41.7666121, lng = -72.6770879, zoom = 14) %>% 
+  addTiles()
+    
+```
