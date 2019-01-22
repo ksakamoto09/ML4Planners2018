@@ -1,7 +1,6 @@
 ---
-title: "Assignment1"
+title: "Assignment 1"
 author: "Kaz Sakamoto"
-date: "3/6/2018"
 output: html_document
 ---
 
@@ -9,23 +8,29 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this assignment we will be starting to work with R. Please submit a rscript (.r file) with your submission. Title should be Lastname_Firstname_assignment1.r and submit to canvas.
+In this assignment we will be starting to work with R. Please submit a rscript (.r file) with your submission. Title should be Lastname_Firstname_assignment1.r and submit to canvas. Also give step-by-step code for credit.
 
 ## Question 1
 
 What are the four main types of variables? What are two functions that can be used to determine a variable type?
 
 ## Question 2
-Create a vector of numbers from one to fifteen called `numVec`. Use the sum function to calculate the sum of this vector.
+
+Show me two ways of assigning the number seven to "x" and "y".
 
 ## Question 3
 
-Create a vector of your five faveorite cities called `cityVec`. Use the nchar function to calculate the number of charaters for every word in the vector and then call the mean function to calculate the mean of the number of characters.
+Create a vector of numbers from one through twenty called `numVec`. Multiply every number by three and then use the sum function to calculate the sum of this vector.
 
 ## Question 4
 
-What is the fourth element of your `cityVec`? use the "[" to select your elemnent.
+Create a vector of your five faveorite cities called `cityVec`. Use the nchar function to calculate the number of charaters for every word in the vector and then call the mean function to calculate the mean of the number of characters.
 
 ## Question 5
 
+What is the fourth element of your `cityVec`? use the "[" to select your elemnent.
+
+## Question 6
+
 Now please show the `cityVec` vector with the third element removed.
+
