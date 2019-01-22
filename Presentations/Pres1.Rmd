@@ -9,8 +9,7 @@ output: ioslides_presentation
 options(htmltools.dir.version = FALSE)
 
 knitr::opts_chunk$set(
-    cache=TRUE
-    , fig.cap=""
+      fig.cap=""
     , fig.align='center'
     , include=TRUE
     , comment=NA
@@ -204,6 +203,25 @@ knitr::include_graphics("http://joapen.com/blog/wp-content/uploads/2018/02/DL-ML
 - Weather Forecast
 - Loan default prediction
 - Credit card fraudulent charges
+
+## Object Classification
+
+```{r objectClass,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("http://bryanrussell.org/projects/recognitionBySceneAlignment/banner.jpg")
+```
+
+## Zestimate
+
+```{r Zestimate,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://cdn.geekwire.com/wp-content/uploads/2011/09/zillow-zestimate.jpg")
+```
+
+
+## Citi Bike Demand
+
+```{r CitiBike,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://cdn.toddwschneider.com/citibike/model_predicted_by_date.png")
+```
 
 ## Machine Learning
 

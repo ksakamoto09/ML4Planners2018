@@ -123,14 +123,14 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * Computational thinking
 * What is machine learning?
 * Machine learning applications
-* [Intro to R part 1](labs/lab1.html)
+* Lab - Intro to R part 1
 * Assignment 1 - Intro R
 * Reading - The Rise of Statistical Thinking
 * Reading Response 1
 
 #### Week 2 - 1/29/2019
 * **Intro Week**
-* [Intro to R part 2](labs/lab1.html)
+* Lab - Intro to R part 2
 * Assignment 2 - Functions
 
 #### Week 3 - 2/5/2019
