@@ -1,0 +1,237 @@
+---
+title: "Week 1 Presentation"
+author: "Kaz Sakamoto"
+date: "1/22/2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+knitr::opts_chunk$set(
+    cache=TRUE
+    , fig.cap=""
+    , fig.align='center'
+    , include=TRUE
+    , comment=NA
+    , message=FALSE
+    , warning=FALSE
+    , echo=TRUE
+    , eval = FALSE
+)
+# put the curly brace of functions on a new line where they belong
+options(left.brace.newline = TRUE)
+```
+
+```{r packages,echo=FALSE}
+packages <- c(
+    'magrittr'
+    , 'dplyr'
+    , 'purrr'
+    , 'tidyr'
+    , 'ggplot2'
+    , 'png'
+    , 'grid'
+    , 'RCurl'
+)
+packColon <- c('readr', 'tibble')
+purrr::walk(packages, library, character.only=TRUE)
+```
+
+
+## Agenda
+
+* Course specs
+* Computational Thinking
+* Data Science Intro
+* ML Applications
+* Intro to R part 1
+
+## Course Site
+
+All information can be accessed through the url:
+
+[ml-course.kazsakamoto.com/](http://ml-course.kazsakamoto.com/)
+
+## Course Objectives
+
+* Get familiarized with topics on machine learning, and artificial intelligence
+* Critical examination of algorithms for social science applications
+* Hands-on experience through a survey of foundational ML algorithms
+
+## Maslow's Hammer
+
+"If the only tool you have is a hammer, you will start treating all your problems like a nail.”
+
+```{r Tools,  out.width = "60%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://stockx.imgix.net/products/streetwear/Supreme-Diamond-Plate-Tool-Box-Red.jpg?fit=fill&bg=FFFFFF&w=700&h=500&auto=format,compress&q=90&dpr=2&trim=color&updated_at=1538080256")
+```
+
+# Computational Thinking
+
+
+## What is CT?
+
+## Computational Thinking
+"CT is a set of problem solving methods that involve expressing problems and their solutions in ways that a computer could execute"
+```{r CT,  out.width = "50%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://www.computationalthinkers.com/wp-content/uploads/2016/01/ComputationalThinkingProductLogo.png")
+```
+
+## Decomposition
+
+Breaking down a complex problem or system into smaller parts that are more manageable and easier to understand.
+
+```{r Decomp,  out.width = "40%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://cdn.apartmenttherapy.info/image/fetch/f_auto,q_auto:eco,c_fill,g_auto,w_1460/https://storage.googleapis.com/gen-atmedia/3/2018/07/e3ce4eb1741bd76cc083424453c0e3f39d147f9b.jpeg")
+```
+<div class="notes">
+Breaking down a complex system like a bike is easier to fix and understand
+</div>
+
+## Pattern Recognition
+
+Finding the similarities or patterns among small, decomposed problems that can help us solve more complex problems more efficiently.
+
+```{r Pattern,  out.width = "50%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://static.boredpanda.com/blog/wp-content/uploads/2016/03/dog-food-comparison-bagel-muffin-lookalike-teenybiscuit-karen-zack-7__700.jpg")
+```
+<div class="notes">
+Are there ways of making things easier for us like what a cat is?
+</div>
+
+## Abstraction
+
+Problem forumation through sifting of relevant information.
+
+```{r Abstraction,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("http://kskwikkleankitchen.com/wp-content/uploads/2017/12/baking2.jpg")
+```
+<div class="notes">
+How do you generalize this into a problem? how to bake a cake, ingredients (not specific amounts) like what is a cake?
+</div>
+
+## Algorithms
+
+Create a set of step-by-step instructions to solve a problem.
+
+```{r Algorithms,  out.width = "50%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://motherwouldknow.com/wp-content/uploads/2017/05/2017-05-26-Collyn-biscuits-recipe-w-1.jpg")
+```
+<div class="notes">
+How do you generalize this into a problem? how to bake a cake, ingredients (not specific amounts) like what is a cake?
+</div>
+
+## Analysis
+
+Evaluation solution and the execution
+
+```{r Analysis,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://www.augustalibrary.org/wp-content/uploads/2018/05/nailed-it.jpg")
+```
+<div class="notes">
+How do you generalize this into a problem? how to bake a cake, ingredients (not specific amounts) like what is a cake?
+</div>
+
+# Data Science Intro
+
+## Big Data
+
+What is Big Data?
+
+## Big Data
+
+The concept of Big Data is one that is hard to define, because it is a moving target. What used to be "big" say in 1999 no longer could be categorized as such today. The 3Vs have been used to describe Big Data.  
+
+- Volume: amount of data
+- Variety: types of data
+- Velocity: speed of data processing
+
+## Big Data Chart
+
+![""](http://itknowledgeexchange.techtarget.com/writing-for-business/files/2013/02/BigData.001.jpg)
+
+## What is Artificial Intelligence?
+
+## Artificial Intelligence
+
+**AI is a large umbrella term encompassing:**
+
+- Computer vision
+- Robotics
+- Machine learning
+- Natural language processing
+
+<div class='notes'>
+- it's a buzzword right now but it's broad term
+</div>
+
+## AI History
+```{r AI-History,  out.width = "100%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://www.actuaries.digital/wp-content/uploads/2018/08/ai1.jpg")
+```
+[link](https://en.wikipedia.org/wiki/History_of_artificial_intelligence#The_first_AI_winter_1974.E2.80.931980)
+
+<div class='notes'>
+Humans have been pondering intelligent artificial beings since antiquity. Modern AI is built on the foundation of math, philosophy, and logic to name a few fields. By exploring the human reasoning and thought through symbols, inventions such as the digital computer were created to create an electronic brain.
+</div>
+
+
+## Machine Learning
+
+ML is a subtopic within AI. The goal is to program computers how to learn without explicit rules.
+
+```{r ML,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("http://joapen.com/blog/wp-content/uploads/2018/02/DL-ML-AI.jpg")
+```
+
+<div class='notes'>
+- explicitly how would you teach a computer patterns. most of these are done by mathematical or algorithmic fashions.
+</div>
+
+
+## ML Framework
+
+- Data Storage: Short/long term memory, and CPU. Storing and retrieving data is foundational
+- Abstraction: Assigning meaning to stored data. Modes can be mathematical, relational, logical, clustered.
+- Generalization: Turn abstracted knowledge into a reusable form. 
+- Evaluation: was the model successful or not?
+
+## Machine Learning Examples
+
+- Classifying spam messages
+- Cancer Diagnosis
+- Weather Forecast
+- Loan default prediction
+- Credit card fraudulent charges
+
+## Machine Learning
+
+With the influx of data we need to utilize computers to gain insights out of the data. We can utilize statistical methods that model data with this growth of data and computation to our advantage. 
+
+Data Mining vs. Machine Learning...  
+There are overlap between the two but ML focuses on teaching computers how to use data to solve a problem where DM identifies patterns that humans then use to solve problems. 
+
+## Machine Learning
+
+ML is useful to augment, rather than replace subject matter experts(SME). ML algorithms successfully filter spam from your email inboxes, can detect fraudulent credit card charges, and even recommend tv shows and movies. ML algorithms are powerful and fast, but currently most models have very little flexibility to extrapolate outside of their narrow scopes. How many times are you still disappointed with your Google/Alexa/Siri questions? We have come a long way since predictive text but we still live in a world of autocorrect errors. 
+
+## Machine Learning Ethics
+
+At its core, machine learning is a technique that assists us in making sense of the
+world's complex data. Like any tool, it can be used for good or evil. Machine learning
+may lead to problems when it is applied so broadly or callously that humans are
+treated as lab rats, automata, or mindless consumers. A process that may seem
+harmless may lead to unintended consequences when automated by an emotionless
+computer. For this reason, those using machine learning or data mining would be
+remiss not to consider the ethical implications of the art. - Brett Lantz
+
+## Machine Learning Ethics
+
+```{r Ethics,  out.width = "70%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://media.giphy.com/media/xUA7aVH74cLVAlShk4/giphy.gif")
+```
+
+[link](https://www.forbes.com/sites/kashmirhill/2012/02/16/how-target-figured-out-a-teen-girl-was-pregnant-before-her-father-did/#26fbc4f16668)
+
+# The End

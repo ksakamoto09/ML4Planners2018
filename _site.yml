@@ -11,5 +11,7 @@ navbar:
       href: assignments.html
     - text: "Labs"
       href: labs.html
+    - text: "Presentations"
+      href: presentations.html
     - text: "Readings"
       href: readings.html

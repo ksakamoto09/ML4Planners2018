@@ -2,7 +2,17 @@
 title: "Readings"
 ---
 
-Here are a list of readings, please check [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F%2Fcourseworks.columbia.edu%2Fsakai-login-tool%2Fcontainer) for the pdfs of weekly readings.
+Here are a list of readings, please check [Canvas](https://courseworks.columbia.edu/welcome/) for the pdfs of weekly readings. Which Include:
+
+* The System of Professions - Abott, Andrew.
+* Crititcal Theory of Tecnologyn - Feenberg, Andrew.
+* Rethinking Objectivity - Megill, Allan.
+* Weapons of Math Descruction - O'Neill, Cathy.
+* The Rise of Statistical Thinking - Porter, Thomas.
+* Trust in Numbers - Porter, Thomas.
+* Order without Design - Bertaud, Alain.
+* Making Technology Masculine - Ruth Oldenziel
+* Making Social Science Matter - Flyvbjerg, Bent.
 
 ## Computational Thinking
 
@@ -34,9 +44,3 @@ Here are a list of readings, please check [Canvas](https://cas.columbia.edu/cas/
 
 * [NYC Mayor's office of analytics](https://moda-nyc.github.io/Project-Library/analytics/)
 
-The politics of large numbers : a history of statistical reasoning -Desrosières, Alain.
-Participation : the new tyranny? - edited by Bill Cooke and Uma Kothari.
-Making Technology Masculine - Ruth Oldenziel
-Education and the Cult of Efficiency - Callahan, Raymond E
-A calculating people : the spread of numeracy in early America - Patricia Kline Cohen
-Making Social Science Matter - Flyvbjerg, Bent.
