@@ -1,0 +1,20 @@
+---
+title: "Reading Response Prompt"
+author: "Kaz Sakamoto"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Please submit your response on canvas. The filename should be Lastname_Firstname_reading_#.docx.
+
+For the reading responses, please complete the reading for the week and write a thoughtful response. The responses should be no longer than a page(single spaced) and aim to be clear and consice. 
+
+The responses should include:
+
+* What is the author trying to prove or argue?
+* What example(s) does the author use to corroborate their claim(s)?
+* What is the significance or this work?
+* Do you agree or disagree with the author and why?
