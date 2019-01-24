@@ -125,7 +125,7 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * Machine learning applications
 * Lab - Intro to R part 1
 * Assignment 1 - Intro R
-* Reading - The Rise of Statistical Thinking
+* Reading - The Rise of Statistical Thinking | Porter
 * Reading Response 1
 
 #### Week 2 - 1/29/2019
@@ -138,7 +138,7 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * APIs
 * Data Munging
 * Assignment 3 - Data Munging
-* Reading - Trust in Numbers & Rethinking Objectivity
+* Reading - Trust in Numbers & Rethinking Objectivity | Porter & Megill
 * Reading Reponse 2 
 
 #### Week 4 - 2/12/2019
@@ -153,7 +153,7 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * **Regression Week**
 * Linear Regression
 * Assignment 5 - Mulitvariate Regression
-* Reading - Critical Theory of Technology
+* Reading - Critical Theory of Technology | Feenberg
 * Reading Reponse 3
 
 #### Week 6 - 2/26/2019
@@ -167,13 +167,12 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * Trends
 * Cycles
 * Assignment 7 - Forecasting
-* Reading - Making Social Science Matter
+* Reading - Making Social Science Matter | Flyvbjerg
 * Reading Reponse 4
 
 #### Week 8 - 3/12/2019
 * **Classification Week**
 * Decision Trees
-* Reading(Rethinking Objectivity)
 * Assignment 8 - Classification
 
 #### Week 9 - 3/19/2019 
@@ -184,7 +183,7 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * SVM
 * Random Forest
 * PCA
-* Reading - Order without Design
+* Reading - Order without Design | Bertaud
 * Reading Reponse 5
 * Assignment 9 - PCA
 
@@ -197,9 +196,8 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 #### Week 12 - 4/9/2019
 * **Text Mining Week**
 * Tidy Text
-* Reading(Trust in Numbers, Weapons of Math Destruction)
 * Assignment 11 - Text Mining
-* Reading - Weapons of Math Destruction
+* Reading - Weapons of Math Destruction | O'Neill
 * Reading Reponse 6
 
 #### Week 13 - 4/16/2019

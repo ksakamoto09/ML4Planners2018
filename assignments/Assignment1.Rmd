@@ -12,7 +12,7 @@ In this assignment we will be starting to work with R. Please submit a rscript (
 
 ## Question 1
 
-What are the four main types of variables? What are two functions that can be used to determine a variable type?
+What are the four main atomic data types of variables? What are two functions that can be used to determine a variable type?
 
 ## Question 2
 
