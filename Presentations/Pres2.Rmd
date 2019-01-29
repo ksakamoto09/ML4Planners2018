@@ -1,0 +1,183 @@
+---
+title: "Week 2 Presentation"
+author: "Kaz Sakamoto"
+date: "1/29/2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+knitr::opts_chunk$set(
+      fig.cap=""
+    , fig.align='center'
+    , include=TRUE
+    , comment=NA
+    , message=FALSE
+    , warning=FALSE
+    , echo=TRUE
+    , eval = FALSE
+)
+# put the curly brace of functions on a new line where they belong
+options(left.brace.newline = TRUE)
+```
+
+```{r packages,echo=FALSE, eval=TRUE}
+packages <- c(
+    'magrittr'
+    , 'dplyr'
+    , 'purrr'
+    , 'tidyr'
+    , 'ggplot2'
+    , 'png'
+    , 'grid'
+    , 'RCurl'
+)
+packColon <- c('readr', 'tibble')
+purrr::walk(packages, library, character.only=TRUE)
+```
+
+
+## Agenda
+
+* Reading responses
+* Theory and philosophy around statistics
+* Intro to R part 2
+
+## Deduction vs. Inductive
+
+*Deductive reasoning* is top down approach. Starts with a general statement of theory and works it's way down to a conclusion based on evidence. The goal is usually certainty.
+
+*Inductive reasoning* is a bottom up approach. Starts with a small observation or questions and works its way up to a theory. The goal is usually probability or likelihood of being true.
+
+<div class="notes">
+Aristotle - deductive something we can be certain of. There are very few things that we can be certain of in this world
+All humans are mortal, Socrates is a human, Socrates must be mortal.
+Francis Bacon - Inductive.  make repeated observations, using past experiences to make future predictions
+use the predictability of nature to use the past to predict the future
+most house sizes in 1980 were 2,000 sq ft. My parents had a house in 1980, my parents house was 2,000 sq ft
+</div> 
+
+## Empiricism
+
+**Empiricism** in the philosophy of science emphasizes evidence, especially as discovered in experiments. It is a fundamental part of the scientific method that all hypotheses and theories must be tested against observations of the natural world rather than resting solely on a priori reasoning, intuition, or revelation.
+
+<div class="notes">
+based on measurement
+</div> 
+
+
+## Scientific Method
+
+It involves formulating hypotheses, via induction, based on such observations; experimental and measurement-based testing of deductions drawn from the hypotheses; and refinement (or elimination) of the hypotheses based on the experimental findings. These are principles of the scientific method, as opposed to a definitive series of steps applicable to all scientific enterprises.
+
+## Scientific Method
+```{r , out.width="80%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/The_Scientific_Method_as_an_Ongoing_Process.svg/850px-The_Scientific_Method_as_an_Ongoing_Process.svg.png")
+```
+
+
+## Hypothesis
+
+An Educated guess about a phenomena that should be testable.
+usually a If (This) Then (that) statement
+
+*If society has high levels of income inequality, the socio-economic segregation is great*
+
+*If police presence is increased then crimes decrease*
+
+## Hypothesis Testing
+You’re basically testing whether your results are valid by figuring out the odds that your results have happened by chance. If your results may have happened by chance, the experiment won’t be repeatable and so has little use.
+
+## Null Hypothesis
+
+If you trace back the history of science, the null hypothesis is always the accepted fact. 
+ex. light travels at 299,792,458 meters per second 
+
+## Example
+**Higher levels of income inequality makes for racially segregated neighborhoods**
+Average mix of populations might be 50% whites and 50% blacks
+the null hypothesis is the opposite so segregation doesn't change with higher income inequality.
+
+## Example Continued
+$$z = \frac{\overline{x}-\mu_0}{({\sigma}/\sqrt n)}$$
+if the mean is 50% for whites we can select an alpha level like 0.05 or 5%. z-score ~1.65
+
+If you have 80% for whites, with a sd of 20%, you get 6.7 which is greater than 1.65. You can reject the null hypothesis since 6.7 > 1.65
+```{r, eval=TRUE}
+(80-50)/(20/sqrt(20))
+```
+
+## Probability Theory
+
+As a mathematical foundation for statistics, probability theory is essential to many human activities that involve quantitative analysis of data.
+
+Probability quantifies as a number between 0 and 1, where, loosely speaking, 0 indicates impossibility and 1 indicates certainty
+
+Although it is not possible to perfectly predict random events, much can be said about their behavior. Two major results in probability theory describing such behavior are the law of large numbers and the central limit theorem.
+
+## Law of Large Numbers
+In probability theory, the law of large numbers (LLN) is a theorem that describes the result of performing the same experiment a large number of times. According to the law, the average of the results obtained from a large number of trials should be close to the expected value, and will tend to become closer as more trials are performed.
+
+The LLN is important because it guarantees stable long-term results for the averages of some random events
+
+## Law of Large Numbers
+```{r , out.width="90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://mdkarcher.github.io/StatLabs/_main_files/figure-html/unnamed-chunk-135-1.png")
+```
+
+## Central Limit Theorem
+In probability theory, the central limit theorem (CLT) establishes that, in some situations, when independent random variables are added, their properly normalized sum tends toward a normal distribution (informally a "bell curve") even if the original variables themselves are not normally distributed. The theorem is a key concept in probability theory because it implies that probabilistic and statistical methods that work for normal distributions can be applicable to many problems involving other types of distributions.
+
+<div class="notes">
+A simple example of this is that if one flips a coin many times the probability of getting a given number of heads in a series of flips will approach a normal curve, with mean equal to half the total number of flips in each series. (In the limit of an infinite number of flips, it will equal a normal curve.)
+</div> 
+
+## Central Limit Theorem
+
+```{r , out.width="90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("http://www.muelaner.com/wp-content/uploads/2013/07/central-limit-theorem.png")
+```
+
+
+
+## The Normal Distribution
+
+$$\frac 1{\sqrt{2\pi}}e^{- \frac x2^2}$$
+
+## The Normal Distribution
+```{r normalCurve , eval=TRUE}
+ggplot(data = data.frame(x = c(0, 50)), aes(x)) +
+  stat_function(fun = dnorm, n = 101, args = list(mean = 25, sd = 5)) + 
+    stat_function(fun = dnorm, n = 101, args = list(mean = 25, sd = 3), color = "red") + 
+  ylab("") +
+  scale_y_continuous(breaks = NULL) + theme_minimal()
+
+```
+
+## Determinism and Free Will
+
+*Determinism* is the philosophical idea that all events, including moral choices, are determined completely by previously existing causes. 
+
+*Free will* is the ability to choose between different possible courses of action unimpeded.
+
+## Nature vs. Nurture
+
+* *Nature* refers to all of the genes and hereditary factors that influence who we are—from our physical appearance to our personality characteristics.
+
+* *Nurture* refers to all the environmental variables that impact who we are, including our early childhood experiences, how we were raised, our social relationships, and our surrounding culture.
+
+## A Universe of Chance
+
+"...to say an event occurs by chance is to say that it occurs for no reason at all. It is to speak nonsense, to confuse a mere word with a cause."
+
+
+## Anything is Probabilistic
+
+*Indeterminism* - If x is a necessary cause of y; then the presence of y necessarily implies that x preceded it. The presence of x, however, does not imply that y will occur.
+
+"God doesn't play dice with the universe" - *Einstein*
+
+<div class="notes">
+causes don't constrain the future. it just makes it more probable. makes quantam physics 
+</div> 
