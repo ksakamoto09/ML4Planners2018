@@ -1,7 +1,6 @@
 ---
-title: "Assignment3"
+title: "Assignment 3"
 author: "Kaz Sakamoto"
-date: "3/26/2018"
 output: html_document
 ---
     
@@ -9,35 +8,48 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
 ```
 
-For this assignment I would like you to load the MN_pluto.csv(Manhattan PLUTO Data) and run some EDA. for this assignment we will be looking at the variable YearBuilt, please take values greater than 0 to filter out the dataframe.  You can share the .html file in canvas.
+In this assignment we will be scraping data from Wikipedia. Please submit a rscript (.r file) with your submission. Title should be Lastname_Firstname_assignment2.r and submit to canvas.
+
+You can run the code snippet from below to help you get going!
+
+```{r}
+# thi will download htmltab if you don't have it
+if (!require(htmltab)) install.packages('htmltab')
+
+# let's load the library
+library(htmltab)
+
+## let's create two variables url1 and ulr2 with our wikipedia pages
+url1 <- "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
+url2 <- "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(PPP)_per_capita"
+
+# take the second table in population page
+pop <- htmltab(url1,2)
+
+# tale the second table in GDP page
+gdp <- htmltab(url2,2)
+
+```
 
 
 ## Task 1
 
-Create your own function mean_N to calculate the mean of yearBuilt
+rename pop columns to PopRank, Country, Population, Date, PopPercent, Source
 
 ## Task 2
 
-Create your own function median_N to calculate the median of yearBuilt
+rename gdp columns to gdpRank, Country, GDP
 
-## Task 3
+# Task 3
 
-Create your own function range_N to return the range of yearBuilt (should be a vector of two numbers)
+take all the "-" in the Rank columns in both tables and fill down with the value 
+from the row above
 
-## Task 4
-What is the standard deviation and variance of yearBuilt
+# Task 4
+clean the country names and join gdp and pop together
 
+# Task 5
+what are the top 10 countries by GDP in order? (greatest to smallest)
 
-## Task 5
-
-Print the mean(using your function), median(using your function), min, max, grouped into
-landuse types.
-
-## Task 6
-Create a box plot of yearBuilt, and describe the box plot and what you see. (interquartile range? mean? median? what do you see?)
-
-## Task 7
-Create a violin plot of yearBuilt on the y axis and landuse on the x axis.
-
-## Task 8
-If you were predicting year built what other variables might be important to look at in PLUTO, in other data sources?
+# Task 6
+what are the top 10 countries by population in order? (greatest to smallest)

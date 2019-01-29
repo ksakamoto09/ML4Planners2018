@@ -1,0 +1,277 @@
+---
+title: "Intro to R Part 2"
+author: ""
+date: ""
+output: html_document
+---
+    
+    ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+# Missing Data 
+
+## NA
+
+You will most likely have to deal with NAs some point in your work:
+```{r na-example}
+z <- c(1, 2, NA, 8, 3, NA, 3)
+z
+is.na(z)
+```
+
+calcluating functions with NAs might not work how you expect:
+```{r na-mean}
+mean(z)
+mean(z, na.rm = TRUE)
+```
+
+
+Here is an example with character data:
+```{r na-types}
+zChar <- c("Hockey", NA, "Lacrosse")
+zChar
+is.na(zChar)
+```
+
+## NULL
+
+Null differs from NA which is represented as another element in the vector. Null
+is more similar to nothingness:
+```{r null-disappear}
+z <- c(1, NULL, 3)
+z
+```
+
+```{r null-test}
+d <- NULL
+is.null(d)
+is.null(7)
+```
+
+# Advanced Data Structures
+## Lists
+lists are able to hold a collection of different objects which makes it very useful
+
+```{r}
+list(1,2,3)
+
+list(c(1,2,3))
+
+list(c(1,2,3), 1:10)
+
+## named lists
+list1 <- list(num1 = c(1,2,3),
+     num2 = 1:10)
+
+## getting elements of a list use "[["
+
+list1[[1]]
+
+## or with it's name 
+list1$num1
+```
+
+## Matrices
+
+a matrix is a very common mathematical structure and essential for statistics. Matricies are similar to a dataframe in that it is rectangular with a row and column structure. The main difference is that every element in a matrix must be of the same data type, commonly numerics. 
+
+```{r}
+matrix(1:10, nrow = 5)
+
+matrix(1:10, ncol = 5)
+```
+
+## Dataframes
+
+```{r}
+ids <- 1:5
+age <- round(runif(5, 22, 30))
+firstName <- c("Alex", "Peter", "Mary", "Beth", "Tom")
+
+df <- data.frame(ids, age, firstName, stringsAsFactors = FALSE)
+```
+
+```{r}
+nrow(df)
+ncol(df)
+dim(df)
+dplyr::glimpse(df)
+
+names(df)
+```
+
+```{r}
+df[1,]
+df[,3]
+df[1:3,]
+df[,c("age","firstName")]
+```
+
+# Writing Functions
+
+Functions are assigned to objects just like any other variable. After the **function** should be a set of parentheses where your arguments will go inside of, and if they are empty there will be no arguments passed along inside the function.
+
+The body of the function is enclosed within the **{}** where all of the instructions should go. If you function is one line, you may omit the **{}** but often functions will have multiple lines to it.
+
+```{r}
+sayHello <- function(){
+    print("Hello, World")
+}
+```
+
+to call the function, like any function you have been using call **sayHello()** and again there are no arguments that need to be passed into the function.
+
+```{r}
+# This will print "Hello, World"
+sayHello()
+```
+
+## Functions with Arguments
+
+Here are some examples with more complex algorithms that might get you thinking more concretely about what fucntions can do for you.
+
+```{r multiplying-funcs}
+## the value of the last line of code is returned in the function but you can be explicit with return()
+timesTwo <- function(x){
+    return(x * 2)
+}
+timesTwo(3)
+
+timesTwo <- function(x){
+    x * 2
+}
+timesTwo(3)
+
+timesX <- function(n, x){
+    n * x
+}
+timesX(4,7)
+
+## here is an example setting default arguemtns inside the function call.
+timesX <- function(n, x=2){
+    n * x
+}
+
+timesX(4, 7)
+timesX(4)
+```
+
+# Control Statements
+
+The use of logical statements can guide the flow of your programming and conditionally evoke changes.
+
+## if and else
+
+```{r}
+if(2 > 1){
+    print("This is true")
+}
+```
+
+## if and else in a function
+```{r}
+checkName <- function(name){
+    if(name == "Alex"){
+        print("Hello Alex")
+    }else{
+        print("I'm sorry I don't know who you are")
+    }
+}
+
+name1 <- "Peter"
+checkName(name1)
+```
+
+## else if
+```{r}
+checkName2 <- function(name){
+    if(name == "Alex"){
+        print("Hello Alex")
+    }else if(is.numeric(name)){
+        print("Please add a name")
+    }else{
+        print("I'm sorry I don't know who you are")
+    }  
+}
+
+name2 <- "Alex"
+checkName2(name2)
+
+name3 <- 1
+checkName2(name3)
+```
+
+## ifelse
+```{r}
+ifelse(1 == 1, "Yes", "No")
+```
+
+```{r}
+x <- 3
+ifelse(x == 1, "it's a 1", ifelse(x == 2, "it's a 2", "what is it?"))
+```
+
+## switch
+If you have many cases, writing an if else statment might become cumbersome, this is where **switch** comes in.
+
+```{r}
+gsappCodeSwitch <- function(y){
+    switch(y,
+           "up" = "Urban Planning",
+           "arch" = "Architecture",
+           "ud" = "Urban Design",
+           "hp" = "Historic Preservation",
+           "red" = "Real Estate Development",
+           "Not a Program")
+}
+
+gsappCodeSwitch("up")
+
+gsappCodeSwitch("arch")
+
+gsappCodeSwitch("ud")
+
+gsappCodeSwitch("hp")
+
+gsappCodeSwitch("red")
+
+gsappCodeSwitch("mba")
+
+```
+
+
+# Loops
+
+R users generally work with vectorized operations, but using loops to iterate over elements might feel more comfortable for coders from other langauges.
+
+## For
+
+```{r}
+for(i in 1:10){
+    print(i)
+}
+```
+
+
+## While
+
+```{r}
+x <- 1
+while(x <= 5){
+    print(x)
+    x <- x + 1
+}
+```
+
+## Controlling Loops
+
+```{r}
+for(i in 1:10){
+    if(i > 3 & i < 7){
+        next
+    }
+    print(i)
+}
+```
+

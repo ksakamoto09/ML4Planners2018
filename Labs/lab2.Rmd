@@ -298,32 +298,3 @@ subway %>% mutate(numberLines = str_extract_all(LINE, "[1-9]"))
 str_replace(string=subway$LINE, pattern="\\d", replacement="x") %>% head
 str_replace_all(string=subway$LINE, pattern="\\d", replacement="x") %>% head
 ```
-
-## Function Arguments
-```{r multiplying-funcs}
-timesTwo <- function(x)
-{
-    return(x * 2)
-}
-timesTwo(3)
-
-timesTwo <- function(x)
-{
-    x * 2
-}
-timesTwo(3)
-
-timesX <- function(n, x)
-{
-    n * x
-}
-timesX(4,7)
-
-timesX <- function(n, x=2)
-{
-    n * x
-}
-
-timesX(4, 7)
-timesX(4)
-```

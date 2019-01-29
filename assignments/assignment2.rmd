@@ -1,7 +1,6 @@
 ---
-title: "Assignment2"
+title: "Assignment 2"
 author: "Kaz Sakamoto"
-date: "3/19/2018"
 output: html_document
 ---
     
@@ -9,48 +8,25 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
 ```
 
-In this assignment we will be scraping data from Wikipedia. Please submit a rscript (.r file) with your submission. Title should be Lastname_Firstname_assignment2.r and submit to canvas.
-
-You can run the code snippet from below to help you get going!
-
-```{r}
-# thi will download htmltab if you don't have it
-if (!require(htmltab)) install.packages('htmltab')
-
-# let's load the library
-library(htmltab)
-
-## let's create two variables url1 and ulr2 with our wikipedia pages
-url1 <- "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
-url2 <- "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(PPP)_per_capita"
-
-# take the second table in population page
-pop <- htmltab(url1,2)
-
-# tale the second table in GDP page
-gdp <- htmltab(url2,2)
-
-```
+In this assignment we will be continue working with R. Please submit a rscript (.r file) with your submission. Title should be Lastname_Firstname_assignment2.r and submit to canvas. Also give step-by-step code for credit.
 
 
 ## Task 1
 
-rename pop columns to PopRank, Country, Population, Date, PopPercent, Source
+Create your own function mean_N to calculate the mean of vector of numbers
 
 ## Task 2
 
-rename gdp columns to gdpRank, Country, GDP
+Create your own function median_N to calculate the median of a vector of numbers
 
-# Task 3
+## Task 3
 
-take all the "-" in the Rank columns in both tables and fill down with the value 
-from the row above
+Create your own function range_N to return the range of a vector (should be a vector of two numbers)
 
-# Task 4
-clean the country names and join gdp and pop together
+## Task 4
 
-# Task 5
-what are the top 10 countries by GDP in order? (greatest to smallest)
+Create a function called sum_N that removes na values and uses a for each to loop through each item in a vector to add up each elemtn in a vector(don't use the sum function that's already built).
 
-# Task 6
-what are the top 10 countries by population in order? (greatest to smallest)
+## Task 5
+
+Create a function called skipFunc that takes in two arguments, a vector and a character. If the character is "even", I want the function to remove all the even numbers and return the odd numbers. If the character is "odd", I want the function to remove all the odd numbers and return the even numbers.
