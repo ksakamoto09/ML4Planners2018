@@ -11,20 +11,27 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 
 ## Reading in Data
 
+Let's download subway.csv and subway.xlsx from canvas and add it to a folder called Data in your project directory.
+
 ### Reading in CSV
 
 CSVs are probably one of the most common data formats that you will work with.
 To read in data we will use the "readr" package.
 
 ```{r read-subway-do}
+
+## here we are going to find the root_file 
 root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
 dataDir <- file.path(root, 'Data')
 
+# load readr
 library(readr)
+# read in csv
 subway <- read_csv(file=file.path(dataDir, "subway.csv"))
 ```
 
-How about reading files from online?
+How about reading files from online? just add the url in `read_csv()`
 
 ```{r read-subway,eval=FALSE}
 subway_online <- read_csv(file="http://ml-course.kazsakamoto.com/Data/subway.csv")
@@ -37,22 +44,25 @@ head(subway)
 ```
 
 ## Read Excel
-Load the package
+
+Sometimes you will have to work with excel files. There is a special package for that.
 
 ```{r load-readxl,echo=FALSE}
+## Load in readxl
 library(readxl)
 ```
 
-let's now set the data directory and load the excel file and see the sheets
+let's now use our `dataDir` again and load the excel file and see the available sheets.
 
 ```{r see-sheets-show, eval=FALSE, warning = FALSE, error=FALSE}
 excel_sheets(file.path(dataDir, 'subway.xlsx'))
 ```
 
-we can load the actual table with the specified sheet.
+we can load the actual table with the specified sheet for now we'll just index it with the first sheet.
 ```{r read-subway-with-readxl-do,eval=FALSE}
 subwayXL <- read_excel(file.path(dataDir, 'subway.xlsx'), sheet=1)
 ```
+
 
 ## Pipes
 
@@ -64,10 +74,13 @@ library(magrittr)
   
 pipes are very useful and easier to read. Let's compare viewing the head of the
 data with and without pipes.
+
+Often it's the case where functions will be nested together and in those circumstances you'll have to read from inside-out. Pipes allows us to read from left to right!
 ```{r head}
 head(subway)
 subway %>% head
 ```
+
 what if we wanted to get only the top four observations? let's add n = 4 as an argument.
 
 ```{r}
@@ -76,7 +89,7 @@ subway %>% head(n=4)
 ```
 
 
-What if we wanted to get just the fourth row?
+What if we wanted to get just the fourth row? isn't pipes much easier to read?
 
 ```{r head-tail}
 tail(head(iris, n=4), n=1)
@@ -84,18 +97,24 @@ iris %>% head(n=4) %>% tail(n=1)
 ```
 
 
-## Dplyr
+## dplyr
+
+"dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges"
+
+here is the [cheat sheet](https://github.com/rstudio/cheatsheets/blob/master/data-transformation.pdf) if you want a reference guide.
 
 ### select
 
 If we need to select ceration columns from our table there are a few ways to do it
 in dplyr we use select
 ```{r dplyr-select}
+# with brackets
 subway[, c('Lat', 'Long')]
+# with pipes
 subway %>% select(Lat, Long)
-
+# with pipes and column index
 subway %>% select(5, 6)
-# everything but carat and price
+# everything but lat and long
 subway %>% select(-c(5, 6))
 ```
 
@@ -136,14 +155,15 @@ subway %>% slice(1:10)
 If you want to create a new column use the mutate function
 
 ```{r dplyr-mutate}
-# price/carat
+# pass / stairs
 subway %>% mutate(pass / stairs)
 subway %>% mutate(ratio = pass / stairs)
 
-# write back to original data.frame
+# writing back to original data.frame
 subway %<>% mutate(ratio = pass / stairs)
 subway
 ```
+
  We can even include more than one column to be made
 ```{r dplyr-mutate-seq}
 subway %>% mutate(passLog = log(pass), TwiceSize = ratio * 2)
@@ -151,30 +171,42 @@ subway %>% mutate(passLog = log(pass), TwiceSize = ratio * 2)
 
 ### summarize
 
-what if we want to make sume summary stats?
+what if we want to make some summary stats?
 ```{r dplyr-sumamrize}
-
+# average pass
 subway %>% summarize(mean(pass))
+# naming summary stats
 subway %>% summarize(AvgPass = mean(pass))
 ```
 
 ### group_by 
 like pivot tables, maybe you want to group your data?
 ```{r dplyr-group-by}
-subway %>% group_by(borough) %>% summarize(AvgPass=mean(pass))
-subway %>% group_by(borough, stairs) %>% summarize(AvgPass=mean(pass))
+subway %>% group_by(borough) %>% 
+    summarize(AvgPass=mean(pass))
+
+subway %>% group_by(borough, stairs) %>% 
+    summarize(AvgPass=mean(pass))
 ```
 
 how about multiple summaries?
 ```{r dplyr-group-by-mult}
-subway %>% group_by(borough) %>% summarize(AvgPass=mean(pass), AvgStairs=mean(stairs), TotalPass=sum(pass))
-subway %>% group_by(borough, stairs) %>% summarize(AvgPass=mean(pass), Count = n(), TotalPass=sum(pass)) -> subwayWide
+subway %>% 
+    group_by(borough) %>% 
+    summarize(AvgPass=mean(pass), AvgStairs=mean(stairs), TotalPass=sum(pass))
+
+subwayWide <- subway %>% 
+    group_by(borough, stairs) %>% 
+    summarize(AvgPass=mean(pass), Count = n(), TotalPass=sum(pass)) 
+
 subwayWide
 ```
 
 ### gather
 ```{r}
-subwayWide %>% gather(key = variable, value = value, -borough, - stairs) -> subwayLong
+subwayLong <- subwayWide %>% 
+    gather(key = variable, value = value, -borough, - stairs)
+
 subwayLong
 ```
 
@@ -187,7 +219,7 @@ subwayLong %>% spread(key = variable, value = value)
 
 ### unite
 ```{r}
-subway %>% unite(Coord, Lat, Long, sep = " ") -> subwayCoord
+subwayCoord <- subway %>% unite(Coord, Lat, Long, sep = " ")
 ```
 
 ### separate
@@ -200,6 +232,7 @@ subwayCoord %>% separate(Coord, c("Lat", "Long"), sep = " ")
 ```{r}
 subway %>% arrange(pass)
 subway %>% arrange(desc(pass))
+## multiple ordering
 subway %>% arrange(desc(pass), desc(stairs))
 ```
 
@@ -234,7 +267,7 @@ sprintf("Hello %s, it is going to be %s degrees today and %s", c("Claire", "Bob"
 ## String Manipulation
 
 ```{r }
-require(stringr)
+library(stringr)
 # split the string
 crossStreets <- str_split(string=subway$NAME, pattern=" & ")
 head(crossStreets)
@@ -259,20 +292,30 @@ str_sub(string=subway$NAME, start=4, end=8)
 
 if you need to learn more about regular expressions take a look at this [site](https://regexone.com/)
 
-remember in R you need another '\' to escape the special character
+remember in R you need another '\' to escape special characters
 ```{r }
 Avenues <- str_detect(string=subway$NAME, pattern="Ave")
-sum(Avenues)
+sum(Avenues, na.rm = TRUE)
 Streets <- str_detect(string = subway$NAME, pattern = "St")
-sum(Streets)
+sum(Streets, na.rm = TRUE)
 ```
 
 ```{r }
-subway %>% filter(str_detect(string=subway$NAME, pattern="[r,R]"))
-# begins with
-subway %>% filter(str_detect(string=subway$NAME, pattern="^[r,R]"))
-# ends with
-subway %>% filter(str_detect(string=subway$NAME, pattern="[r,R]$"))
+# looks for r or R
+subway %>% filter(str_detect(NAME, pattern="[r,R]"))
+# begins with r or R
+subway %>% filter(str_detect(NAME, pattern="^[r,R]"))
+# ends with d
+subway %>% filter(str_detect(borough, pattern="[d]$"))
+
+## all punctuations which include !"#$%&’()*+,-./:;<=>?@[]^_`{|}~
+subway %>% filter(str_detect(NAME, pattern = "[[::punct::]]"))
+## periods
+subway %>% filter(str_detect(NAME, pattern = "\\."))
+## anything that has a space then capital E then a space or a period
+subway %>% filter(str_detect(NAME, pattern = "\\s[E][\\s|\\.]"))
+## anything that has a space then a alphabetic character then a space or period
+subway %>% filter(str_detect(NAME, pattern = "\\s[A-z][\\s|\\.]"))
 
 ```
 
@@ -282,19 +325,106 @@ sum(Search)
 ```
 
 ```{r}
-# this looks for any  numbers in subway line
-str_extract(string=subway$LINE, "[1-9]")
-subway %>% mutate(numberLines = str_extract_all(LINE, "[1-9]"))
+# this looks for all numbers in subway line
+str_extract_all(string=subway$LINE, "[0-9]")
 ```
 
-```{r}
-# this looks for any  numbers in subway line
-str_extract(string=subway$LINE, "[1-9]")
-subway %>% mutate(numberLines = str_extract_all(LINE, "[1-9]"))
-```
 
 ```{r}
 # replace the first digit seen with "x"
+# \\d is the same as [0-9]
 str_replace(string=subway$LINE, pattern="\\d", replacement="x") %>% head
 str_replace_all(string=subway$LINE, pattern="\\d", replacement="x") %>% head
+```
+
+
+## rvest
+To scrape html tables from websites, the package rvest is here to help.
+```{r}
+library(rvest)
+```
+
+Let's first read in a table. The World Bank has a table of one of its indicators [size of the economy](http://wdi.worldbank.org/table/WV.1) which we can scrape. We can use this link and read the html in
+```{r}
+wbURL <- read_html("http://wdi.worldbank.org/table/WV.1")
+```
+Next if we open up the inspector on chrome it'll open the html for the page. If you select the table we can copy the xpath which is '//*[@id="scrollTable"]'.
+```{r}
+econSize <- wbURL %>% 
+    html_nodes(xpath = '//*[@id="scrollTable"]') %>% 
+    html_table() %>% "[["(1)
+```
+
+We also have to get the column names.
+```{r}
+wbColNames1 <- wbURL %>% 
+    html_nodes(".level0") %>% 
+    html_nodes("th") %>% 
+    html_text() %>% stringr::str_trim()
+
+wbColNames1ext <- c(wbColNames1[-8], wbColNames1[7], rep(wbColNames1[8],2))
+
+wbColNames2 <- wbURL %>% 
+    html_nodes(".level1") %>% 
+    html_nodes("th") %>% 
+    html_text() %>% stringr::str_trim()
+
+wbColNames3 <- wbURL %>% 
+    html_nodes(".level2") %>% 
+    html_nodes("th") %>% 
+    html_text() %>% stringr::str_trim()
+
+wbColNames <- paste(wbColNames1ext, wbColNames2, wbColNames3) %>% stringr::str_trim()
+wbColNames[1] <- "Country"
+
+colnames(econSize) <- wbColNames
+```
+
+Now you have the table!
+
+```{r}
+View(econSize)
+```
+
+## Google Maps Places API
+
+Next we'll actually use an [API](https://developers.google.com/places/web-service/search) to gain data from Google Maps. This is an official way that companies/entities want to expose their data to others. Every user will need to register their key and use it when they access the API, you can get yours [here](https://developers.google.com/places/web-service/get-api-key). The API in this case is accessed through a url which is what shows up when you are actually using Google Maps!
+
+First thing is to creat the api call, or in this case it's a url. The required parameters for a Place search is:
+
+* key - your API key
+* location - THe lat/long around your search
+* radius - search distance in meters (max is 50,000 m)
+
+optional parameters
+* type - search restriction ([types supported](https://developers.google.com/places/web-service/supported_types))
+* keyword - search word to be matched by Google content
+
+If we are looking for Asisn restaurants around a 1,000 meter radius from Columbia
+https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=40.8075355,-73.9713274&radius=1000&type=restaurant&keyword=asian&key=YOUR_API_KEY
+
+
+Let's think about making this algorithmic!
+```{r}
+library(RCurl)
+lat <- 40.8075355
+long <- -73.9713274
+radius <- 1000
+type <- "restaurant"
+keyword <- "asian"
+key <- "**YOUR_KEY**"
+
+nearbySearch <- function(lat, long, radius, type, keyword, key){
+    # this creates the api call
+    url <- sprintf("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%s,%s&radius=%s&type=%s&keyword=%s&key=%s",
+            lat, long, radius, type, keyword, key)
+    ## This reads in the url
+    output <- getURL(url)
+    ## Read in json and return the results object from the list
+    outDF <- jsonlite::fromJSON(output)$results
+    ## return outDF
+    outDF
+}
+
+asianRest <- nearbySearch(lat, long, radius, type, keyword, key)
 ```
