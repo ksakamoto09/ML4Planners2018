@@ -313,15 +313,20 @@ $(document).ready(function () {
 
 <div id="reading-in-data" class="section level2">
 <h2>Reading in Data</h2>
+<p>Let’s download subway.csv and subway.xlsx from canvas and add it to a folder called Data in your project directory.</p>
 <div id="reading-in-csv" class="section level3">
 <h3>Reading in CSV</h3>
 <p>CSVs are probably one of the most common data formats that you will work with. To read in data we will use the “readr” package.</p>
-<pre class="r"><code>root &lt;- rprojroot::find_rstudio_root_file()
+<pre class="r"><code>## here we are going to find the root_file 
+root &lt;- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
 dataDir &lt;- file.path(root, 'Data')
 
+# load readr
 library(readr)
+# read in csv
 subway &lt;- read_csv(file=file.path(dataDir, &quot;subway.csv&quot;))</code></pre>
-<p>How about reading files from online?</p>
+<p>How about reading files from online? just add the url in <code>read_csv()</code></p>
 <pre class="r"><code>subway_online &lt;- read_csv(file=&quot;http://ml-course.kazsakamoto.com/Data/subway.csv&quot;)</code></pre>
 <p>Let’s take a look at what subway loos like</p>
 <pre class="r"><code>head(subway)</code></pre>
@@ -329,10 +334,10 @@ subway &lt;- read_csv(file=file.path(dataDir, &quot;subway.csv&quot;))</code></p
 </div>
 <div id="read-excel" class="section level2">
 <h2>Read Excel</h2>
-<p>Load the package</p>
-<p>let’s now set the data directory and load the excel file and see the sheets</p>
+<p>Sometimes you will have to work with excel files. There is a special package for that.</p>
+<p>let’s now use our <code>dataDir</code> again and load the excel file and see the available sheets.</p>
 <pre class="r"><code>excel_sheets(file.path(dataDir, 'subway.xlsx'))</code></pre>
-<p>we can load the actual table with the specified sheet.</p>
+<p>we can load the actual table with the specified sheet for now we’ll just index it with the first sheet.</p>
 <pre class="r"><code>subwayXL &lt;- read_excel(file.path(dataDir, 'subway.xlsx'), sheet=1)</code></pre>
 </div>
 <div id="pipes" class="section level2">
@@ -340,25 +345,30 @@ subway &lt;- read_csv(file=file.path(dataDir, &quot;subway.csv&quot;))</code></p
 <p>let’s load the library magrittr.</p>
 <pre class="r"><code>library(magrittr)</code></pre>
 <p>pipes are very useful and easier to read. Let’s compare viewing the head of the data with and without pipes.</p>
+<p>Often it’s the case where functions will be nested together and in those circumstances you’ll have to read from inside-out. Pipes allows us to read from left to right!</p>
 <pre class="r"><code>head(subway)
 subway %&gt;% head</code></pre>
 <p>what if we wanted to get only the top four observations? let’s add n = 4 as an argument.</p>
 <pre class="r"><code>head(subway, n=4)
 subway %&gt;% head(n=4)</code></pre>
-<p>What if we wanted to get just the fourth row?</p>
+<p>What if we wanted to get just the fourth row? isn’t pipes much easier to read?</p>
 <pre class="r"><code>tail(head(iris, n=4), n=1)
 iris %&gt;% head(n=4) %&gt;% tail(n=1)</code></pre>
 </div>
 <div id="dplyr" class="section level2">
-<h2>Dplyr</h2>
+<h2>dplyr</h2>
+<p>“dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges”</p>
+<p>here is the <a href="https://github.com/rstudio/cheatsheets/blob/master/data-transformation.pdf">cheat sheet</a> if you want a reference guide.</p>
 <div id="select" class="section level3">
 <h3>select</h3>
 <p>If we need to select ceration columns from our table there are a few ways to do it in dplyr we use select</p>
-<pre class="r"><code>subway[, c('Lat', 'Long')]
+<pre class="r"><code># with brackets
+subway[, c('Lat', 'Long')]
+# with pipes
 subway %&gt;% select(Lat, Long)
-
+# with pipes and column index
 subway %&gt;% select(5, 6)
-# everything but carat and price
+# everything but lat and long
 subway %&gt;% select(-c(5, 6))</code></pre>
 </div>
 <div id="filter" class="section level3">
@@ -386,11 +396,11 @@ subway %&gt;% slice(1:10)</code></pre>
 <div id="mutate" class="section level3">
 <h3>mutate</h3>
 <p>If you want to create a new column use the mutate function</p>
-<pre class="r"><code># price/carat
+<pre class="r"><code># pass / stairs
 subway %&gt;% mutate(pass / stairs)
 subway %&gt;% mutate(ratio = pass / stairs)
 
-# write back to original data.frame
+# writing back to original data.frame
 subway %&lt;&gt;% mutate(ratio = pass / stairs)
 subway</code></pre>
 <p>We can even include more than one column to be made</p>
@@ -398,23 +408,36 @@ subway</code></pre>
 </div>
 <div id="summarize" class="section level3">
 <h3>summarize</h3>
-<p>what if we want to make sume summary stats?</p>
-<pre class="r"><code>subway %&gt;% summarize(mean(pass))
+<p>what if we want to make some summary stats?</p>
+<pre class="r"><code># average pass
+subway %&gt;% summarize(mean(pass))
+# naming summary stats
 subway %&gt;% summarize(AvgPass = mean(pass))</code></pre>
 </div>
 <div id="group_by" class="section level3">
 <h3>group_by</h3>
 <p>like pivot tables, maybe you want to group your data?</p>
-<pre class="r"><code>subway %&gt;% group_by(borough) %&gt;% summarize(AvgPass=mean(pass))
-subway %&gt;% group_by(borough, stairs) %&gt;% summarize(AvgPass=mean(pass))</code></pre>
+<pre class="r"><code>subway %&gt;% group_by(borough) %&gt;% 
+    summarize(AvgPass=mean(pass))
+
+subway %&gt;% group_by(borough, stairs) %&gt;% 
+    summarize(AvgPass=mean(pass))</code></pre>
 <p>how about multiple summaries?</p>
-<pre class="r"><code>subway %&gt;% group_by(borough) %&gt;% summarize(AvgPass=mean(pass), AvgStairs=mean(stairs), TotalPass=sum(pass))
-subway %&gt;% group_by(borough, stairs) %&gt;% summarize(AvgPass=mean(pass), Count = n(), TotalPass=sum(pass)) -&gt; subwayWide
+<pre class="r"><code>subway %&gt;% 
+    group_by(borough) %&gt;% 
+    summarize(AvgPass=mean(pass), AvgStairs=mean(stairs), TotalPass=sum(pass))
+
+subwayWide &lt;- subway %&gt;% 
+    group_by(borough, stairs) %&gt;% 
+    summarize(AvgPass=mean(pass), Count = n(), TotalPass=sum(pass)) 
+
 subwayWide</code></pre>
 </div>
 <div id="gather" class="section level3">
 <h3>gather</h3>
-<pre class="r"><code>subwayWide %&gt;% gather(key = variable, value = value, -borough, - stairs) -&gt; subwayLong
+<pre class="r"><code>subwayLong &lt;- subwayWide %&gt;% 
+    gather(key = variable, value = value, -borough, - stairs)
+
 subwayLong</code></pre>
 </div>
 <div id="spread" class="section level3">
@@ -423,7 +446,7 @@ subwayLong</code></pre>
 </div>
 <div id="unite" class="section level3">
 <h3>unite</h3>
-<pre class="r"><code>subway %&gt;% unite(Coord, Lat, Long, sep = &quot; &quot;) -&gt; subwayCoord</code></pre>
+<pre class="r"><code>subwayCoord &lt;- subway %&gt;% unite(Coord, Lat, Long, sep = &quot; &quot;)</code></pre>
 </div>
 <div id="separate" class="section level3">
 <h3>separate</h3>
@@ -433,6 +456,7 @@ subwayLong</code></pre>
 <h3>arrange</h3>
 <pre class="r"><code>subway %&gt;% arrange(pass)
 subway %&gt;% arrange(desc(pass))
+## multiple ordering
 subway %&gt;% arrange(desc(pass), desc(stairs))</code></pre>
 </div>
 </div>
@@ -457,7 +481,7 @@ paste(&quot;Hello &quot;, person, &quot;, it is going to be&quot;, temp,
 </div>
 <div id="string-manipulation" class="section level2">
 <h2>String Manipulation</h2>
-<pre class="r"><code>require(stringr)
+<pre class="r"><code>library(stringr)
 # split the string
 crossStreets &lt;- str_split(string=subway$NAME, pattern=&quot; &amp; &quot;)
 head(crossStreets)
@@ -477,27 +501,107 @@ str_sub(string=subway$NAME, start=4, end=8)</code></pre>
 <div id="regular-expressions" class="section level2">
 <h2>regular expressions</h2>
 <p>if you need to learn more about regular expressions take a look at this <a href="https://regexone.com/">site</a></p>
-<p>remember in R you need another ’' to escape the special character</p>
+<p>remember in R you need another ’' to escape special characters</p>
 <pre class="r"><code>Avenues &lt;- str_detect(string=subway$NAME, pattern=&quot;Ave&quot;)
-sum(Avenues)
+sum(Avenues, na.rm = TRUE)
 Streets &lt;- str_detect(string = subway$NAME, pattern = &quot;St&quot;)
-sum(Streets)</code></pre>
-<pre class="r"><code>subway %&gt;% filter(str_detect(string=subway$NAME, pattern=&quot;[r,R]&quot;))
-# begins with
-subway %&gt;% filter(str_detect(string=subway$NAME, pattern=&quot;^[r,R]&quot;))
-# ends with
-subway %&gt;% filter(str_detect(string=subway$NAME, pattern=&quot;[r,R]$&quot;))</code></pre>
+sum(Streets, na.rm = TRUE)</code></pre>
+<pre class="r"><code># looks for r or R
+subway %&gt;% filter(str_detect(NAME, pattern=&quot;[r,R]&quot;))
+# begins with r or R
+subway %&gt;% filter(str_detect(NAME, pattern=&quot;^[r,R]&quot;))
+# ends with d
+subway %&gt;% filter(str_detect(borough, pattern=&quot;[d]$&quot;))
+
+## all punctuations which include !&quot;#$%&amp;’()*+,-./:;&lt;=&gt;?@[]^_`{|}~
+subway %&gt;% filter(str_detect(NAME, pattern = &quot;[[::punct::]]&quot;))
+## periods
+subway %&gt;% filter(str_detect(NAME, pattern = &quot;\\.&quot;))
+## anything that has a space then capital E then a space or a period
+subway %&gt;% filter(str_detect(NAME, pattern = &quot;\\s[E][\\s|\\.]&quot;))
+## anything that has a space then a alphabetic character then a space or period
+subway %&gt;% filter(str_detect(NAME, pattern = &quot;\\s[A-z][\\s|\\.]&quot;))</code></pre>
 <pre class="r"><code>Search &lt;- str_detect(subway$LINE, &quot;L&quot;)
 sum(Search)</code></pre>
-<pre class="r"><code># this looks for any  numbers in subway line
-str_extract(string=subway$LINE, &quot;[1-9]&quot;)
-subway %&gt;% mutate(numberLines = str_extract_all(LINE, &quot;[1-9]&quot;))</code></pre>
-<pre class="r"><code># this looks for any  numbers in subway line
-str_extract(string=subway$LINE, &quot;[1-9]&quot;)
-subway %&gt;% mutate(numberLines = str_extract_all(LINE, &quot;[1-9]&quot;))</code></pre>
+<pre class="r"><code># this looks for all numbers in subway line
+str_extract_all(string=subway$LINE, &quot;[0-9]&quot;)</code></pre>
 <pre class="r"><code># replace the first digit seen with &quot;x&quot;
+# \\d is the same as [0-9]
 str_replace(string=subway$LINE, pattern=&quot;\\d&quot;, replacement=&quot;x&quot;) %&gt;% head
 str_replace_all(string=subway$LINE, pattern=&quot;\\d&quot;, replacement=&quot;x&quot;) %&gt;% head</code></pre>
+</div>
+<div id="rvest" class="section level2">
+<h2>rvest</h2>
+<p>To scrape html tables from websites, the package rvest is here to help.</p>
+<pre class="r"><code>library(rvest)</code></pre>
+<p>Let’s first read in a table. The World Bank has a table of one of its indicators <a href="http://wdi.worldbank.org/table/WV.1">size of the economy</a> which we can scrape. We can use this link and read the html in</p>
+<pre class="r"><code>wbURL &lt;- read_html(&quot;http://wdi.worldbank.org/table/WV.1&quot;)</code></pre>
+<p>Next if we open up the inspector on chrome it’ll open the html for the page. If you select the table we can copy the xpath which is ’//*<span class="citation">[@id=&quot;scrollTable&quot;]</span>’.</p>
+<pre class="r"><code>econSize &lt;- wbURL %&gt;% 
+    html_nodes(xpath = '//*[@id=&quot;scrollTable&quot;]') %&gt;% 
+    html_table() %&gt;% &quot;[[&quot;(1)</code></pre>
+<p>We also have to get the column names.</p>
+<pre class="r"><code>wbColNames1 &lt;- wbURL %&gt;% 
+    html_nodes(&quot;.level0&quot;) %&gt;% 
+    html_nodes(&quot;th&quot;) %&gt;% 
+    html_text() %&gt;% stringr::str_trim()
+
+wbColNames1ext &lt;- c(wbColNames1[-8], wbColNames1[7], rep(wbColNames1[8],2))
+
+wbColNames2 &lt;- wbURL %&gt;% 
+    html_nodes(&quot;.level1&quot;) %&gt;% 
+    html_nodes(&quot;th&quot;) %&gt;% 
+    html_text() %&gt;% stringr::str_trim()
+
+wbColNames3 &lt;- wbURL %&gt;% 
+    html_nodes(&quot;.level2&quot;) %&gt;% 
+    html_nodes(&quot;th&quot;) %&gt;% 
+    html_text() %&gt;% stringr::str_trim()
+
+wbColNames &lt;- paste(wbColNames1ext, wbColNames2, wbColNames3) %&gt;% stringr::str_trim()
+wbColNames[1] &lt;- &quot;Country&quot;
+
+colnames(econSize) &lt;- wbColNames</code></pre>
+<p>Now you have the table!</p>
+<pre class="r"><code>View(econSize)</code></pre>
+</div>
+<div id="google-maps-places-api" class="section level2">
+<h2>Google Maps Places API</h2>
+<p>Next we’ll actually use an <a href="https://developers.google.com/places/web-service/search">API</a> to gain data from Google Maps. This is an official way that companies/entities want to expose their data to others. Every user will need to register their key and use it when they access the API, you can get yours <a href="https://developers.google.com/places/web-service/get-api-key">here</a>. The API in this case is accessed through a url which is what shows up when you are actually using Google Maps!</p>
+<p>First thing is to creat the api call, or in this case it’s a url. The required parameters for a Place search is:</p>
+<ul>
+<li>key - your API key</li>
+<li>location - THe lat/long around your search</li>
+<li>radius - search distance in meters (max is 50,000 m)</li>
+</ul>
+<p>optional parameters</p>
+<ul>
+<li>type - search restriction (<a href="https://developers.google.com/places/web-service/supported_types">types supported</a>)</li>
+<li>keyword - search word to be matched by Google content</li>
+</ul>
+<p>If we are looking for Asisn restaurants around a 1,000 meter radius from Columbia <a href="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=40.8075355,-73.9713274&amp;radius=1000&amp;type=restaurant&amp;keyword=asian&amp;key=YOUR_API_KEY" class="uri">https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=40.8075355,-73.9713274&amp;radius=1000&amp;type=restaurant&amp;keyword=asian&amp;key=YOUR_API_KEY</a></p>
+<p>Let’s think about making this algorithmic!</p>
+<pre class="r"><code>library(RCurl)
+lat &lt;- 40.8075355
+long &lt;- -73.9713274
+radius &lt;- 1000
+type &lt;- &quot;restaurant&quot;
+keyword &lt;- &quot;asian&quot;
+key &lt;- &quot;**YOUR_KEY**&quot;
+
+nearbySearch &lt;- function(lat, long, radius, type, keyword, key){
+    # this creates the api call
+    url &lt;- sprintf(&quot;https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%s,%s&amp;radius=%s&amp;type=%s&amp;keyword=%s&amp;key=%s&quot;,
+            lat, long, radius, type, keyword, key)
+    ## This reads in the url
+    output &lt;- getURL(url)
+    ## Read in json and return the results object from the list
+    outDF &lt;- jsonlite::fromJSON(output)$results
+    ## return outDF
+    outDF
+}
+
+asianRest &lt;- nearbySearch(lat, long, radius, type, keyword, key)</code></pre>
 </div>
 
 
