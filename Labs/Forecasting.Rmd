@@ -1,0 +1,70 @@
+---
+title: "Forecasting"
+author: "Kaz Sakamoto"
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+
+## Forecasting Libraries
+
+```{r}
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(forecast)
+
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
+```
+
+# `ts` objects
+
+A simple time series object is a collection of numbers with a corresponding time, which could be year, month, week, etc.
+
+```{r}
+y <- ts(1:10, start = 2000)
+y
+```
+
+If your time series' observations happen more frequently than once per year, you can add to the `frequency` argument.
+```{r}
+## Monthly
+ts(1:100, start = 2000, frequency = 12)
+## Quarterly
+ts(1:100, start = 2000, frequency = 4)
+## Weekly
+ts(1:100, start = 2000, frequency = 52)
+```
+
+```{r}
+citiBike <- read_csv(file.path(dataDir, "citiBike2018.csv"))
+cbts <- ts(citiBike$`Trips over the past 24-hours (midnight to 11:59pm)`, start = 2018, frequency = 365)
+```
+
+
+## Frequency
+
+If the frequency of observations is greater than once per week, then there is usually more than one way of handling the frequency. For example, data with daily observations might have a weekly seasonality (frequency=7=7) or an annual seasonality (frequency=365.25=365.25). 
+
+Similarly, data that are observed every minute might have an hourly seasonality (frequency=60=60), a daily seasonality (frequency=24×60=1440=24×60=1440), a weekly seasonality (frequency=24×60×7=10080=24×60×7=10080) and an annual seasonality (frequency=24×60×365.25=525960=24×60×365.25=525960). If you want to use a ts object, then you need to decide which of these is the most important
+
+# Plotting Time Series
+
+```{r}
+autoplot(cbts) + ggtitle("Citibike Trips") +
+    xlab("Day") + ylab("Trips")
+```
+
+```{r}
+autoplot(fpp::a10) +
+  ggtitle("Antidiabetic drug sales") +
+  ylab("$ million") +
+  xlab("Year")
+```
+
+

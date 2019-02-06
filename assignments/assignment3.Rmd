@@ -8,48 +8,41 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
 ```
 
-In this assignment we will be scraping data from Wikipedia. Please submit a rscript (.r file) with your submission. Title should be Lastname_Firstname_assignment2.r and submit to canvas.
+In this assignment we will be scraping data from Wikipedia. Please submit a rscript (.r file) with your submission. Title should be Lastname_Firstname_assignment3.r and submit to canvas.
 
-You can run the code snippet from below to help you get going!
-
+Use these urls for scraping.
 ```{r}
-# thi will download htmltab if you don't have it
-if (!require(htmltab)) install.packages('htmltab')
-
-# let's load the library
-library(htmltab)
 
 ## let's create two variables url1 and ulr2 with our wikipedia pages
 url1 <- "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
 url2 <- "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(PPP)_per_capita"
-
-# take the second table in population page
-pop <- htmltab(url1,2)
-
-# tale the second table in GDP page
-gdp <- htmltab(url2,2)
 
 ```
 
 
 ## Task 1
 
-rename pop columns to PopRank, Country, Population, Date, PopPercent, Source
+for `url1`, name the table `pop` and rename columns to PopRank, Country, Population, Date, PopPercent, Source
 
 ## Task 2
 
-rename gdp columns to gdpRank, Country, GDP
+for `url2` name the table `gdp` and rename columns to gdpRank, Country, GDP
 
 # Task 3
 
-take all the "-" in the Rank columns in both tables and fill down with the value 
-from the row above
+take all the "-" in the `PopRank` and `gdpRank` columns in the tables and fill down with the value 
+from the row above. Use the function `fill()` from the tidyr package.
+https://tidyr.tidyverse.org/reference/fill.html
 
 # Task 4
-clean the country names and join gdp and pop together
+
+clean the country names and join gdp and pop together using `full_join()` from the dplyr package. Name the new table joinedDF. https://dplyr.tidyverse.org/reference/join.html
+
 
 # Task 5
+
 what are the top 10 countries by GDP in order? (greatest to smallest)
 
 # Task 6
+
 what are the top 10 countries by population in order? (greatest to smallest)

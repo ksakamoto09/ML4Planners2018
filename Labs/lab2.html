@@ -352,8 +352,8 @@ subway %&gt;% head</code></pre>
 <pre class="r"><code>head(subway, n=4)
 subway %&gt;% head(n=4)</code></pre>
 <p>What if we wanted to get just the fourth row? isn’t pipes much easier to read?</p>
-<pre class="r"><code>tail(head(iris, n=4), n=1)
-iris %&gt;% head(n=4) %&gt;% tail(n=1)</code></pre>
+<pre class="r"><code>tail(head(subway, n=4), n=1)
+subway %&gt;% head(n=4) %&gt;% tail(n=1)</code></pre>
 </div>
 <div id="dplyr" class="section level2">
 <h2>dplyr</h2>
@@ -406,6 +406,13 @@ subway</code></pre>
 <p>We can even include more than one column to be made</p>
 <pre class="r"><code>subway %&gt;% mutate(passLog = log(pass), TwiceSize = ratio * 2)</code></pre>
 </div>
+</div>
+<div id="mutate_at-and-mutate_if" class="section level2">
+<h2>mutate_at and mutate_if</h2>
+<pre class="r"><code>subway %&gt;% select(Lat,Long) %&gt;% 
+    mutate_if(is.numeric, funs(as.character))
+
+subway %&gt;% mutate_at(vars(starts_with(&quot;La&quot;)), funs(as.character))</code></pre>
 <div id="summarize" class="section level3">
 <h3>summarize</h3>
 <p>what if we want to make some summary stats?</p>

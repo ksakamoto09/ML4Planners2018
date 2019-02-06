@@ -92,8 +92,8 @@ subway %>% head(n=4)
 What if we wanted to get just the fourth row? isn't pipes much easier to read?
 
 ```{r head-tail}
-tail(head(iris, n=4), n=1)
-iris %>% head(n=4) %>% tail(n=1)
+tail(head(subway, n=4), n=1)
+subway %>% head(n=4) %>% tail(n=1)
 ```
 
 
@@ -164,10 +164,19 @@ subway %<>% mutate(ratio = pass / stairs)
 subway
 ```
 
- We can even include more than one column to be made
+We can even include more than one column to be made
 ```{r dplyr-mutate-seq}
 subway %>% mutate(passLog = log(pass), TwiceSize = ratio * 2)
 ```
+
+## mutate_at and mutate_if
+```{r}
+subway %>% select(Lat,Long) %>% 
+    mutate_if(is.numeric, funs(as.character))
+
+subway %>% mutate_at(vars(starts_with("La")), funs(as.character))
+```
+
 
 ### summarize
 
