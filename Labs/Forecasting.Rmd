@@ -15,6 +15,7 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 library(forecast)
+library(readr)
 
 ## here we are going to find the root_file 
 root <- rprojroot::find_rstudio_root_file()
@@ -42,10 +43,36 @@ ts(1:100, start = 2000, frequency = 52)
 ```
 
 ```{r}
-citiBike <- read_csv(file.path(dataDir, "citiBike2018.csv"))
-cbts <- ts(citiBike$`Trips over the past 24-hours (midnight to 11:59pm)`, start = 2018, frequency = 365)
+citiBike <- read_csv(file.path(dataDir, "citiBike.csv"))
+
+cbWeek <- citiBike %>% mutate(date = lubridate::mdy(citiBike$Date),
+                    week = lubridate::week(date),
+                    year = lubridate::year(date)) %>% 
+    group_by(year,week) %>% 
+    summarise(trips = sum(`Trips over the past 24-hours (midnight to 11:59pm)`),
+              miles = sum(`Miles traveled today (midnight to 11:59 pm)`)) %>% ungroup() %>% 
+    select(trips, miles)
+cbWeek <- ts(cbWeek, start = 2015, frequency = 52.25)
 ```
 
+```{r}
+cbMonth <- citiBike %>% mutate(date = lubridate::mdy(citiBike$Date),
+                    month = lubridate::month(date),
+                    year = lubridate::year(date)) %>% 
+    group_by(year,month) %>% 
+    summarise(trips = sum(`Trips over the past 24-hours (midnight to 11:59pm)`),
+              miles = sum(`Miles traveled today (midnight to 11:59 pm)`)) %>% ungroup() %>% 
+    select(trips, miles)
+cbMonth <- ts(cbMonth[,"trips"], start = 2015, frequency = 12)
+```
+
+```{r}
+newcb <- citiBike %>%
+ rename(trips = `Trips over the past 24-hours (midnight to 11:59pm)`,
+           miles = `Miles traveled today (midnight to 11:59 pm)`) %>%
+ select(trips, miles)
+cbts <- ts(newcb, start = 2015, frequency = 365)
+```
 
 ## Frequency
 
@@ -56,7 +83,7 @@ Similarly, data that are observed every minute might have an hourly seasonality 
 # Plotting Time Series
 
 ```{r}
-autoplot(cbts) + ggtitle("Citibike Trips") +
+autoplot(cbWeek) + ggtitle("Citibike Trips") +
     xlab("Day") + ylab("Trips")
 ```
 
@@ -67,4 +94,98 @@ autoplot(fpp::a10) +
   xlab("Year")
 ```
 
+```{r}
+ggAcf(cbWeek[,"trips"])
+```
+
+
+## avereage method
+
+forecasts can be as simple as the average or mean value of historical numbers.
+$$\hat{y}_{T+h|T}= \bar{y} = (y_1 + ... + y_T) / T $$
+```{r}
+meanf(cbWeek[,"trips"], h = 10)
+```
+
+
+## Naive method
+
+we can also set the forecast as the last observed number.
+
+$$\hat{y}_{T+h|T} = y_T$$
+```{r}
+naive(cbWeek[,"trips"], h = 10)
+# Alternatively
+rwf(cbWeek[,"trips"], h = 10)
+```
+
+## Seasonal naive method
+similarliy to the naive method, the forecast is equal to the last observed number from the same season a year ago. *m* is the seasonal period and *k* is the interger part of (*h* - 1)/*m*
+$$\hat{y}_{T+h|T} = y_{T+h-m(k+1)}$$
+```{r}
+snaive(cbWeek[,"trips"], h = 10)
+```
+
+## Drift method
+
+```{r}
+rwf(cbWeek[,"trips"], h = 10, drift = TRUE)
+```
+
+```{r}
+autoplot(cbWeek[,"trips"]) +
+  autolayer(meanf(cbWeek[,"trips"], h=11),
+    series="Mean", PI=FALSE) +
+  autolayer(naive(cbWeek[,"trips"], h=11),
+    series="Naïve", PI=FALSE) +
+  autolayer(snaive(cbWeek[,"trips"], h=11),
+    series="Seasonal naïve", PI=FALSE) +
+  ggtitle("Forecasts for quarterly beer production") +
+  xlab("Year") + ylab("Megalitres") +
+  guides(colour=guide_legend(title="Forecast"))
+```
+
+## Calendar Adjustment
+The number of days per month are different so monthly numbers could be affected by them.
+```{r}
+monthDay <- cbind(Monthly = cbMonth, DailyAverage = cbMonth/monthdays(cbMonth))
+
+autoplot(monthDay, facet = TRUE)
+```
+
+Other Adjustments to consider:
+
+* Adjusting for inflation (using Consumer Price Index)
+* log transformations (useful for monetary variables)
+* power transformations (you can use square roots or cube roots)
+
+# Box-Cox Transformation
+
+This transformation utilizes both logarithm and power transformation with a parameter called $\lambda$.
+
+$$w_t =
+\begin{cases}
+\\log(y_t),  &\text{if } \lambda = 0 \\
+\dfrac{y_i^\lambda-1}{\lambda},  &\text{otherwise. }
+\end{cases}$$
+
+you can see that if $\lambda = 0$ then the natural log is used, but if $\lambda \neq 0$ the power transformation is used. One more thing of note is that if $\lambda = 1$ then $w_t = y_t -1$ which means the data will be shifted down.
+
+```{r}
+lambdaVal <- BoxCox.lambda(monthDay)
+autoplot(BoxCox(monthDay, lambdaVal))
+```
+
+## Bias Adjustment
+
+When we get the back-transformed forecast from the Box-Cox transofmation, it will return the median of the forecast distribution rather than the mean. The difference between the mean and the median is called the **bias** hence **bias-adjusted** point forecasts. 
+
+```{r}
+fc <- rwf(monthDay[,"Monthly"], drift=TRUE, lambda=0)
+fc2 <- rwf(monthDay[,"Monthly"], drift=TRUE, lambda=0, biasadj=TRUE)
+autoplot(monthDay[,"Monthly"]) +
+  autolayer(fc, series="Simple back transformation") +
+  autolayer(fc2, series="Bias adjusted", PI=FALSE) +
+  guides(colour=guide_legend(title="Forecast")) + ylab("Trips")
+```
 
