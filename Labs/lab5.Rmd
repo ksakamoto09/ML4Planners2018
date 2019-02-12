@@ -49,6 +49,7 @@ We have already seen this plot but let's plot our new data with `ggpairs`
 GGally::ggpairs(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
 ```
 
+## Variance
 
 ## Covariance
 
@@ -103,8 +104,36 @@ ggplot(sqftCoef, aes(Estimate, coef)) + geom_point() + geom_errorbarh(aes(xmin=L
     ggtitle("Rental Comparble Income by Square Feet")
 ```
 
+# R
+correlation
+
+## R^2
+percentage of variance explained
+
+## coeffcients
+
+## Things to look out for
+
+* residuals have to have mean of zero
+* residuals are not autocorrelated - Durban Watson test
+* normality or errors
+* need more observations than variables.
+* no excessive multicollinearity
 
 ## Multiple Regression
+$$ Y = \beta_0 + \beta_1*x_1 +...\text{Error}$$
+
+## Specification Erros
+
+you have to make sure all the relevant variables are in the model or else you will have a systematic error when we want our error to be random.
+
+## Challenges
+
+* visual examination becomes difficult
+* multicollinearity
+* interactions
+* attributing importance to each variable
+
 
 What happens if you have more than one predictor? you'll have to use multiple regression. 
 
@@ -189,6 +218,12 @@ coefplot(condo2, sort = 'mag')
 ```{r}
 multiplot(condo1, condo2)
 ```
+
+
+## Stepwise Variable Selection
+
+backwards or forwards usually bad
+
 
 ## Generalized Linear Models
 

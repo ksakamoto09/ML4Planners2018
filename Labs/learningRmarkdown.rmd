@@ -1,32 +1,31 @@
 ---
-title: First Report
-author: Kaz Sakamoto
-framework: bootstrap
-mode: selfcontained
-highlighter: prettify
-hitheme: twitter-bootstrap
-assets:
-  css:
-    - "http://fonts.googleapis.com/css?family=Raleway:300"
-    - "http://fonts.googleapis.com/css?family=Oxygen"
+title: "First Report"
+author: "Kaz Sakamoto"
+output: 
+  html_document
 ---
 ```{r echo=F, warning= F, message=F}
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, error = FALSE, tidy = FALSE, cache = FALSE, results = 'asis' )
 ```
+
 <style>
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
+
 body{
-  font-family: 'Oxygen', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 16px;
   line-height: 24px;
 }
 
 h1,h2,h3,h4 {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'VT323', monospace;
+  background-color: #D4DAEC;
 }
 
 .container { width: 1000px; }
-h3 {
-  background-color: #D4DAEC;
+
+
+h2 {
   text-indent: 50px; 
 }
 
@@ -35,11 +34,14 @@ g-table-intro h4 {
 }
 </style>
 
-### First Section
+# First Section
 
-I claim absolutely no credit for this visualization, which I consider one of the most best I have ever seen.  All credit belongs to the <a href = "http://www.nytimes.com/interactive/2011/05/31/business/economy/case-shiller-index.html">original source</a>.  If anybody believes this to be not fair use, I will take it down immediately.  I am implicitly assuming approval for this fork due to the [data.stories interview](http://datastori.es/data-stories-22-nyt-graphics-and-d3-with-mike-bostock-and-shan-carter/)
+I claim absolutely no credit for this visualization, which I consider one of the most best I have ever seen.  
 
-### New link
+Adding a link
+[data.stories interview](http://datastori.es/data-stories-22-nyt-graphics-and-d3-with-mike-bostock-and-shan-carter/)
+
+## Second Section
 
 
 

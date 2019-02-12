@@ -149,4 +149,222 @@ ggplot(NYC_Lots, aes(x=LotArea, y=TotalValue, color=Borough)) +
     facet_grid(Borough ~ NumBldgs)
 ```
 
-## Rmarkdown
+# Rmarkdown
+
+# YAML Header {#yamlHeader page=RfES427}
+
+YAML means Yet Another Markup Language
+
+```YAML
+---
+title: "RMarkdown Primer"
+author: "Your Name"
+date: "Jan 12, 2019"
+output: html_document
+---
+```
+
+# Sections {#sections page=RfES428}
+
+Sections are denoted with hashtags
+
+```md
+# Level 1 Heading
+
+Regular text goes here. Blank lines create new paragraphs.
+
+# Another Level 1 Heading
+
+More text
+
+## Level 2 Heading
+
+This is a subsection under the level 1 heading
+
+# Back to Level 1
+
+This starts a new section
+```
+
+# Text Formatting {#text-formatting page=RfES429}
+
+- Underscores for italic
+- Two underscores for bold
+- Three underscores for italic and bold
+
+```md
+_italic_
+
+__bold__
+
+___italic and bold___
+```
+
+_italic_
+
+__bold__
+
+___italic and bold___
+
+# Lists {#lists page=RfES428}
+
+## Unordered Lists {#lists-unordered page=RfES429}
+
+A leading dash (`-`) creates a list element
+
+List fruit
+
+```md
+- apples
+- bananas
+- oranges
+- kiwi
+```
+
+- apples
+- bananas
+- oranges
+- kiwi
+
+## Ordered Lists {#lists-ordered page=RfES430}
+
+### Numbered Lists {#lists-numbered page=RfES430}
+
+A leading `1.` creates list elements
+
+```md
+1. New York
+1. New Jersey
+1. Connecticut
+```
+
+1. New York
+1. New Jersey
+1. Connecticut
+
+### Lettered Lists {#lists-lettered}
+
+A leading 'a.' creates a lettered list
+
+```md
+a. Coal
+a. Wood
+a. Gas
+```
+
+a. Coal
+a. Wood
+a. Gas
+
+## Nested List {#lists-nested page=RfES430}
+
+```md
+1. NY
+    a. Coal
+    a. Wood
+    a. Gas
+        - Bakers Pride
+        - Bari
+    a. Electric
+1. NJ
+1. Philly
+1. Detroit
+```
+
+1. NY
+    a. Coal
+    a. Wood
+    a. Gas
+        - Baker's Pride
+        - Bari
+    a. Electric
+1. NJ
+1. Philly
+1. Detroit
+
+# Links {#links page=RfES430}
+
+```md
+[My Website](www.ml-course.kazsakamoto.com)
+```
+
+[My Website](www.ml-course.kazsakamoto.com)
+
+# Math {#math page=RfES430}
+
+Markdown uses LaTeX math notation.
+
+```md
+$$
+    \bar{x} = \sum_{i=1}^n \frac{x_i}{n}
+$$
+```
+
+$$
+    \bar{x} = \sum_{i=1}^n \frac{x_i}{n}
+$$
+
+```md
+Inline equations look like $y = mx + b$.
+```
+
+Inline equations look like $y = mx + b$.
+
+# Footnotes {#footnotes}
+
+```md
+We are learning markdown^[Markdown is a simple way of writing documents] on our way to learning RMarkdown.
+```
+
+We are learning markdown^[Markdown is a simple way of writing documents] on our way to learning RMarkdown.
+
+# More YAML Options {#MoreYamlOptions page=RfES428}
+
+Go to the top at add new options
+
+```YAML
+---
+title: "RMarkdown Primer"
+author: "Your Name"
+date: "Jan 12, 2019"
+output: 
+    html_document:
+        number_sections: yes
+        toc: yes
+        toc_float:
+            collapsed: false
+            smooth_scroll: true
+        keep_md: false
+        code_download: true
+---
+```
+
+# Adding Custom sytling
+
+```html
+<style>
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
+
+body{
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4 {
+  font-family: 'VT323', monospace;
+  background-color: #D4DAEC;
+}
+
+.container { width: 1000px; }
+
+
+h2 {
+  text-indent: 50px; 
+}
+
+g-table-intro h4 {
+  text-indent: 0px;
+}
+</style>
+```
