@@ -4,7 +4,31 @@ author: "Kaz Sakamoto"
 date: "4/9/2018"
 output: html_document
 ---
-    
+<style>
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
+
+body{
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4 {
+  font-family: 'VT323', monospace;
+  background-color: #D4DAEC;
+}
+
+.container { width: 1000px; }
+
+
+h2 {
+  text-indent: 50px; 
+}
+
+g-table-intro h4 {
+  text-indent: 0px;
+}
+</style>
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
 ```

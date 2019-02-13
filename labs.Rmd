@@ -1,26 +1,41 @@
 ---
 title: "Labs"
 ---
+<style>
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
+
+body{
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 12px;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4 {
+  font-family: 'VT323', monospace;
+}
+#navbar {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+}
+.container { width: 1000px; }
+
+
+g-table-intro h4 {
+  text-indent: 0px;
+}
+</style>
 --------
 
 These labs were generously shared by Jared Lander and modified to meet class needs.
 
-### [Intro to R part 1](Labs/lab1.html)
-
-### [Intro to R part 2](Labs/lab1_2.html)
-
-### [Data Munging](Labs/lab2.html)
-
-### [Reports with R Markdown](Labs/lab3.html)
-
-### [Marchine Learning part Lecture](Labs/lab4Lect.html)
-
-### [Machine Learning part 1](Labs/lab4.html)
-
-### [Machine Learning part 2](Labs/lab5.html)
-
-### [Model Evaluation](Labs/lab6.html)
-
-### [CitiBike Tutorial](Labs/Lab7.html)
+## [Intro to R part 1](Labs/lab1.html)
+## [Intro to R part 2](Labs/lab1_2.html)
+## [Data Munging](Labs/lab2.html)
+## [Reports with R Markdown](Labs/lab3.html)
+## [Marchine Learning part Lecture](Labs/lab4Lect.html)
+## [Machine Learning part 1](Labs/lab4.html)
+## [Machine Learning part 2](Labs/lab5.html)
+## [Model Evaluation](Labs/lab6.html)
+## [CitiBike Tutorial](Labs/Lab7.html)
 
 
