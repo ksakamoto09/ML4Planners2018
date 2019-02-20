@@ -1,7 +1,6 @@
 ---
 title: "Week 1 Presentation"
 author: "Kaz Sakamoto"
-date: "1/22/2019"
 output: ioslides_presentation
 ---
 

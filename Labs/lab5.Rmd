@@ -1,34 +1,9 @@
 ---
 title: "Lab 5"
 author: "Kaz Sakamoto"
-date: "4/9/2018"
 output: html_document
 ---
-<style>
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
 
-body{
-  font-family: 'Noto Sans', sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-}
-
-h1,h2,h3,h4 {
-  font-family: 'VT323', monospace;
-  background-color: #D4DAEC;
-}
-
-.container { width: 1000px; }
-
-
-h2 {
-  text-indent: 50px; 
-}
-
-g-table-intro h4 {
-  text-indent: 0px;
-}
-</style>
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
 ```
@@ -36,6 +11,10 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE,
 library(dplyr)
 library(magrittr)
 library(ggplot2)
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
 ```
 
 
@@ -73,7 +52,7 @@ We have already seen this plot but let's plot our new data with `ggpairs`
 GGally::ggpairs(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
 ```
 
-## Variance
+# Variance
 
 ## Covariance
 
@@ -116,7 +95,15 @@ sqftLM <- lm(Income ~ SqFt, data = housing)
 
 sqftLM
 
-summary(sqftLM) -> sqftInfo
+sqftInfo <- summary(sqftLM)
+sqftInfo
+
+## MSE
+sum(residuals(sqftLM)^2) / df.residual(sqftLM)
+
+##RMSE
+sqrt(sum(residuals(sqftLM)^2) / df.residual(sqftLM))
+
 sqftCoef <- as.data.frame(sqftInfo$coefficients[,1:2])
 sqftCoef <- within(sqftCoef, {
     Lower <- Estimate - qt(p=.9, df = sqftInfo$df[2]) * `Std. Error`
@@ -124,15 +111,19 @@ sqftCoef <- within(sqftCoef, {
     coef <- row.names(sqftCoef)
 })
 
-ggplot(sqftCoef, aes(Estimate, coef)) + geom_point() + geom_errorbarh(aes(xmin=Lower, xmax = Upper), height = .3) +
+ggplot(sqftCoef, aes(x=Estimate, y=coef)) + geom_point() + geom_errorbarh(aes(xmin=Lower, xmax = Upper), height = .3) +
     ggtitle("Rental Comparble Income by Square Feet")
-```
 
-# R
-correlation
+```
 
 ## R^2
 percentage of variance explained
+```{r}
+#r^2
+1 - sum((housing$Income-predict.lm(sqftLM, data.frame(SqFt =housing$SqFt)))^2)/
+    sum((housing$Income-mean(housing$Income))^2)
+```
+
 
 ## coeffcients
 
@@ -147,7 +138,7 @@ percentage of variance explained
 ## Multiple Regression
 $$ Y = \beta_0 + \beta_1*x_1 +...\text{Error}$$
 
-## Specification Erros
+## Specification Errors
 
 you have to make sure all the relevant variables are in the model or else you will have a systematic error when we want our error to be random.
 
@@ -255,58 +246,21 @@ backwards or forwards usually bad
 + Posson Regression can be used when count data is being used. 
 
 ```{r}
-MN <- readr::read_csv("../Data/PLUTO/MN_pluto.csv")
-MN %>% filter(LandUse %in% c(10, 06)) %>% 
+Lots <- readr::read_csv(file.path(dataDir, "NYC_Lots.csv"))
+MN <- Lots %>% filter(Borough == "MN" , LandUse %in% c(10, 06)) %>% 
     mutate(Parking = if_else(LandUse == 10, "Parking", "Manufacturing") %>% as.factor) %>% 
     mutate(LandUse = as.character(LandUse)) %>% 
-    select( LandUse, LotArea, AssessLand, NumFloors, Parking) -> MN_Model
+    select( LandUse, LotArea, AssessLand, NumFloors, Parking)
 ```
 
 ```{r}
-parking1 <- glm(Parking ~  scale(LotArea) + scale(AssessLand) + NumFloors , data = MN_Model,
+parking1 <- glm(Parking ~  scale(LotArea) + scale(AssessLand) + NumFloors , data = MN,
              family = binomial(link="logit"))
 summary(parking1)
 ```
 
 ```{r}
+library(coefplot)
 coefplot(parking1, sort = 'mag')
-```
-
-
-## Descision Trees
-
-Sometimes you need a non-linear model to fit your data. Decision trees are quite
-flexible taking on both regression and classification tasks.
-
-```{r}
-library(rpart)
-
-parking2 <- rpart(Parking ~ LotArea + AssessLand + NumFloors, data = MN_Model, method = "class")
-```
-
-```{r}
-library(rpart.plot)
-rpart.plot(parking2, extra = 104)
-```
-
-```{r}
-ggplot(MN_Model, aes(LotArea, NumFloors, color = Parking)) + geom_point()
-```
-```{r}
-ggplot(MN_Model, aes(AssessLand, NumFloors, color = Parking)) + geom_point()
-```
-```{r}
-ggplot(MN_Model, aes(LotArea, AssessLand, color = Parking)) + geom_point()
-```
-
-
-```{r}
-# Random Forest prediction of Kyphosis data
-library(randomForest)
-parking3 <- randomForest(Parking ~ LotArea + AssessLand + NumFloors, data = MN_Model)
-print(parking3) # view results 
-importance(parking3) # importance of each predictor
-
-plot(parking3)
 ```
 

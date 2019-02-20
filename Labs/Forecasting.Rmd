@@ -189,3 +189,37 @@ autoplot(monthDay[,"Monthly"]) +
   guides(colour=guide_legend(title="Forecast")) + ylab("Trips")
 ```
 
+## ETS
+
+There are 15 different kinds of exponential smoothing algorithms
+![](https://image.slidesharecdn.com/google-jun-2015-150616034835-lva1-app6892/95/automatic-algorithms-for-time-series-forecasting-47-638.jpg?cb=1434428177)
+
+### Simple exponential smoothing
+
+if we consider the naive method...
+$$\hat y_{T+h|T} = y_T $$
+the last observed value will be our forecast.
+
+If we consider the avereage method...
+$$\hat y_{T+h|T} = \frac{1}{T} \sum_{t=1}^T y_t$$
+all observations are equally weighted.
+
+To get something in between these extremes exponential smoothing can be employed...
+$$\hat y_{T+1|T} = \alpha y_T + \alpha(1-\alpha) y_{T-1}+ \alpha(1-\alpha)^2 y_{T-2} + ...$$
+We add a new variable called $\apha$ which is going to be $0 \leq \alpha \leq 1$. You can see the most recent
+variable is $\alpha y_T$ getting the full weight, while the next one is $\alpha(1-\alpha) y_{T-1}$ getting multiplied
+by itself, the next one is a square, the next one after that would be a cube and you'll see that the older and older values
+from our timeseries will be weighted less.
+
+An alternative representation is the component form. We only have 1 component for smoothing, later we will look at seasonality and trend.
+
+We can think of the component as a level, and the algorithm "learns" the new level from the data. you have to initialize $l_1$ with some value and often it can be the first value.
+
+
+```{r}
+oildata <- window(fpp2::oil, start=1996)
+fc <- forecast::ses(oildata, h = 5)
+round(forecast::accuracy(fc), 2)
+```
+
+additive approaches only give seasonal where the average seasonal affects are seen. multiplicative will also have trend to it.

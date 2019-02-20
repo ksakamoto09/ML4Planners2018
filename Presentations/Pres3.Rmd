@@ -1,0 +1,375 @@
+---
+title: "Week 5 Presentation"
+author: "Kaz Sakamoto"
+output: ioslides_presentation
+---
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  #regression-models { margin-top: 5px;}
+</style>
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+knitr::opts_chunk$set(
+      fig.cap=""
+    , fig.align='center'
+    , include=TRUE
+    , comment=NA
+    , message=FALSE
+    , warning=FALSE
+    , echo=TRUE
+    , eval = FALSE
+)
+# put the curly brace of functions on a new line where they belong
+options(left.brace.newline = TRUE)
+```
+
+```{r packages,echo=FALSE}
+packages <- c(
+    'magrittr'
+    , 'dplyr'
+    , 'purrr'
+    , 'tidyr'
+    , 'ggplot2'
+    , 'png'
+    , 'grid'
+    , 'RCurl'
+)
+packColon <- c('readr', 'tibble')
+purrr::walk(packages, library, character.only=TRUE)
+```
+
+
+## Agenda
+
+* Recap
+* Machine Learning
+* Supervised vs. Unsupervised Learning
+* Basic Stats
+* Simple Linear Regression
+* Multiple Regression
+
+# Recap
+
+## Topics Covered{.col2}
+
+- R Basics
+  - Data types
+  - Using functions
+  - Writing functions
+- Working with Data
+  - Reading data
+  - Scraping data
+  - Manipulating data
+- Visualization
+  - Univariate plotting
+  - Multivariate plotting
+  - Facets
+  - Rmarkdown reports
+
+# Machine Learning
+
+
+## ML Foundation{.col2}
+
+**What is machine learning?** 
+
+ML relies on computers to combine inputs and produce predictions from brand new data.
+
+<iframe src="https://giphy.com/embed/N1ZMt6G7phnJm" width="200" height="370" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+
+## ML Framework
+
+* Label\Response - The variable that we are trying to predict
+* Features\Predictors - Input variables that are used to produce predictions
+* Models - Is the definition of the relationship between the features and the label.
+
+## Regression vs. Classification
+
+In **regression** we predict continuous values, examples: 
+
+* citibike users per day
+* temperatures
+* GDP
+
+In contrast, **classification** predicts discrete values, examples:
+
+* landuse types
+* Building permit approvals
+
+## Supervised vs. Unsupervised Learning
+
+What we have been covering so far is **supervised learning**! We give the computer/algorithm
+already labeled data so it knows what outcomes we want to predict.
+
+* Regression
+* Decision Trees
+
+When you have no labels, **unsupervised learning** comes into play. You still have features
+to work with but allow the algorithm to come up with patterns or structures.
+
+* Hierarchical Clustering
+* K-Means Clustering
+
+## Simple Splitting
+
+In our current data rich times, we have the luxury of paritioning our data (usually) in
+two parts. The first is the **training set** which is a subset(normally around 75-80%) of your total
+data to train your model, and the **test set** which is the rest of your data that you test your model
+against to compare results. 
+
+```{r split,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://developers.google.com/machine-learning/crash-course/images/PartitionTwoSets.svg")
+```
+
+<div class="notes">
+Is large enough to yield statistically meaningful results.
+Is representative of the data set as a whole. In other words, don't pick a test set with different characteristics than the training set.
+</div>
+
+## Simple Splitting Example
+
+```{r splitPlot,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://developers.google.com/machine-learning/crash-course/images/TrainingDataVsTestData.svg")
+```
+
+## Validation Set
+
+We can add another parition called the **validation set** allows us to tweak the model before we
+go on and test it against our hold-out test set. That way we can save our test data to confirm the model.
+
+```{r valPlot,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://developers.google.com/machine-learning/crash-course/images/WorkflowWithValidationSet.svg")
+```
+
+## Occam's Razor 
+
+*...simpler solutions are more likely to be correct than complex ones. When presented with competing hypotheses to solve a problem, one should select the solution with the fewest assumptions*
+
+The less complex an ML model, the more likely that a good empirical result is not just due to the peculiarities of the sample.
+
+## Bias
+
+Error due to bias is the amount by which the expected model prediction differs from the true value of the training data. It is introduced by approximating the complicated model by much simpler model. High bias algorithms are easier to learn but less flexible, due to this they have lower predictive performance on complex problems. Linear algorithms and oversimplified model lead to high bias in the model.
+```{r bv,  out.width = "100%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://cdn-images-1.medium.com/max/1600/1*9hPX9pAO3jqLrzt0IE3JzA.png")
+```
+
+## Variance
+
+Error due to variance is the amount by which the prediction, over one training set, differs from the expected value over all the training sets. In machine learning, diﬀerent training data sets will result in a diﬀerent estimation. But ideally it should not vary too much between training sets. However, if a method has high variance then small changes in the training data can result in large changes in results.
+```{r bv2,  out.width = "100%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://cdn-images-1.medium.com/max/1600/1*9hPX9pAO3jqLrzt0IE3JzA.png")
+```
+
+
+
+## Bias Variance Tradeoff
+```{r tradeoff,  out.width = "80%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://qph.fs.quoracdn.net/main-qimg-a55358a5a12b02c3f71010c965a2c4dc")
+```
+
+## Model Completxity
+
+```{r model complexity,  out.width = "80%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://i.stack.imgur.com/WuAFQ.png")
+```
+
+# Basic Stats
+
+## Correlation
+
+Correlation is a measure of how two variables are interacting. The numbers are between -1 and 1, with 0 meaning no relationship.
+
+$$r_{xy} =\frac{\sum ^n _{i=1}(x_i - \bar{x})(y_i - \bar{y})}{(n-1)s_xs_y}$$
+
+* $\bar{x}$ is the mean of $x$
+* $\bar{y}$ is the mean of $y$
+* $s_x$ and $s_y$ is the standard deviations of $x$ and $y$ respectively.
+
+## Correlation Plots
+
+```{r cor,  out.width = "100%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Correlation_examples2.svg/1280px-Correlation_examples2.svg.png")
+```
+
+<div class="notes">
+Several sets of (x, y) points, with the correlation coefficient of x and y for each set. Note that the correlation reflects the non-linearity and direction of a linear relationship (top row), but not the slope of that relationship (middle), nor many aspects of nonlinear relationships (bottom)
+</div>
+
+## Covariance
+
+The joint variability of two random variables. Unlike correlation which is dimensionless, 
+covariance is in units obtained by multiplying the units of the two variables.
+$$\text{Cov}(X,Y) =\frac{\sum ^n _{i=1}(x_i - \bar{x})(y_i - \bar{y})}{n-1}$$
+
+# Regression
+
+## Regression Models
+```{r regression,  out.width = "47%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://www.explainxkcd.com/wiki/images/2/24/curve_fitting.png")
+```
+
+## Simple Linear Regression
+
+This is one of the if not more foundational model in machine learning. While the simplicity is 
+stark, it actually is extremely powerful. Many of you have already encountered this tool
+growing up or other elementary statistics courses. You've seen this equation:
+
+$$ y =mx+b$$
+
+where:
+
+* $y$ is the response variable
+* $m$ is the slope of the line
+* $x$ is the predictor variable
+* $b$ is the y-intercept
+
+## Linear Regression ML
+
+In machine learning, we right $y = mx+b$ slightly differently.
+
+$$ y = \beta_0 + \beta_1x_1$$ 
+where:
+
+* $y$ is the response
+* $\beta_0$ is the constant or y-intercept
+* $\beta_1$ is the first coefficient
+* $x_1$ the value of the predictor variable
+
+## Calculating Errors
+
+The errors in this case is the deviation or 
+vertical distance from the regression line to the actual data.
+
+$$e_i = y_i - \hat{y_i}$$
+
+```{r Tools,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://developers.google.com/machine-learning/crash-course/images/LossSideBySide.png")
+```
+
+## Mean Square Error
+
+In this calucation we are using $n-\text{df}$ since we hav to account for degrees of freedom.
+
+$$\text{MSE} = \frac{\sum_{i=1}^n (y_i-\hat{y})^2}{n-\text{df}}$$
+## Root Mean Square Error
+
+$$\text{s} = \sqrt{\text{MSE}} $$
+
+## Errors vs. Residuals
+
+Errors and Residuals are almost identical, the main difference is on inference. If we
+have a fully known population, the deviation from the actual to the predicted is called an error.
+While if we take a sample distribution and take the deviations, they are called residuals. 
+
+## Ordinary Least Squares
+
+OLS is the most common method for fitting a regression line. This allows us to calculate the best-fitting line over the 
+observed data. The criteria is to minimize the sum of the squared errors, and since the deviations are first squared, there are no
+cancellations between positive and negative errors. 
+
+## Regression Coefficient
+
+To calculate the regression coefficient or the $\beta_1$ the equation is:
+
+$$\beta_1 = \frac{\sum_{i=1}^n (y_i-\bar{y})(x_i-\bar{x})}{\sum_{i=1}^n (x_i-\bar{x})^2} = \frac{\text{Cov}(x,y)}{\text{Var}(x)}$$
+## R^2
+
+The coefficient of determination of a linear regression model is the quotient of the variances of the fitted values and observed values of the dependent variable. If we denote yi as the observed values of the dependent variable, ¯y as its mean, and yˆi as the fitted value, then the coefficient of determination is
+
+
+
+## R Simple Linear Regression
+
+```{r lm, eval = TRUE}
+irisMod <- lm(Sepal.Length~Petal.Length, iris)
+summary(irisMod)
+```
+
+## RMSE
+
+```{r, eval = TRUE}
+## MSE
+sum(residuals(irisMod)^2) / df.residual(irisMod)
+##RMSE
+sqrt(sum(residuals(irisMod)^2) / df.residual(irisMod))
+#r^2
+1 - sum((iris$Sepal.Length-predict.lm(irisMod, data.frame(Petal.Length =iris$Petal.Length)))^2)/sum((iris$Sepal.Length-mean(iris$Sepal.Length))^2)
+```
+
+
+## Plotting lm
+
+```{r plotLm, eval = TRUE, echo = FALSE}
+library(ggplot2)
+library(ggthemes)
+ggplot(iris, aes(x = Petal.Length, y= Sepal.Length)) + geom_point() + 
+  geom_smooth(method = "lm") +
+    xlab("Petal Length") + ylab("Sepal Length") + theme_tufte()
+```
+
+## lm Prediction
+```{r predictLM,eval = TRUE}
+predict.lm(irisMod, data.frame(Petal.Length = 1:10))
+```
+
+
+## Extrapolation
+```{r extrapolate,  out.width = "90%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://imgs.xkcd.com/comics/extrapolating.png")
+```
+
+## Multiple Regression
+
+There are often times you need to model a phenomena with more than one predictor variable.
+That's when you need add more inputs. The general equation is:
+
+$$y_i = \beta_0 1 + \beta_1 x_{i1}  + \beta_2 x_{i2}+ \cdots + \beta_p x_{ip}$$
+
+
+## Multicollinearity 
+
+Where two or more independent variables in a multiple regression model are highly linearly related. This often reduces the power of a model to identify independent variables that are statistically significant.
+
+- **Structural multicollinearity** is a mathematical artifact caused by creating new predictors from other predictors — such as, creating the predictor $x^2$ from the predictor $x$.
+
+- **Data-based multicollinearity** on the other hand, is a result of a poorly designed experiment, reliance on purely observational data, or the inability to manipulate the system on which the data are collected.
+
+## Issues with Multicollinearity
+
+* When predictor variables are correlated, the estimated regression coefficient of any one variable depends on which other predictor variables are included in the model.
+
+* When predictor variables are correlated, the precision of the estimated regression coefficients decreases as more predictor variables are added to the model. More errors mean larger confidence intervals.
+
+* When predictor variables are correlated, the marginal contribution of any one predictor variable in reducing the error sum of squares varies depending on which other variables are already in the model. If one of the correlated variable is explaining the response variable there is less room for the other correlated variable to explain the response.
+
+## Heteroscedasticity
+
+The residuals should be spread (relatively) equally along the ranges of predictors.
+```{r Heteroscedasticity,  out.width = "80%", eval=TRUE, echo=FALSE}
+knitr::include_graphics("https://cdn-images-1.medium.com/max/800/1*Bp4EOXLf1rNvNdsy1Ei14A.png")
+```
+
+## Multiple Linear Regression
+
+You can add new parameters by using the $+$ to append new input variables.
+
+```{r, eval = TRUE}
+irisMod2 <- lm(Sepal.Length~Petal.Length + Petal.Width, iris)
+summary(irisMod2)
+```
+
+## Three Dimensional Graphics
+
+```{r, eval = TRUE}
+library(plotly)
+plot_ly(data = iris, x=~Petal.Length, y=~Sepal.Length, 
+        z=~Petal.Width, type="scatter3d", mode="markers", color =~Species)
+
+```
+

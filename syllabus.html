@@ -68,6 +68,7 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="www/ml4Planners.css" type="text/css" />
 
 </head>
 
@@ -96,6 +97,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -110,7 +114,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -130,6 +133,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -151,18 +191,77 @@ $(document).ready(function () {
 });
 </script>
 
-
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -215,29 +314,6 @@ $(document).ready(function () {
 </div>
 
 
-<style>
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
-
-body{
-  font-family: 'Noto Sans', sans-serif;
-  font-size: 12px;
-  line-height: 24px;
-}
-
-h1,h2,h3,h4 {
-  font-family: 'VT323', monospace;
-}
-#navbar {
-  font-family: 'VT323', monospace;
-  font-size: 18px;
-}
-.container { width: 1000px; }
-
-
-g-table-intro h4 {
-  text-indent: 0px;
-}
-</style>
 <hr />
 <p><em>Urban planning decisions are inherently difficult, as cities comprise systems of immense complexity and increasingly large volumes of data. While planners aren’t new to qualitative and quantitative tools to model such decisions, this course will engage the role of technologies in the planning process by focusing on challenges and advantages gained from three new skills in particular: data munging, machine learning, and data visualization. Students will learn to apply the skills and techniques necessary to describe, model, and evaluate their results alongside the history and theory intersecting technocracy and urban planning.</em></p>
 <div id="text-books" class="section level2">
@@ -411,7 +487,6 @@ g-table-intro h4 {
 <ul>
 <li><strong>Regression Week</strong></li>
 <li>Linear Regression</li>
-<li>Assignment 5 - Mulitvariate Regression</li>
 <li>Reading - Critical Theory of Technology | Feenberg</li>
 <li>Reading Reponse 3</li>
 </ul>
@@ -421,7 +496,7 @@ g-table-intro h4 {
 <ul>
 <li><strong>Regression Week</strong></li>
 <li>Generalized Linear Models</li>
-<li>Assignment 6 - ElasticNet</li>
+<li>Assignment 5 - Mulitvariate Regression + ElasticNet</li>
 </ul>
 </div>
 <div id="week-7---352019" class="section level4">
@@ -431,7 +506,7 @@ g-table-intro h4 {
 <li>Seasonality</li>
 <li>Trends</li>
 <li>Cycles</li>
-<li>Assignment 7 - Forecasting</li>
+<li>Assignment 6- Forecasting</li>
 <li>Reading - Making Social Science Matter | Flyvbjerg</li>
 <li>Reading Reponse 4</li>
 </ul>
@@ -441,7 +516,7 @@ g-table-intro h4 {
 <ul>
 <li><strong>Classification Week</strong></li>
 <li>Decision Trees</li>
-<li>Assignment 8 - Classification</li>
+<li>Assignment 7 - Classification</li>
 </ul>
 </div>
 <div id="week-9---3192019" class="section level4">
@@ -459,7 +534,7 @@ g-table-intro h4 {
 <li>PCA</li>
 <li>Reading - Order without Design | Bertaud</li>
 <li>Reading Reponse 5</li>
-<li>Assignment 9 - PCA</li>
+<li>Assignment 8 - PCA</li>
 </ul>
 </div>
 <div id="week-11---422019" class="section level4">
@@ -468,7 +543,7 @@ g-table-intro h4 {
 <li><strong>Unsupervised Learning Week</strong></li>
 <li>Kmeans</li>
 <li>Heirarchical Clustering</li>
-<li>Assignment 10 - Labeling</li>
+<li>Assignment 9 - Labeling</li>
 </ul>
 </div>
 <div id="week-12---492019" class="section level4">
@@ -476,7 +551,7 @@ g-table-intro h4 {
 <ul>
 <li><strong>Text Mining Week</strong></li>
 <li>Tidy Text</li>
-<li>Assignment 11 - Text Mining</li>
+<li>Assignment 10 - Text Mining</li>
 <li>Reading - Weapons of Math Destruction | O’Neill</li>
 <li>Reading Reponse 6</li>
 </ul>
@@ -487,7 +562,7 @@ g-table-intro h4 {
 <li><strong>Text Mining Week</strong></li>
 <li>Natural Langange Processing/Understanding</li>
 <li>Discussion on Final Competition</li>
-<li>Assignment 12 - NLP</li>
+<li>Assignment 11 - NLP</li>
 </ul>
 </div>
 <div id="week-14---4232019" class="section level4">

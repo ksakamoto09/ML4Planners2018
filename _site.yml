@@ -1,5 +1,8 @@
 name: "ML4Planners-Website"
 output_dir: "."
+output: 
+  html_document:
+    css: www/ml4Planners.css
 navbar:
   title: ""
   left:

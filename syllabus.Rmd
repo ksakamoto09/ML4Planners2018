@@ -1,29 +1,7 @@
 ---
 title: "Syllabus"
 ---
-<style>
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
 
-body{
-  font-family: 'Noto Sans', sans-serif;
-  font-size: 12px;
-  line-height: 24px;
-}
-
-h1,h2,h3,h4 {
-  font-family: 'VT323', monospace;
-}
-#navbar {
-  font-family: 'VT323', monospace;
-  font-size: 18px;
-}
-.container { width: 1000px; }
-
-
-g-table-intro h4 {
-  text-indent: 0px;
-}
-</style>
 --------
 
 
@@ -176,28 +154,27 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 #### Week 5 - 2/19/2019
 * **Regression Week**
 * Linear Regression
-* Assignment 5 - Mulitvariate Regression
 * Reading - Critical Theory of Technology | Feenberg
 * Reading Reponse 3
 
 #### Week 6 - 2/26/2019
 * **Regression Week**
 * Generalized Linear Models
-* Assignment 6 - ElasticNet
+* Assignment 5 - Mulitvariate Regression + ElasticNet
 
 #### Week 7 - 3/5/2019
 * **Forecasting Week**
 * Seasonality
 * Trends
 * Cycles
-* Assignment 7 - Forecasting
+* Assignment 6- Forecasting
 * Reading - Making Social Science Matter | Flyvbjerg
 * Reading Reponse 4
 
 #### Week 8 - 3/12/2019
 * **Classification Week**
 * Decision Trees
-* Assignment 8 - Classification
+* Assignment 7 - Classification
 
 #### Week 9 - 3/19/2019 
 * **Spring Break**
@@ -209,18 +186,18 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * PCA
 * Reading - Order without Design | Bertaud
 * Reading Reponse 5
-* Assignment 9 - PCA
+* Assignment 8 - PCA
 
 #### Week 11 - 4/2/2019
 * **Unsupervised Learning Week**
 * Kmeans
 * Heirarchical Clustering
-* Assignment 10 - Labeling
+* Assignment 9 - Labeling
 
 #### Week 12 - 4/9/2019
 * **Text Mining Week**
 * Tidy Text
-* Assignment 11 - Text Mining
+* Assignment 10 - Text Mining
 * Reading - Weapons of Math Destruction | O'Neill
 * Reading Reponse 6
 
@@ -228,7 +205,7 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * **Text Mining Week**
 * Natural Langange Processing/Understanding
 * Discussion on Final Competition
-* Assignment 12 - NLP
+* Assignment 11 - NLP
 
 #### Week 14 - 4/23/2019
 * **Model Evaluation Week**
