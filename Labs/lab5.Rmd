@@ -11,12 +11,14 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE,
 library(dplyr)
 library(magrittr)
 library(ggplot2)
+library(coefplot)
 ## here we are going to find the root_file 
 root <- rprojroot::find_rstudio_root_file()
 ## we are going to set the data file path here
 dataDir <- file.path(root, 'Data')
 ```
 
+# Introduction
 
 We will first read data from Jared Lander's website. This data comes from the NYC open data portal
 but has already been cleaned. It represents housing sales between 2011-2021 in NYC. 
@@ -31,6 +33,8 @@ names(housing) <- c("Neighborhood", "Class", "Units", "YearBuilt",
                     "ExpensePerSqFt", "NetIncome", "Value", 
                     "ValuePerSqFt", "Boro")
 ```
+
+# Stats Principles
 
 ## Correlation
 
@@ -52,8 +56,6 @@ We have already seen this plot but let's plot our new data with `ggpairs`
 GGally::ggpairs(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
 ```
 
-# Variance
-
 ## Covariance
 
 Related to correlation, covariance is like a variance between variables. 
@@ -70,7 +72,7 @@ cov(housing %>% select(c(Income, SqFt, Units, ValuePerSqFt)))
 ```
 
 
-## Simple Linear Regression
+# Simple Linear Regression
 
 Let's take a look at square feet and possible rental income. 
 ```{r}
@@ -116,6 +118,8 @@ ggplot(sqftCoef, aes(x=Estimate, y=coef)) + geom_point() + geom_errorbarh(aes(xm
 
 ```
 
+# Regression Diagnostics
+
 ## R^2
 percentage of variance explained
 ```{r}
@@ -124,6 +128,89 @@ percentage of variance explained
     sum((housing$Income-mean(housing$Income))^2)
 ```
 
+
+## Outliers
+
+If we want to see the outliers the `car` package has some nice tools. The function
+`outlierTest` gives the studentized residuals which highlights the extreme
+outliers in our data.
+$$t_i = r_i (\frac{n-k-2}{n-k-1-r_i^2})^{1/2}$$
+In the example below we can see that the red data point greatly effects our linear
+regression. 
+
+![](https://newonlinecourses.science.psu.edu/stat462/sites/onlinecourses.science.psu.edu.stat462/files/09influential/influ_points_02/index.png)
+
+The studentized resideual(`TRES1`) is -19.7990 and absolute values larger than 3 can be called outliers.
+
+![](https://newonlinecourses.science.psu.edu/stat462/sites/onlinecourses.science.psu.edu.stat462/files/09influential/influ_points_01/index.png)
+
+
+```{r}
+car::outlierTest(sqftLM)
+
+car::leveragePlots(sqftLM)
+```
+
+## Influential Observations
+
+The `influencePlot` function creates a “bubble” plot of Studentized residuals versus hat values, with the areas of the circles representing the observations proportional to the value Cook's distance. Vertical reference lines are drawn at twice and three times the average hat value, horizontal reference lines at -2, 0, and 2 on the Studentized-residual scale.
+```{r}
+cutoff <- 4/((nrow(housing)-length(sqftLM$coefficients)-2)) 
+plot(sqftLM, which=4, cook.levels=cutoff)
+car::influencePlot(sqftLM, id.method="identify", main="Influence Plot", sub="Circle size is proportial to Cook's Distance" )
+```
+
+## Non-Normality
+
+Plots empirical quantiles of a variable, or of studentized residuals from a linear model, against theoretical quantiles of a comparison distribution.
+
+```{r}
+car::qqPlot(sqftLM, main="QQ Plot")
+
+sresid <- MASS::studres(sqftLM)
+data.frame(sresid) %>% ggplot(aes(x =sresid)) + 
+    geom_histogram(binwidth = 0.5)  + theme_minimal()
+```
+
+## Homoscedasticity
+
+Creates plots for examining the possible dependence of spread on level, or an extension of these plots to the studentized residuals from linear models. We're
+interested in the variability of a variable is unequal across the range of values of a second variable that predicts it.
+
+```{r}
+# Evaluate homoscedasticity
+# non-constant error variance test
+car::ncvTest(sqftLM)
+# plot studentized residuals vs. fitted values 
+car::spreadLevelPlot(sqftLM)
+```
+
+## Nonlinerarity
+
+`crPlots` constructs component+residual plots, also called partial-residual plots, for linear and generalized linear models. 
+
+This is a good way to see if the predictors have a linear relationship to the dependent variable. A partial residual plot basically attempts to model the residuals of one predictor against the dependent variable. A component residual plot adds a line indicating where the line of best fit lies. A significant difference between the residual line and the component line indicates that the predictor does not have a linear relationship with the dependent variable
+
+```{r}
+car::crPlots(sqftLM)
+```
+
+## Non-Independence of Errors
+
+the Durbin-Watston statistic is used to detect the presence of autocorrelation at lag 1 in the residuals (prediction errors) from a regression analysis. 
+Remember that we want our predictor variables to be independent. The Durbin-Watson statistic will always have a value between 0 and 4. A value of 2.0 means that there is no autocorrelation detected in the sample. Values from 0 to less than 2 indicate positive autocorrelation and values from from 2 to 4 indicate negative autocorrelation.
+
+Positive autocorrelation means that if the previous value declines, the next value will also decline, while a negative autocorrelation has the opposite effect.
+```{r}
+# Test for Autocorrelated Errors
+car::durbinWatsonTest(sqftLM)
+```
+
+## Plotting them together
+```{r}
+layout(matrix(c(1,2,3,4),2,2))
+plot(sqftLM)
+```
 
 ## coeffcients
 
@@ -135,8 +222,10 @@ percentage of variance explained
 * need more observations than variables.
 * no excessive multicollinearity
 
-## Multiple Regression
-$$ Y = \beta_0 + \beta_1*x_1 +...\text{Error}$$
+# Multiple Regression
+
+What happens when you want to have more than two variables and include new predictor variables? You will 
+$$ Y = \beta_0 + \beta_1*x_1 + \beta_2*x_2 + ...\text{Error}$$
 
 ## Specification Errors
 
@@ -201,7 +290,8 @@ housing <- housing %>% filter(Units < 1000)
 now let's fit a model `condo1` with our response variable being ValuePerSqFt and
 predictor variables Units, SqFt, and Boro.
 ```{r}
-condo1 <- lm(ValuePerSqFt ~ Units + SqFt + Boro, data = housing)
+housingFact <- housing %>% mutate(Boro = as.factor(Boro))
+condo1 <- lm(ValuePerSqFt ~ Units + SqFt + Boro + YearBuilt, data = housingFact)
 ```
 
 We can view the summary of the model
@@ -235,32 +325,112 @@ multiplot(condo1, condo2)
 ```
 
 
+## Interaction effects
+
+
 ## Stepwise Variable Selection
 
-backwards or forwards usually bad
+The stepwise regression consists of iteratively removing or adding predictors 
+in order to find the best subset of variables in the data resulting in the best model.
+The criteria for choosing the best model is usually dictated by the lowest prediction errors
+through RMSEs. 
 
+There are three ways stepwise selection can be operatinalized:
 
-## Generalized Linear Models
+- **Forward** which starts with no predictors and iteratively adds the most predictive variable.
+It stops when the improvement is no longer statistcally significant.
 
-+ Logistic Regression can be used when you have a binary regression task.
-+ Posson Regression can be used when count data is being used. 
+- **Backward** starts with all the predictors and iteratively removes the least predictive variable.
+This again stops when there is no longer improvement in the model.
+
+- **Stepwise(both)** this is a combination of forward and backward selections. You start with no variables
+like the forward method, but then you also remove any variabels that no longer provide improvement like the backward selection.
+
+### Criticism
+
+Some view this method as mere data dredging, and is a poor substitute for real subject matter expertise. 
+
+### Akaike Information Criterion
+
+Another metric used often is the AIC, it is an estimator of the relative quality of statistical models for a given set of data.
+To derive the value the equation is:
+$$\text{AIC} = 2k-2ln(\hat{L})$$
+where $\hat{L}$ is the maximum value of the likelihood function for the model and $k$ is the number of estimated parameters in the model. The model with the 
+lowest AIC value is the preferred model. As you can see AIC favors goodness of fit by the likelihood function and penalizes increasing number of parameters. In a simple linear regression there are three parameters, $\beta_0$ (the intercept), $\beta_1$ (the cofficient) and the variance of the Gaussian distributions. For any least squares model the residuals are expected to be random and normally distributed and counted as one of the parameters.  
 
 ```{r}
-Lots <- readr::read_csv(file.path(dataDir, "NYC_Lots.csv"))
-MN <- Lots %>% filter(Borough == "MN" , LandUse %in% c(10, 06)) %>% 
-    mutate(Parking = if_else(LandUse == 10, "Parking", "Manufacturing") %>% as.factor) %>% 
-    mutate(LandUse = as.character(LandUse)) %>% 
-    select( LandUse, LotArea, AssessLand, NumFloors, Parking)
+library(MASS)
+stepMod <- stepAIC(condo1, direction = "both")
+stepMod$anova
 ```
 
 ```{r}
-parking1 <- glm(Parking ~  scale(LotArea) + scale(AssessLand) + NumFloors , data = MN,
-             family = binomial(link="logit"))
+library(relaimpo)
+
+crlm <- calc.relimp(condo1,
+            type = c("lmg", "last", "first"), 
+            rela = TRUE )
+plot(crlm)
+```
+
+### Example with cars data
+
+```{r}
+mpg <- mpg %>% mutate_if(is.character, ~as.factor(.x))
+carsLm <- lm(hwy~displ+year+cyl+trans+drv+fl+class, mpg)
+stepMod <- stepAIC(carsLm, direction = "both")
+stepMod$anova
+```
+
+```{r}
+carsim <- calc.relimp(carsLm,
+            type = c("lmg", "last", "first"), 
+            rela = TRUE )
+plot(carsim)
+```
+
+
+# Generalized Linear Models
+
++ Logistic Regression can be used when you have a binary regression task.
++ Poisson Regression can be used when count data is being used. 
+
+## Logistic Regression
+
+
+
+```{r}
+housingBoro <- housing %>% filter(Boro %in% c("Manhattan", "Brooklyn")) %>% 
+    mutate(Boro = as.factor(Boro)) %>% 
+    dplyr::select(-c("Neighborhood", "Class"))
+
+```
+
+```{r}
+parking1 <- glm(Boro ~. , data = housingBoro,
+          family = binomial(link="logit"))
 summary(parking1)
 ```
 
 ```{r}
-library(coefplot)
-coefplot(parking1, sort = 'mag')
+coefplot(parking1, sort = 'mag',coefficients = names(parking1$coefficients)[-1])
 ```
 
+
+```{r}
+parking2 <- glm(Boro ~IncomePerSqFt , data = housingBoro,
+          family = binomial)
+summary(parking2)
+
+logitPlot <- data.frame(IncomePerSqFt = seq(min(housingBoro$IncomePerSqFt), max(housingBoro$IncomePerSqFt),len=nrow(housingBoro)))
+logitPlot$Boro = predict(parking2, newdata=logitPlot, type="response")
+
+housingBoro %>% mutate(Boro = if_else(Boro == "Manhattan", 1, 0)) %>% # have to reclassify manhattan as 1
+    ggplot(aes(x=IncomePerSqFt, y=Boro)) + geom_jitter(shape = 1, height = 0.005, alpha = .25) + 
+    geom_line(data = logitPlot, aes(x = IncomePerSqFt, y=Boro), colour = "red") +
+    theme_minimal()
+```
+
+# glmnet
+
+$$\text{min}_{\beta_0, \beta}\frac{1}{N}\sum ^N _{i=1}w_il(y_i,\beta_0+\beta^Tx_i) +\lambda[(1-\alpha)||\beta||_2^2/2+\alpha||\beta||_1]$$
