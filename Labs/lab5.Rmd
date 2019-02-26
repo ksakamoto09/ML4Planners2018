@@ -214,7 +214,7 @@ plot(sqftLM)
 
 ## coeffcients
 
-## Things to look out for
+### Things to look out for
 
 * residuals have to have mean of zero
 * residuals are not autocorrelated - Durban Watson test
@@ -327,6 +327,41 @@ multiplot(condo1, condo2)
 
 ## Interaction effects
 
+Sometimes two variables interact and are important features to capture. In R, you either use
+`*` or `:` to create unique combiniations of predictor variables on the dependent variable.
+The difference between the two is that `*` will keep the original terms while `:` will only keep
+the interaction terms and no the original terms. 
+
+```{r}
+condo2 <- lm(ValuePerSqFt ~ Units + SqFt* Boro + YearBuilt, data = housingFact)
+```
+
+```{r}
+summary(condo2)
+coefplot(condo2, sort = 'mag', coefficients = condo2$coefficients[-1] %>% names())
+```
+
+Here is an example using the `:` to remove the original variables and keeping only the interactions.
+
+```{r}
+condo3 <- lm(ValuePerSqFt ~ Units + SqFt:Boro + YearBuilt, data = housingFact)
+```
+
+```{r}
+summary(condo3)
+coefplot(condo3, sort = 'mag', coefficients = condo3$coefficients[-1] %>% names())
+```
+
+Here is an example of adding more interactions terms.
+
+```{r}
+condo4 <- lm(ValuePerSqFt ~ Units + SqFt*Boro + SqFt*Class +  YearBuilt, data = housingFact)
+```
+
+```{r}
+summary(condo4)
+coefplot(condo4, sort = 'mag', coefficients = condo4$coefficients[-1] %>% names())
+```
 
 ## Stepwise Variable Selection
 
@@ -358,11 +393,16 @@ $$\text{AIC} = 2k-2ln(\hat{L})$$
 where $\hat{L}$ is the maximum value of the likelihood function for the model and $k$ is the number of estimated parameters in the model. The model with the 
 lowest AIC value is the preferred model. As you can see AIC favors goodness of fit by the likelihood function and penalizes increasing number of parameters. In a simple linear regression there are three parameters, $\beta_0$ (the intercept), $\beta_1$ (the cofficient) and the variance of the Gaussian distributions. For any least squares model the residuals are expected to be random and normally distributed and counted as one of the parameters.  
 
+Here is an example of running through the different permutations of each step.
 ```{r}
-library(MASS)
-stepMod <- stepAIC(condo1, direction = "both")
-stepMod$anova
+nullModel <- lm(ValuePerSqFt ~ 1, data = housingFact %>% filter(complete.cases(.)))
+
+step(nullModel,
+     scope = list(lower = nullModel, upper = condo4),
+     direction = "both")
 ```
+
+This library shows us the relative importance of variables for our original simple model. 
 
 ```{r}
 library(relaimpo)
@@ -395,6 +435,10 @@ plot(carsim)
 + Logistic Regression can be used when you have a binary regression task.
 + Poisson Regression can be used when count data is being used. 
 
+Here is a table of the different types of generalized linear models that could be fit using
+the `glm` function. 
+![](https://www.statisticshowto.datasciencecentral.com/wp-content/uploads/2014/01/link-function.jpg)
+
 ## Logistic Regression
 
 
@@ -407,23 +451,23 @@ housingBoro <- housing %>% filter(Boro %in% c("Manhattan", "Brooklyn")) %>%
 ```
 
 ```{r}
-parking1 <- glm(Boro ~. , data = housingBoro,
+Boro1 <- glm(Boro ~. , data = housingBoro,
           family = binomial(link="logit"))
-summary(parking1)
+summary(Boro1)
 ```
 
 ```{r}
-coefplot(parking1, sort = 'mag',coefficients = names(parking1$coefficients)[-1])
+coefplot(Boro1, sort = 'mag',coefficients = names(Boro1$coefficients)[-1])
 ```
 
 
 ```{r}
-parking2 <- glm(Boro ~IncomePerSqFt , data = housingBoro,
+Boro2 <- glm(Boro ~IncomePerSqFt , data = housingBoro,
           family = binomial)
-summary(parking2)
+summary(Boro2)
 
 logitPlot <- data.frame(IncomePerSqFt = seq(min(housingBoro$IncomePerSqFt), max(housingBoro$IncomePerSqFt),len=nrow(housingBoro)))
-logitPlot$Boro = predict(parking2, newdata=logitPlot, type="response")
+logitPlot$Boro = predict(Boro2, newdata=logitPlot, type="response")
 
 housingBoro %>% mutate(Boro = if_else(Boro == "Manhattan", 1, 0)) %>% # have to reclassify manhattan as 1
     ggplot(aes(x=IncomePerSqFt, y=Boro)) + geom_jitter(shape = 1, height = 0.005, alpha = .25) + 
