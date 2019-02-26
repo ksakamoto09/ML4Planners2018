@@ -715,7 +715,23 @@ housingBoro %&gt;% mutate(Boro = if_else(Boro == &quot;Manhattan&quot;, 1, 0)) %
 </div>
 <div id="glmnet" class="section level1">
 <h1>glmnet</h1>
+<p>Glmnet is a package that fits a generalized linear model via penalized maximum likelihood. The regularization path is computed for the lasso or elasticnet penalty at a grid of values for the regularization parameter lambda.</p>
 <p><span class="math display">\[\text{min}_{\beta_0, \beta}\frac{1}{N}\sum ^N _{i=1}w_il(y_i,\beta_0+\beta^Tx_i) +\lambda[(1-\alpha)||\beta||_2^2/2+\alpha||\beta||_1]\]</span></p>
+<div id="regularization" class="section level2">
+<h2>Regularization</h2>
+<p>If you recall the concepts of overfitting and parsimony, simplifying models as much as possible is beneficial. Regularization is a popular technique for avoiding overfitting which adds another element to the loss function.</p>
+</div>
+<div id="ridge-regression" class="section level2">
+<h2>Ridge Regression</h2>
+<p><span class="math display">\[L = \Sigma(\hat{Y_i}-Y_i)^2 + \lambda\Sigma\beta^2\]</span></p>
+<p>This loss function has two parts, the first is the squared errors, and the second sums over the squared <span class="math inline">\(\beta\)</span> and multiples it by a new term <span class="math inline">\(\lambda\)</span>. We want to penalize the model for larger numbers of coeffiencets.</p>
+</div>
+<div id="lasso-method" class="section level2">
+<h2>Lasso Method</h2>
+<p>This loss function is slightly different from the previous method</p>
+<p><span class="math display">\[L = \Sigma(\hat{Y_i}-Y_i)^2 + \lambda\Sigma|\beta|\]</span></p>
+<p>where you can see the <span class="math inline">\(\beta\)</span> is now a absolute value. Unlike the Ridge method where coefficients are pushed towards zero, the Lasso will set irelevant coeffiencts to zero.</p>
+</div>
 </div>
 
 
