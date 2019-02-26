@@ -433,4 +433,32 @@ housingBoro %>% mutate(Boro = if_else(Boro == "Manhattan", 1, 0)) %>% # have to 
 
 # glmnet
 
+Glmnet is a package that fits a generalized linear model via penalized maximum likelihood. The regularization
+path is computed for the lasso or elasticnet penalty at a grid of values for the regularization parameter
+lambda.
+
 $$\text{min}_{\beta_0, \beta}\frac{1}{N}\sum ^N _{i=1}w_il(y_i,\beta_0+\beta^Tx_i) +\lambda[(1-\alpha)||\beta||_2^2/2+\alpha||\beta||_1]$$
+
+## Regularization
+
+If you recall the concepts of overfitting and parsimony, simplifying models as much
+as possible is beneficial. Regularization is a popular technique for avoiding overfitting
+which adds another element to the loss function.
+
+
+## Ridge Regression
+
+$$L = \Sigma(\hat{Y_i}-Y_i)^2 + \lambda\Sigma\beta^2$$
+
+This loss function has two parts, the first is the squared errors, and the second sums over
+the squared $\beta$ and multiples it by a new term $\lambda$. We want to penalize the model
+for larger numbers of coeffiencets. 
+
+## Lasso Method
+
+This loss function is slightly different from the previous method
+
+$$L = \Sigma(\hat{Y_i}-Y_i)^2 + \lambda\Sigma|\beta|$$
+
+where you can see the $\beta$ is now a absolute value. Unlike the Ridge method where
+coefficients are pushed towards zero, the Lasso will set irelevant coeffiencts to zero.
