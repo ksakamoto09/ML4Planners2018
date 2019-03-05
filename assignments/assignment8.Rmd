@@ -1,0 +1,30 @@
+---
+title: "Assignment 6"
+author: "Kaz Sakamoto"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
+```
+
+# Task 1
+
+Read in "nyc311_2005_2007.csv" and create a time series object. What frequency should this be at?
+
+# Task 2
+
+Plot the timeseries with `autoplot`, `ggAcf` please explain what you see.
+
+# Task 3
+
+Create forecasts with snaive into the future and check the `checkResiduals` and plot the residuals. Please explain the results.
+
+# Task 4
+
+Split the data into `train` and `test` with the `window` function and start your `test` at the last month of 2007.
+use `snaive` to calculate the forecast and comapare with the test set using `accuracy` and `checkResiduals`.
+
+# Task 5
+
+Use `snaive` with `tscsv` and compare them against forecasting it without `tscv`. Explain your results.

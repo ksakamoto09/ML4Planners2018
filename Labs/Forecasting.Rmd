@@ -15,6 +15,7 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 library(forecast)
+library(fpp)
 library(readr)
 
 ## here we are going to find the root_file 
@@ -22,6 +23,17 @@ root <- rprojroot::find_rstudio_root_file()
 ## we are going to set the data file path here
 dataDir <- file.path(root, 'Data')
 ```
+
+This lab is created using material from [Forecasting: Principles and Practice](https://otexts.com/fpp2/) by Rob Hyndman. Please use the text to supplement
+anything covered here and beyond.
+
+## Forecastability
+
+- we have a good understanding of the factors that contribute to it
+- there is lots of data available
+- the forecasts cannot affect the thing we are trying to forecast
+- there is relatively low natural/unexplainable random variation.
+- the future is somewhat similar to the past
 
 # `ts` objects
 
@@ -39,20 +51,31 @@ ts(1:100, start = 2000, frequency = 12)
 ## Quarterly
 ts(1:100, start = 2000, frequency = 4)
 ## Weekly
-ts(1:100, start = 2000, frequency = 52)
+ts(1:100, start = 2000, frequency = 52.18)
 ```
 
 ```{r}
 citiBike <- read_csv(file.path(dataDir, "citiBike.csv"))
 
-cbWeek <- citiBike %>% mutate(date = lubridate::mdy(citiBike$Date),
-                    week = lubridate::week(date),
+cbDay <- citiBike %>% mutate(date = lubridate::mdy(citiBike$Date),
+                    day = lubridate::yday(date),
                     year = lubridate::year(date)) %>% 
+    group_by(year,day) %>% 
+    summarise(trips = sum(`Trips over the past 24-hours (midnight to 11:59pm)`),
+              miles = sum(`Miles traveled today (midnight to 11:59 pm)`)) %>% ungroup() %>% 
+    select(trips, miles)
+cbDay <- ts(cbDay, start = c(2015,1), frequency =365)
+```
+
+```{r}
+cbWeek <- citiBike %>% mutate(date = lubridate::mdy(citiBike$Date),
+                              week = lubridate::week(date),
+                              year = lubridate::year(date)) %>% 
     group_by(year,week) %>% 
     summarise(trips = sum(`Trips over the past 24-hours (midnight to 11:59pm)`),
               miles = sum(`Miles traveled today (midnight to 11:59 pm)`)) %>% ungroup() %>% 
     select(trips, miles)
-cbWeek <- ts(cbWeek, start = 2015, frequency = 52.25)
+cbWeek <- ts(cbWeek, start = 2015, frequency = 52)
 ```
 
 ```{r}
@@ -72,6 +95,22 @@ newcb <- citiBike %>%
            miles = `Miles traveled today (midnight to 11:59 pm)`) %>%
  select(trips, miles)
 cbts <- ts(newcb, start = 2015, frequency = 365)
+```
+
+## Window function
+
+Useful for subsetting your time series data by date.
+
+You can either use the start date
+```{r}
+cbWeek2 <- window(cbWeek, start = 2018)
+autoplot(cbWeek2)
+```
+
+or end date, or both!
+```{r}
+cbWeek3 <- window(cbWeek, end = 2018)
+autoplot(cbWeek3)
 ```
 
 ## Frequency
@@ -94,10 +133,32 @@ autoplot(fpp::a10) +
   xlab("Year")
 ```
 
+## Time Series Patterns
+
+**Trend** a pattern exists when there is a long-term increase or decrease in the data. ex. Population growth
+
+**Seasonal** a pattern exists when a series is influenced by seasonal factors (e.g., the quarter of the year, the month, or day of the week). ex. Ice cream sales
+
+**Cyclic** a pattern exists when data exhibit rises and falls that are not of fixed period (duration usually of at least 2 years). ex. economic recovery
+
+**Irregular (random)** no specific pattern exhibited, also called noise. 
+
+![](http://lh3.googleusercontent.com/BxXk8mT9-fTwwNqmK6ePanq2qI5bBdIulCR4VvgoVvYRyZh5FdYF-H0tAs81Xy-OMxVwURmiE037wYLcsEdNMA4Ui60=s500)
+
+## ACF plots
+
+Autocorrelation is the strength of the relatiopship with previous observations of the data.
+Remember that normal correlation wast the relationship between two variables? Autocorrelation
+is just the relationship the variable has on its self. Using the normal distribution as an assumption
+we'll score the correlations again with the Pearson's between -1 and 1.
+
+The **Partial Autocorrelation** at lag k is the correlation that 
+results after removing the effect of any correlations due to the terms at shorter lags.
+
+[more about autocorrelation](https://machinelearningmastery.com/gentle-introduction-autocorrelation-partial-autocorrelation/)
 ```{r}
 ggAcf(cbWeek[,"trips"])
 ```
-
 
 ## avereage method
 
@@ -120,6 +181,7 @@ rwf(cbWeek[,"trips"], h = 10)
 ```
 
 ## Seasonal naive method
+
 similarliy to the naive method, the forecast is equal to the last observed number from the same season a year ago. *m* is the seasonal period and *k* is the interger part of (*h* - 1)/*m*
 $$\hat{y}_{T+h|T} = y_{T+h-m(k+1)}$$
 ```{r}
@@ -144,6 +206,42 @@ autoplot(cbWeek[,"trips"]) +
   xlab("Year") + ylab("Megalitres") +
   guides(colour=guide_legend(title="Forecast"))
 ```
+
+## Residuals
+
+Here we can check how our models predictions are doing against the actual data.
+
+```{r}
+fitted(snaive(cbWeek[,"trips"])) %>% autoplot(series ="Fitted") +
+    autolayer(cbWeek[,"trips"], series = "Data")
+
+```
+
+Now we can take a look at the residuals and plot them out.
+```{r}
+res <- snaive(cbWeek[,"trips"]) %>% residuals
+
+autoplot(res)
+
+gghistogram(res, add.normal = TRUE)
+```
+
+We also want to check the ACF of residuals and expect no significant correlations.
+If so there are probably other information left in the residuals that should be used
+in computing forecasts. If we looked at the residual time series plot, you can see that
+it is not staying aorund a mean. Although our histogram shows normality, which will give us
+confidence in our prediction intervals. 
+
+```{r}
+ggAcf(res)
+```
+
+All together now
+
+```{r}
+checkresiduals(snaive(cbWeek[,"trips"]))
+```
+
 
 ## Calendar Adjustment
 The number of days per month are different so monthly numbers could be affected by them.
@@ -189,6 +287,55 @@ autoplot(monthDay[,"Monthly"]) +
   guides(colour=guide_legend(title="Forecast")) + ylab("Trips")
 ```
 
+
+## Train and Test
+
+```{r}
+train <- window(cbWeek[,"trips"], end = 2018.7)
+test <- window(cbWeek[,"trips"], start = 2018.7)
+
+fc1 <- meanf(train,h=20)
+fc2 <- rwf(train,h=20)
+fc3 <- snaive(train,h=20,drift=TRUE)
+accuracy(fc1, test)
+accuracy(fc2, test)
+accuracy(fc3, test)
+```
+
+```{r}
+autoplot(cbind(training = train, test = test)) + 
+    autolayer(fc1, series = "meanf", PI = FALSE)+ 
+    autolayer(fc2, series = "rwf", PI = FALSE)+ 
+    autolayer(fc3, series = "snaive", PI = FALSE)
+```
+
+## Time series Cross Validation
+
+```{r}
+train %>%
+tsCV(forecastfunction=snaive, drift = TRUE, h=1) -> e
+
+e^2 %>% mean(na.rm=TRUE) %>% sqrt
+
+train %>% snaive() %>% residuals -> res
+
+res^2 %>% mean(na.rm=TRUE) %>% sqrt
+```
+
+comparing results.
+```{r}
+fc6 <- snaive(train, h =20)
+
+autoplot(train) + 
+    autolayer(forecast(e, h = 20), series = "tscv",PI = FALSE)+
+    autolayer(fc6, series = "snaive", PI = FALSE) + 
+    autolayer(test, series = "test")
+
+accuracy(forecast(e, h = 20), test)
+accuracy(fc6, test)
+```
+
+
 ## ETS
 
 There are 15 different kinds of exponential smoothing algorithms
@@ -223,3 +370,294 @@ round(forecast::accuracy(fc), 2)
 ```
 
 additive approaches only give seasonal where the average seasonal affects are seen. multiplicative will also have trend to it.
+
+## Trend Methods
+
+The simple exponential smoothing model can be extended by taking into account trends. There are three equations, one for the forecast, two for smoothing.
+$$\begin{align*}
+  \hat{y}_{t+h|t} &= \ell_{t} + hb_{t} \\
+  \ell_{t} &= \alpha(y_{t} - s_{t-m}) + (1 - \alpha)(\ell_{t-1} + b_{t-1})\\
+  b_{t} &= \beta^*(\ell_{t} - \ell_{t-1}) + (1 - \beta^*)b_{t-1}\\
+\end{align*}
+$$
+
+```{r}
+window(ausair, start=1990, end=2004) %>%
+holt(h=5, PI=FALSE) %>%
+autoplot()
+```
+
+**Damped Trends**
+
+the Holt's method forecasts are linear and indefinitely increasing or decreasing into the future. Damped forecasts will flatten the line over time. 
+
+```{r}
+air <- window(ausair, start=1990)
+fcs <- forecast::ses(air, h = 15)
+fc <- holt(air, h=15)
+fc2 <- holt(air, damped=TRUE, phi = 0.9, h=15)
+autoplot(air) +
+    autolayer(fcs, series="SES", PI=FALSE) +
+    autolayer(fc, series="Holt's method", PI=FALSE) +
+    autolayer(fc2, series="Damped Holt's method", PI=FALSE) +
+    ggtitle("Forecasts from Holt's method") + xlab("Year") +
+    ylab("Air passengers in Australia (millions)") +
+    guides(colour=guide_legend(title="Forecast"))
+```
+
+
+
+## Seasonal Methods
+
+The next component to add is seasonality. We are adding one more smoothing equation for $s_t$. We wil use $m$ to denote
+the frequency of the seasonailty, so quarterly seasonaltiy will be $m = 4$ or monthly would be $m = 12$.
+
+**Additive Method**
+
+$$\begin{align*}
+  \hat{y}_{t+h|t} &= \ell_{t} + hb_{t} + s_{t+h-m(k+1)} \\
+  \ell_{t} &= \alpha(y_{t} - s_{t-m}) + (1 - \alpha)(\ell_{t-1} + b_{t-1})\\
+  b_{t} &= \beta^*(\ell_{t} - \ell_{t-1}) + (1 - \beta^*)b_{t-1}\\
+  s_{t} &= \gamma (y_{t}-\ell_{t-1}-b_{t-1}) + (1-\gamma)s_{t-m},
+\end{align*}
+$$
+
+**Multiplicative Method**
+
+$$\begin{align*}
+  \hat{y}_{t+h|t} &= (\ell_{t} + hb_{t})s_{t+h-m(k+1)} \\
+  \ell_{t} &= \alpha \frac{y_{t}}{s_{t-m}} + (1 - \alpha)(\ell_{t-1} + b_{t-1})\\
+  b_{t} &= \beta^*(\ell_{t}-\ell_{t-1}) + (1 - \beta^*)b_{t-1}                \\
+  s_{t} &= \gamma \frac{y_{t}}{(\ell_{t-1} + b_{t-1})} + (1 - \gamma)s_{t-m}
+\end{align*}
+$$
+
+```{r}
+trips <- window(cbMonth)
+
+fit1 <- hw(trips,seasonal="additive", h = 40)
+fit2 <- hw(trips,seasonal="multiplicative", h = 40)
+autoplot(trips) +
+  autolayer(fit1, series="HW additive forecasts", PI=FALSE) +
+  autolayer(fit2, series="HW multiplicative forecasts",
+    PI=FALSE) +
+  xlab("Year") +
+  ylab("Visitor nights (millions)") +
+  ggtitle("International visitors nights in Australia") +
+  guides(colour=guide_legend(title="Forecast"))
+```
+
+```{r}
+plot(fit1$model$states[,1:3], col = "blue", main = "Additive Components")
+plot(fit2$model$states[,1:3], col = "blue", main = "Multiplicative Components")
+```
+
+## ETS
+
+
+# ARIMA Models
+
+## Stationarity & Differencing
+
+A **Stationary** time series is one whose porpeties do not depend on the timea t twhich the sries is obvsered.
+This means that time series with trends and seasonality are not considered to be stationary. Remeber cyclical patterns?
+Those are considered staionary series. A stationary series will have no preidtavale pattern in the the long run.
+
+- roughly horizontal
+- constant variance
+- no patterns predictable in the long-term
+
+![](https://otexts.com/fpp2/fpp_files/figure-html/stationary-1.png)
+
+**Differencing** is when you compute the differences btwenne consiectuive observations. THis is another form of transformation that can turn non-stationary data into stationary. This technique can help stabilize the mean of a time series by removing the changes in teh level(removing the tren and seasonality). 
+
+Occasionaly the differenced data is not stationary and may need to be differenced a second time. This is called a **Second-Order Differencing** when you difference a second time. 
+
+```{r}
+cbDay[,"trips"]  %>% autoplot()
+```
+
+```{r}
+cbDay[,"trips"] %>% log() %>% autoplot()
+```
+
+```{r}
+cbDay[,"trips"] %>% log() %>% diff(lag = 365) %>% autoplot()
+```
+```{r}
+cbDay[,"trips"] %>% log() %>% diff(lag = 365) %>% diff(lag=1) %>% autoplot()
+```
+
+## Autoregressive models
+
+Compared to a multiple regression model, where a forecast is made using a linear combination
+of predictors, the autoregressive model uses a linear combiniation of past values of the variable. Remember for time 
+series forecasting so far we have only used one variable and the past variables to predict the future.
+
+an autogressive model of order $p$ can be written as:
+
+$$y_{t} = c + \phi_{1}y_{t-1} + \phi_{2}y_{t-2} + \dots + \phi_{p}y_{t-p} + \varepsilon_{t}$$
+The  $p$ is for the order of the autoregressive model.
+
+## Moving average models
+
+Unline the autoregressive model, a moving average model uses past forecast erros in a regression like model.
+
+$$y_{t} = c + \varepsilon_t + \theta_{1}\varepsilon_{t-1} + \theta_{2}\varepsilon_{t-2} + \dots + \theta_{q}\varepsilon_{t-q},$$
+
+In the moving average case $q$ is the order of the model.
+
+
+## Non-seasonal ARIMA
+
+Non-seasonal ARIMA models are when you combine differenceing with autroregression and a moving average model.
+ARIMA stands for AutoRegressive Integrated Moving Average, where integrataion is the reverese of differenceing. 
+
+$$
+  y'_{t} = c + \phi_{1}y'_{t-1} + \cdots + \phi_{p}y'_{t-p}
+     + \theta_{1}\varepsilon_{t-1} + \cdots + \theta_{q}\varepsilon_{t-q} + \varepsilon_{t}$$
+
+The model has both lagged values of $y_t$ and lagged errors.
+
+The constant $c$ has an important effect on the long-term forecasts obtained from these models.
+The value of $d$ also has an effect on the prediction intervals — the higher the value of $d$, 
+the more rapidly the prediction intervals increase in size. For  
+$d=0$, the long-term forecast standard deviation will go to the standard deviation of the 
+historical data, so the prediction intervals will all be essentially the same.
+
+- If $c=0$ and $d=0$, the long-term forecasts will go to zero
+- If $c=0$ and $d=1$, the long-term forecasts will go to a non-zero constant.
+- If $c=0$ and $d=2$, the long-term forecasts will follow a straight line.
+- If $c\ne0$ and $d=0$, the long-term forecasts will go to the mean of the data.
+- If $c\ne0$ and $d=1$, the long-term forecasts will follow a straight line.
+- If $c\ne0$ and $d=2$, the long-term forecasts will follow a quadratic trend.
+
+### Example 1
+```{r}
+autoplot(cbDay[,"trips"] %>% diff(lag = 1))
+```
+
+```{r}
+fit <- auto.arima(cbDay[,"trips"] %>% diff(lag = 1), seasonal = FALSE)
+fit
+```
+$$y_t = c + 0.3670 y_{t-1}
+          -0.8963 \varepsilon_{t-1}
+          -0.0476 \varepsilon_{t-2}
+          + 0.0372\varepsilon_{t-3}
+          -0.1120\varepsilon_{t-4}
+          +0.1345 \varepsilon_{t-5}
+          + \varepsilon_{t},$$
+$c=0$ since mean is zero and $\varepsilon_t$ is $9776.678 = \sqrt95583426$
+```{r}
+fit %>% forecast(h=10) %>% autoplot(include=80)
+```
+
+### Example 2
+```{r}
+autoplot(cbWeek[,"trips"] %>% diff(lag = 52) %>% diff(lag = 1))
+```
+
+```{r}
+fit <- auto.arima(cbWeek[,"trips"] %>% diff(lag = 52) %>% diff(lag = 1), seasonal = FALSE)
+fit
+```
+
+In ARIMA($p,d,q$):
+
+Usually determing $p$:
+- The ACF is exponentially decaying or sinusodial;
+- There is a significant spike at lap $p$ in the PACF, but none byeond lag $p$
+
+Usually determing $q$:
+- The PACF is exponentially decaying or sinusodial;
+- There is a significant spike at lap $q$ in the ACF, but none byeond lag $q$
+
+```{r}
+ggAcf(cbWeek[,"trips"] %>% diff(lag = 52) %>% diff(lag = 1), main = "CitiBike Trips per Week")
+```
+
+
+```{r}
+ggPacf(cbWeek[,"trips"] %>% diff(lag = 52) %>% diff(lag = 1), main = "CitiBike Trips per Week")
+```
+
+## seasonal ARIMAs
+
+```{r}
+cbMonth[,"trips"] %>% ggtsdisplay()
+```
+
+```{r}
+fit3 <- auto.arima(cbMonth[,"trips"], seasonal = TRUE)
+fit3
+```
+
+```{r}
+checkresiduals(fit3)
+```
+
+
+```{r}
+fit3 %>% forecast(h=12) %>% autoplot()
+```
+
+
+## ARIMA vs ETS
+
+While linear exponential smoothing models are all special cases of ARIMA models, the non-linear exponential smoothing models have no equivalent ARIMA counterparts. On the other hand, there are also many ARIMA models that have no exponential smoothing counterparts. In particular, all ETS models are non-stationary, while some ARIMA models are stationary.
+
+The AICc is useful for selecting between models in the same class. For example, we can use it to select an ARIMA model between candidate ARIMA models17 or an ETS model between candidate ETS models. However, it cannot be used to compare between ETS and ARIMA models because they are in different model classes, and the likelihood is computed in different ways
+
+
+```{r}
+e1 <- tsCV(y = cbMonth[,"trips"], function(y,h) ets(y) %>% forecast(h = h), h=1)
+# Compute CV errors for ARIMA as e2
+e2 <- tsCV(y = cbMonth[,"trips"], function(y,h) auto.arima(y) %>% forecast(h = h), h=1)
+# Find MSE of each model class
+mean(e1^2, na.rm=TRUE)
+#> [1] 7.864
+mean(e2^2, na.rm=TRUE)
+```
+```{r}
+cbMonth[,"trips"] %>% ets() %>% forecast() %>% autoplot()
+```
+
+
+```{r}
+dayTrips <- cbDay[,"trips"] %>% diff(lag = 1)
+# Use 3 years of the data as the training set
+train <- window(dayTrips, end=c(2018,1))
+```
+
+```{r}
+fit.arima <- auto.arima(train)
+```
+
+```{r}
+checkresiduals(fit.arima)
+```
+
+```{r}
+fit.ets <- ets(train)
+```
+
+```{r}
+checkresiduals(fit.ets)
+```
+
+```{r}
+a1 <- fit.arima %>% forecast(h = 10) %>%
+  accuracy(dayTrips)
+a1[,c("RMSE","MAE","MAPE","MASE")]
+
+a2 <- fit.ets %>% forecast(h = 10) %>%
+  accuracy(dayTrips)
+a2[,c("RMSE","MAE","MAPE","MASE")]
+
+```
+
+```{r}
+dayTrips %>% auto.arima() %>% forecast(h = 10) %>% autoplot()
+```
+
