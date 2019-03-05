@@ -1,7 +1,6 @@
 ---
-title: "Assignment4"
+title: "Assignment 6"
 author: "Kaz Sakamoto"
-date: "4/3/2018"
 output: html_document
 ---
 
@@ -9,14 +8,23 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
 ```
 
-In Lab we learning about the K-Means and KNN algorithms.
+# Task 1
 
-For this assignment we will be looking into these algorithms with PLUTO Data again.
+Read in "nyc311_2005_2007.csv" and create a time series object. What frequency should this be at?
 
-## K-means
+# Task 2
 
-I would like you to take the same PLUTO csv of Manhattan from the last assignment and we are going to see clustering of lots with the fields Assessed Total Value, Lot Area, and Building Area. Please play around with scale number of K values with your K-means to see if you can make sense of the data. We know that there are different land use schemes that could be a good way to see clusters. Please share the code and have some visual outputs too.
+Plot the timeseries with `autoplot`, `ggAcf` please explain what you see.
 
-## KNN
+# Task 3
 
-I would also like to use this data to do some KNN classification too. I would like you to first break up your data by Multifamily Elevator or Industrial/Manufacturing lots (landuse), and set the seed for 1234 and a train test split of 70/30 percent. Play with different variables and number of Ks to find a solution that can get you pretty good predictions. Again share the code and have some visual outputs too.
+Create forecasts with snaive into the future and check the `checkResiduals` and plot the residuals. Please explain the results.
+
+# Task 4
+
+Split the data into `train` and `test` with the `window` function and start your `test` at the last month of 2007.
+use `snaive` to calculate the forecast and comapare with the test set using `accuracy` and `checkResiduals`.
+
+# Task 5
+
+Use `snaive`, `rwf`, `rwf`(with drift) on`tscsv` and compare them against eachother, explain your results.
