@@ -32,7 +32,7 @@ anything covered here and beyond.
 - we have a good understanding of the factors that contribute to it
 - there is lots of data available
 - the forecasts cannot affect the thing we are trying to forecast
-- there is relatively low natural/unexplainable random variation.
+- there is relatively low natural/inexpiable random variation.
 - the future is somewhat similar to the past
 
 # `ts` objects
@@ -147,7 +147,7 @@ autoplot(fpp::a10) +
 
 ## ACF plots
 
-Autocorrelation is the strength of the relatiopship with previous observations of the data.
+Autocorrelation is the strength of the relationship with previous observations of the data.
 Remember that normal correlation wast the relationship between two variables? Autocorrelation
 is just the relationship the variable has on its self. Using the normal distribution as an assumption
 we'll score the correlations again with the Pearson's between -1 and 1.
@@ -182,7 +182,7 @@ rwf(cbWeek[,"trips"], h = 10)
 
 ## Seasonal naive method
 
-similarliy to the naive method, the forecast is equal to the last observed number from the same season a year ago. *m* is the seasonal period and *k* is the interger part of (*h* - 1)/*m*
+similarly to the naive method, the forecast is equal to the last observed number from the same season a year ago. *m* is the seasonal period and *k* is the integer part of (*h* - 1)/*m*
 $$\hat{y}_{T+h|T} = y_{T+h-m(k+1)}$$
 ```{r}
 snaive(cbWeek[,"trips"], h = 10)
@@ -229,7 +229,7 @@ gghistogram(res, add.normal = TRUE)
 We also want to check the ACF of residuals and expect no significant correlations.
 If so there are probably other information left in the residuals that should be used
 in computing forecasts. If we looked at the residual time series plot, you can see that
-it is not staying aorund a mean. Although our histogram shows normality, which will give us
+it is not staying around a mean. Although our histogram shows normality, which will give us
 confidence in our prediction intervals. 
 
 ```{r}
@@ -276,7 +276,7 @@ autoplot(BoxCox(monthDay, lambdaVal))
 
 ## Bias Adjustment
 
-When we get the back-transformed forecast from the Box-Cox transofmation, it will return the median of the forecast distribution rather than the mean. The difference between the mean and the median is called the **bias** hence **bias-adjusted** point forecasts. 
+When we get the back-transformed forecast from the Box-Cox transformation, it will return the median of the forecast distribution rather than the mean. The difference between the mean and the median is called the **bias** hence **bias-adjusted** point forecasts. 
 
 ```{r}
 fc <- rwf(monthDay[,"Monthly"], drift=TRUE, lambda=0)
@@ -347,7 +347,7 @@ if we consider the naive method...
 $$\hat y_{T+h|T} = y_T $$
 the last observed value will be our forecast.
 
-If we consider the avereage method...
+If we consider the average method...
 $$\hat y_{T+h|T} = \frac{1}{T} \sum_{t=1}^T y_t$$
 all observations are equally weighted.
 
@@ -356,7 +356,7 @@ $$\hat y_{T+1|T} = \alpha y_T + \alpha(1-\alpha) y_{T-1}+ \alpha(1-\alpha)^2 y_{
 We add a new variable called $\apha$ which is going to be $0 \leq \alpha \leq 1$. You can see the most recent
 variable is $\alpha y_T$ getting the full weight, while the next one is $\alpha(1-\alpha) y_{T-1}$ getting multiplied
 by itself, the next one is a square, the next one after that would be a cube and you'll see that the older and older values
-from our timeseries will be weighted less.
+from our time series will be weighted less.
 
 An alternative representation is the component form. We only have 1 component for smoothing, later we will look at seasonality and trend.
 
@@ -409,8 +409,8 @@ autoplot(air) +
 
 ## Seasonal Methods
 
-The next component to add is seasonality. We are adding one more smoothing equation for $s_t$. We wil use $m$ to denote
-the frequency of the seasonailty, so quarterly seasonaltiy will be $m = 4$ or monthly would be $m = 12$.
+The next component to add is seasonality. We are adding one more smoothing equation for $s_t$. We will use $m$ to denote
+the frequency of the seasonality, so quarterly seasonality will be $m = 4$ or monthly would be $m = 12$.
 
 **Additive Method**
 
@@ -459,9 +459,9 @@ plot(fit2$model$states[,1:3], col = "blue", main = "Multiplicative Components")
 
 ## Stationarity & Differencing
 
-A **Stationary** time series is one whose porpeties do not depend on the timea t twhich the sries is obvsered.
-This means that time series with trends and seasonality are not considered to be stationary. Remeber cyclical patterns?
-Those are considered staionary series. A stationary series will have no preidtavale pattern in the the long run.
+A **Stationary** time series is one whose Properties do not depend on the times t which the series is observed.
+This means that time series with trends and seasonality are not considered to be stationary. Remember cyclical patterns?
+Those are considered stationary series. A stationary series will have no predictable pattern in the the long run.
 
 - roughly horizontal
 - constant variance
@@ -469,9 +469,9 @@ Those are considered staionary series. A stationary series will have no preidtav
 
 ![](https://otexts.com/fpp2/fpp_files/figure-html/stationary-1.png)
 
-**Differencing** is when you compute the differences btwenne consiectuive observations. THis is another form of transformation that can turn non-stationary data into stationary. This technique can help stabilize the mean of a time series by removing the changes in teh level(removing the tren and seasonality). 
+**Differencing** is when you compute the differences between consecutive observations. This is another form of transformation that can turn non-stationary data into stationary. This technique can help stabilize the mean of a time series by removing the changes in the level(removing the Trend and seasonality). 
 
-Occasionaly the differenced data is not stationary and may need to be differenced a second time. This is called a **Second-Order Differencing** when you difference a second time. 
+Occasionally the differenced data is not stationary and may need to be differenced a second time. This is called a **Second-Order Differencing** when you difference a second time. 
 
 ```{r}
 cbDay[,"trips"]  %>% autoplot()
@@ -491,7 +491,7 @@ cbDay[,"trips"] %>% log() %>% diff(lag = 365) %>% diff(lag=1) %>% autoplot()
 ## Autoregressive models
 
 Compared to a multiple regression model, where a forecast is made using a linear combination
-of predictors, the autoregressive model uses a linear combiniation of past values of the variable. Remember for time 
+of predictors, the autoregressive model uses a linear combination of past values of the variable. Remember for time 
 series forecasting so far we have only used one variable and the past variables to predict the future.
 
 an autogressive model of order $p$ can be written as:
@@ -501,7 +501,7 @@ The  $p$ is for the order of the autoregressive model.
 
 ## Moving average models
 
-Unline the autoregressive model, a moving average model uses past forecast erros in a regression like model.
+Unline the autoregressive model, a moving average model uses past forecast errors in a regression like model.
 
 $$y_{t} = c + \varepsilon_t + \theta_{1}\varepsilon_{t-1} + \theta_{2}\varepsilon_{t-2} + \dots + \theta_{q}\varepsilon_{t-q},$$
 
@@ -510,8 +510,8 @@ In the moving average case $q$ is the order of the model.
 
 ## Non-seasonal ARIMA
 
-Non-seasonal ARIMA models are when you combine differenceing with autroregression and a moving average model.
-ARIMA stands for AutoRegressive Integrated Moving Average, where integrataion is the reverese of differenceing. 
+Non-seasonal ARIMA models are when you combine differencing with autroregression and a moving average model.
+ARIMA stands for AutoRegressive Integrated Moving Average, where integration is the reverses of differenceing. 
 
 $$
   y'_{t} = c + \phi_{1}y'_{t-1} + \cdots + \phi_{p}y'_{t-p}
@@ -565,13 +565,13 @@ fit
 
 In ARIMA($p,d,q$):
 
-Usually determing $p$:
-- The ACF is exponentially decaying or sinusodial;
-- There is a significant spike at lap $p$ in the PACF, but none byeond lag $p$
+Usually determining $p$:
+- The ACF is exponentially decaying or sinusoidal;
+- There is a significant spike at lap $p$ in the PACF, but none beyond lag $p$
 
-Usually determing $q$:
-- The PACF is exponentially decaying or sinusodial;
-- There is a significant spike at lap $q$ in the ACF, but none byeond lag $q$
+Usually determining $q$:
+- The PACF is exponentially decaying or sinusoidal;
+- There is a significant spike at lap $q$ in the ACF, but none beyond lag $q$
 
 ```{r}
 ggAcf(cbWeek[,"trips"] %>% diff(lag = 52) %>% diff(lag = 1), main = "CitiBike Trips per Week")
