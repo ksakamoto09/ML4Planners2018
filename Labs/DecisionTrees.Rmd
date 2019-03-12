@@ -1,0 +1,256 @@
+---
+title: "Forecasting"
+author: "Kaz Sakamoto"
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+
+## Decision Trees Libraries
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tree)
+
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
+```
+
+## Decision Trees
+
+There is a suspiciously large number floating around the internet, 35,000 decicions on average
+being made by humans on any give day. While the veracity of this number may be unknown we do 
+in fact make countless unconcious and concious decisions throughout the day.
+
+Beginning in the 1970s, AI researchers have explored the decision-making capabilities of humans
+and the ability of software to automate these processes. The results were called Expert Systems
+and by encoding the rules and facts from human experts, computers would soon be able to string together
+simple yes and no answers into complex tasks like medical diagnosis and mission control for space
+exploration.
+
+## Twenty Questions
+
+The classic deductive reasoning game is a useful concept for modeling decision trees. The player with the answer
+will select an object and the other players must guess what the object is with only twenty questions.
+Well selected questions will greatly improve the teams chances of guessing the right object, and the order of 
+those questions are just as crucial. 
+
+The first question in your set should in theory make the biggest split in your decision making. For instance 
+you do not want to start with a very specific question such as "is the object a toaster?", if the object was
+a toaster, you did it! But, if it wasn't, that leaves every other object as a possibility.
+
+## Why Trees?
+
+Trees are another metaphor when we visualize this decision making process. The root or the trunk is the entire
+population of your data, the first split is going to make the most significant cut into their perspective groupings.
+These branches can lead to more branches on-and-on.
+
+## Classification Trees
+
+Decision trees can be used to predict classes, for example whether a building permit is going to be accepted 
+or not. Some of the decisions or splits that could be made is the failure rate of the requestor, complexity of project,
+number of current permits in the building, etc... 
+
+## Regression Trees
+
+Trees can also be used for continous data. Decision trees are good at handling non-linear data, so problems such as
+predicting housing prices can still be made using a tree method. The decision tree input features can also be categorical
+or continuous which makes this method very flexible.
+
+## Recursive Binary Splitting
+
+To build a tree, you will need to start from the first split. The goal is to make the most homogenous branches.
+We will have to calculate the accuracy of each split with a cost
+function, and by doing this recursively you will find an optimal solution for your dataset. 
+
+## Cost Function
+
+For Regression, the *Residual Sum of Squares* will be used. 
+
+$$RSS = \sum_{i=1}^n (\varepsilon_i)^2 = \sum_{i=1}^n (y_i - \bar{y})^2$$
+
+The split should be the lowest RSS.
+
+For Classification, there are a few ways of selecting the best split. 
+
+The Gini imputity is another method that shows "purity" in the regions from a split. 
+To compute Gini impurity for a set of items with $J$ classes, suppose $i\in \{1,2,...,J\}$ , and let $p_{i}$ be the 
+fraction of items labeled with class $i$ in the set.
+
+$$ G = \sum_{i=1}^J p_i(1-p_i) = 1-\sum_{i=1}^J p_i^2$$
+You 1 - the sum of the probability of the cases.
+So if you are seeing if a permit passes based on application length greater than 500 words. In the greater than 500 words split,
+permits passing is 9/10 and not passing is 1/10 it'll be $1 - (\frac{9}{10})^2 - (\frac{1}{10})^2 = 0.18$. If the permits are 
+less than 500 words then the probabilites of passing 2/6 and not pasing is 4/6 or $1 - (\frac{2}{6})^2 - (\frac{4}{6})^2 = 0.44$.
+we want Gini Impurity numbers as close to 0 since perfectly classifying one group would be divding 0 which will always result in a 0 value.
+
+## Information Gain
+To calculate the Gini Index it is $(\frac{11}{16}) * 0.18 + (\frac{5}{16}) * 0.44 = 0.261$
+
+![Information Gain](https://www.bogotobogo.com/python/scikit-learn/images/Entropy/ImpurityIndicesPlot.png)
+
+```{r}
+# chr should be factors and make sure numbers are numeric
+nycSales <- read_csv(file.path(dataDir, "nycSales.csv")) %>% 
+    filter(borough %in% c("manhattan", "brooklyn")) %>% 
+    select(borough, price, num_beds, num_baths, 
+           num_sqft, type, built_date,monthly_cost) %>% 
+    mutate(borough = as.factor(borough),
+           index = 1:n(),
+           num_beds = as.numeric(num_beds),
+           num_baths = as.numeric(num_baths),
+           type = as.factor(type)) %>% 
+    filter(complete.cases(.))
+hist(nycSales$price)
+
+nycSalesTree = tree(borough~.-index, data=nycSales)
+summary(nycSalesTree)
+
+plot(nycSalesTree)
+text(nycSalesTree, pretty = 0)
+```
+
+```{r}
+set.seed(123)
+train=sample_frac(nycSales, size = 0.7)
+
+nycSalesTest = tree(borough~.-index, train)
+
+```
+
+The plot looks a bit different because of the slightly different dataset. Nevertheless, the complexity of the tree looks roughly the same.
+```{r}
+plot(nycSalesTest)
+text(nycSalesTest, pretty=0)
+```
+
+```{r}
+nycSalesPred <- predict(nycSalesTest, nycSales %>% filter(!index %in% train$index), type="class")
+
+caret::confusionMatrix(nycSalesPred, nycSales %>% filter(!index %in% train$index) %>% .$borough)
+```
+
+![confusion matrix](https://www.researchgate.net/profile/Andreas_Fallgatter/publication/230830197/figure/fig1/AS:267609178374146@1440814408186/Confusion-matrix-summarizing-the-errors-made-by-the-classifier-on-the-test-set.png)
+
+- Null Error Rate: This is how often you would be wrong if you always predicted the majority class. (In our example, the null error rate would be 60/165=0.36 because if you always predicted yes, you would only be wrong for the 60 "no" cases.) This can be a useful baseline metric to compare your classifier against. However, the best classifier for a particular application will sometimes have a higher error rate than the null error rate, as demonstrated by the Accuracy Paradox.
+
+- Cohen's Kappa: This is essentially a measure of how well the classifier performed as compared to how well it would have performed simply by chance. In other words, a model will have a high Kappa score if there is a big difference between the accuracy and the null error rate. (More details about Cohen's Kappa.)
+
+- F Score: This is a weighted average of the true positive rate (recall) and precision. (More details about the F Score.)
+
+- ROC Curve: This is a commonly used graph that summarizes the performance of a classifier over all possible thresholds. It is generated by plotting the True Positive Rate (y-axis) against the False Positive Rate (x-axis) as you vary the threshold for assigning observations to a given class. (More details about ROC Curves.)
+
+## Cross Validation
+
+If the tree grows too big, it could be overfitting and "pruning" may help 
+become more generalizeable. we'll use misclassification error as our criteria.
+```{r}
+nycSalesCV = cv.tree(nycSalesTest, FUN = prune.misclass)
+nycSalesCV
+```
+
+```{r}
+plot(nycSalesCV)
+```
+
+```{r}
+nycSalesPrune = prune.misclass(nycSalesTest, best = 8)
+plot(nycSalesPrune)
+text(nycSalesPrune, pretty=0)
+```
+```{r}
+prunePred = predict(nycSalesPrune, nycSales %>% filter(!index %in% train$index), type="class")
+
+caret::confusionMatrix(prunePred, nycSales %>% filter(!index %in% train$index) %>% .$borough)
+```
+
+## Regression Trees
+
+```{r}
+nycSalesReg = tree(price~.-index, train)
+summary(nycSalesReg)
+plot(nycSalesReg)
+text(nycSalesReg, pretty =  0)
+```
+
+```{r}
+regPred = predict(nycSalesReg, nycSales %>% filter(!index %in% train$index))
+mse <- mean((nycSales %>% filter(!index %in% train$index) %>% .$price - regPred)^2)
+```
+
+```{r}
+data.frame(actual = nycSales %>% filter(!index %in% train$index) %>% .$price,
+           predicted = regPred) %>% ggplot(aes(actual, predicted)) + 
+    geom_point(shape =1)
+```
+
+
+
+
+## Random Forests
+
+![](https://cdn-images-1.medium.com/max/592/1*i0o8mjFfCn-uD79-F1Cqkw.png)
+```{r}
+library(randomForest)
+nycSalesRF = randomForest(borough~.-index, data = train)
+nycSalesRF
+```
+
+Printing out the random forest gives its summary: the # of trees (500 were grown), the out-of-box error rate. The only tuning parameter in a random Forests is the argument called `mtry`, which is the number of variables that are selected at each split of each tree when you make a split. So in our example at each node, only 2 variables are ever presented as choices. 
+
+For the `mtry` the default values are different for classification (sqrt(p) where p is number of variables in x) and regression (p/3)
+
+```{r}
+oobErr = double(7)
+testErr = double(7)
+for(mtry in 1:7){
+  fit = randomForest(borough~.-index, train, mtry=mtry, ntree = 350)
+  oobErr[mtry] = fit$err.rate[350]
+  pred = predict(fit, nycSales %>% filter(!index %in% train$index))
+  testErr[mtry] = with(nycSales %>% filter(!index %in% train$index), 
+                       sum(borough != pred)/nrow(nycSales %>% filter(!index %in% train$index)))
+}
+```
+
+Basically you just grew 2450 trees (7 times 350). Now let's make a plot using the matplot command. The test error and the out-of-bag error are binded together to make a 2-column matrix. There are a few other arguments in the matrix, including the plotting character values (pch = 23 means filled diamond), colors (red and blue), type equals both (plotting both points and connecting them with the lines), and name of y-axis (Classification Error Rate). You can also put a legend at the top right corner of the plot.
+
+
+```{r}
+matplot(1:mtry, cbind(testErr, oobErr), pch = 23, 
+        col = c("red", "blue"), type = "b", ylab="Classification Error Rate")
+legend("topright", legend = c("OOB", "Test"), pch = 23, col = c("red", "blue"))
+```
+
+Ideally, these 2 curves should line up, but it seems like the oob error is a bit lower.
+
+
+
+## Regression Random Forest
+
+```{r}
+nycPriceRF = randomForest(price~.-index, data = train, ntree = 200)
+summary(nycPriceRF)
+```
+
+```{r}
+oobErr = double(7)
+testErr = double(7)
+for(mtry in 1:7){
+  fit = randomForest(price~.-index, train, mtry=mtry, ntree = 150)
+  oobErr[mtry] = fit$mse[150]
+  pred = predict(fit, nycSales %>% filter(!index %in% train$index))
+  testErr[mtry] =  with(nycSales %>% filter(!index %in% train$index), mean( (price-pred)^2 ))
+}
+```
+
+```{r}
+matplot(1:mtry, cbind(testErr, oobErr), pch = 23, col = c("red", "blue"), type = "b", ylab="Mean Squared Error")
+legend("topright", legend = c("OOB", "Test"), pch = 23, col = c("red", "blue"))
+```
+

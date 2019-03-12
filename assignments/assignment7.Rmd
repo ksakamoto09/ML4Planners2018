@@ -1,0 +1,42 @@
+---
+title: "Assignment 7"
+author: "Kaz Sakamoto"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
+```
+
+In this assignment we will be continue working with Rmarkdown and R. Please submit a html document as your submission. Title should be Lastname_Firstname_assignment7.html and submit to canvas.
+
+# Task 1
+
+This week well be using the `Boston` data set you can check up the data in this
+[file](https://cran.r-project.org/web/packages/MASS/MASS.pdf) for the column meanings.
+
+```{r}
+library(MASS)
+data(package="MASS")
+df <- Boston
+```
+
+# Task 2
+
+Make some exploratory graphs and clean the data if need be.
+
+# Task 3
+
+create a `tree` with the Boston data predicting `medv` with all other variables. What
+do you see as an result?
+
+# Task 4
+
+create a train and test split with you data.
+try a bunch of `mtry`s with this data set on `randomForest` still predicting for `medv` with all other variables. 
+Compare the train results with the test results (MSE). What does the visual output look like? What number 
+of mtrys is best?
+
+# Task 5
+
+now train the `randomForest` on your entire data with the `mtry` you believe is best. What do the results look like?

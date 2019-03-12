@@ -34,5 +34,6 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 ## [Reports with R Markdown](Labs/lab3.html)
 ## [Linear Regression](Labs/lab5.html)
 ## [Forecasting](Labs/Forecasting.html)
+## [Decision Trees](Labs/DecisionTrees.html)
 
 
