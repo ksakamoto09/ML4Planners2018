@@ -8,11 +8,34 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE)
 ```
 
+In this assignment we will be continue working with Rmarkdown and R. Please submit a html document as your submission. Title should be Lastname_Firstname_assignment8.html and submit to canvas.
 
-## K-means
+# Task 1
 
-I would like you to take the same PLUTO csv of Manhattan from the last assignment and we are going to see clustering of lots with the fields Assessed Total Value, Lot Area, and Building Area. Please play around with scale number of K values with your K-means to see if you can make sense of the data. We know that there are different land use schemes that could be a good way to see clusters. Please share the code and have some visual outputs too.
+This week we will revist rvest and Wikipedia. I want you to scrape the text in the paragraph tags in a few different pages.
+Look for "id-bodyContent", then "p" and grab the text. 
+```{r}
+urbanPlanning <- "https://en.wikipedia.org/wiki/Urban_planning"
+urbanDesign <- "https://en.wikipedia.org/wiki/Urban_design"
+urbanEconomics <- "https://en.wikipedia.org/wiki/Urban_economics"
+Architecture <- "https://en.wikipedia.org/wiki/Architecture"
+```
 
-## KNN
+# Task 2
 
-I would also like to use this data to do some KNN classification too. I would like you to first break up your data by Multifamily Elevator or Industrial/Manufacturing lots (landuse), and set the seed for 1234 and a train test split of 70/30 percent. Play with different variables and number of Ks to find a solution that can get you pretty good predictions. Again share the code and have some visual outputs too.
+combine the text into one tibble with columns,`topic`(should include the page topic), `text`.
+
+# Task 3
+
+Tokenize the text and remove stop words from the text. I want you to visualize the top 20 words from each
+page. explain what you see.
+
+# Task 4
+
+Now I would like you to plot the word frequencies against urban planning. I'll also want to see the correlations
+between the pages and explanation of what you see. 
+
+# Task 5
+
+Using the udpipe library I would like you to compare keywords from each article using
+`as_phrasemachine` and `keywords_phrases`. Explain what you see.

@@ -21,6 +21,6 @@ Please upload to [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F
 
 ## [Assignment 7](assignments/assignment7.html)
 
-## [Assignment 8]
+## [Assignment 8](assignments/assignment8.html)
 
 ## [Assignment 9]
