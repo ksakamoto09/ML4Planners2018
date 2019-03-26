@@ -35,5 +35,9 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 ## [Linear Regression](Labs/lab5.html)
 ## [Forecasting](Labs/Forecasting.html)
 ## [Decision Trees](Labs/DecisionTrees.html)
+## [Text Mining](Labs/textMining.html)
+## [Dimensionality Reduction](Labs/pca.html)
+## [Geocomputation](Labs/geospatial.html)
+## [Unsupervised Learning]
 
 

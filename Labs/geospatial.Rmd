@@ -1,0 +1,67 @@
+---
+title: "Geocomputation"
+author: "Kaz Sakamoto"
+output: html_document
+---
+<style>
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
+body{
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 12px;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4 {
+  font-family: 'VT323', monospace;
+}
+</style>
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+
+## Spatial Libraries
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(sf)
+library(raster)
+
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
+```
+
+## Data Models
+
+### Vector
+
+### Raster
+
+## Simple Features
+There are seventeen geometry types supported by the Open Geospatial Consoritum(OGC),
+but there are seven that are most commonly used. As you can see these are all vector
+formats, and `sf` does not handle raster data. 
+![](https://geocompr.robinlovelace.net/figures/sf-classes.png)
+
+The `sf` package relies on the `rgdal` package for reading and writing spatial data and
+`rgeos` for spatial operations. 
+```{r}
+library(spData)
+names(world)
+```
+
+```{r}
+par()
+plot(world)
+```
+
+## Coordinate Reference Systems
+
+### Geographic Coordinate Systems
+
+### Projected Coordinate Systems
+
+### Areal Exercises

@@ -1,5 +1,5 @@
 ---
-title: "Forecasting"
+title: "Decision Trees"
 author: "Kaz Sakamoto"
 output: html_document
 ---

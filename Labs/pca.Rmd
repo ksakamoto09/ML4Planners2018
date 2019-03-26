@@ -1,0 +1,104 @@
+---
+title: "Dimensionality Reduction"
+author: "Kaz Sakamoto"
+output: html_document
+---
+    
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+
+## PCA Libraries
+
+```{r}
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(readr)
+
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
+```
+[regions](https://en.wikipedia.org/wiki/List_of_regions_of_the_United_States) from wikipedia
+```{r}
+states <- read_csv(file.path(dataDir, "ACS_2017_5yr_States.csv"))
+
+states <- states %>% select(Geo_GEOID, Geo_NAME, starts_with("SE"))
+
+columnNames <- c("GEOID", "STATE", 
+                   "TotalPopulation", "AverageHouseholdSize",
+                   "Civilian Population 16 to 19 Years"," Dropped Out",
+                   "Enrolled", "PopOver16", "In Labor", "In Armed", "Civilian",
+                   "Employed", "Unemployed", "not in Labor","Civilian Population over 16",
+                   "Employed", "Unemployed", "Median HH Income","Housing Units", "Median Year structure Built",
+                   "Median Gross Rent", "Average Commute to Work", "Total Health Insurance", "no health insurance",
+                   "with health insuracnce", "public health insurance", "private health insurance"
+                   )
+colnames(states) <- columnNames %>% stringr::str_remove_all(" ")
+
+states %<>% mutate(REGION = case_when(STATE %in% c("Connecticut", "Maine", "Massachusetts", 
+                                                  "New Hampshire", "Rhode Island", "Vermont",
+                                                  "New Jersey", "New York", "Pennsylvania") ~ "Northeast",
+                                     STATE %in% c("Illinois", "Indiana", "Michigan", "Ohio", "Wisconsin",
+                                                  "Iowa", "Kansas", "Minnesota", "Missouri", 
+                                                  "Nebraska", "North Dakota", "South Dakota") ~ "Midwest",
+                                     STATE %in% c("Delaware", "Florida", "Georgia", "Maryland",
+                                                  "North Carolina", "South Carolina", "Virginia", 
+                                                  "District of Columbia", "West Virginia",
+                                                  "Alabama", "Kentucky", "Mississippi", "Tennessee",
+                                                  "Arkansas", "Louisiana", "Oklahoma", "Texas") ~ "South",
+                                     STATE %in% c("Arizona", "Colorado", "Idaho", "Montana", "Nevada", 
+                                                  "New Mexico", "Utah", "Wyoming",
+                                                  "Alaska", "California", "Hawaii", "Oregon", "Washington") ~ "West",
+                                     TRUE ~ NA_character_
+                                     ))
+```
+
+```{r}
+states %>% head()
+```
+
+## Why PCA?
+
+The goal is to reduce the dimensionality of our data and there are two primary ways of doing this:
+
+- Feature Elimination
+- Feature Extraction
+
+```{r}
+statesPCA <- prcomp(states[,3:27], center = TRUE,scale. = TRUE)
+
+summary(statesPCA)
+
+str(statesPCA)
+```
+
+```{r}
+## download ggbiplot from github if need be using devtools
+# library(devtools)
+# install_github("vqv/ggbiplot")
+library(ggbiplot)
+ggbiplot(statesPCA)
+ggbiplot(statesPCA, labels=states$STATE)
+```
+```{r}
+ggbiplot(statesPCA,ellipse=TRUE,  labels=states$STATE, groups=states$REGION)
+```
+
+```{r}
+ggbiplot(statesPCA,ellipse=TRUE, 
+         circle = TRUE, labels=states$STATE, groups=states$REGION) + theme_minimal() + 
+    theme(legend.position = "bottom")
+
+```
+
+```{r}
+ggbiplot(statesPCA,ellipse=TRUE,  
+         labels=states$STATE, groups=states$REGION,
+         var.axes = FALSE) + theme_minimal() + 
+    theme(legend.position = "bottom")
+
+```
+
