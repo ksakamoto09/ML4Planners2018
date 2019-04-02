@@ -1,0 +1,61 @@
+---
+title: "Final Project"
+author: "Kaz Sakamoto"
+output: html_document
+---
+
+The goal of the final project is to systematically work through an analytics problem using
+MODA's Open Source Analytics framework. Like MODA this class believes in many of the same values
+with analytics and public service. [link](https://moda-nyc.github.io/Project-Library//analytics/)
+
+- **Transparency and Accountability:** We believe an open source model is more effective than a specific regulatory regime in enforcing the ethical development of algorithms in the public sector.
+- **Enabling Replication:** Publishing source code allows agency clients to follow our steps to verify our conclusions. It also allows other agencies or jurisdictions to configure our work for their own context.
+- **Continuous Improvement:** Open-sourcing analytics projects allows MODA’s data scientists to collaborate directly with analysts in adjacent roles across City government, who can improve on the models MODA develops.
+- **Better Knowledge Management:** The best way to maintain and grow institutional knowledge is by making it discoverable through a Google search. Proactively publishing enforces both quality checks and makes information discoverable across the City.
+
+
+As far as the expectation for the final project, this class will focus on the 
+four sections of the process map which are:
+
+1. Scoping
+1. Data
+1. Analysis
+1. Handoff
+
+Each section will be an assignment that will be completed and turned in before the final
+handoff. 
+
+## Scoping
+
+![](../Images/scoping.png)
+
+Select a [NYC agency](https://www1.nyc.gov/nyc-resources/agencies.page) as a client and
+do some research on what kind of problems they might need solving. Select three problems
+that the agency faces and do some research into what has been done to mitigate these
+issues. For each problem, surmise if these problems are a machine learning solvable
+task, also is this really going to solve the problem. You must have at least one
+ML solveable problem.
+
+## Data
+
+![](../Images/data.png)
+
+Without data a project cannot take off. What kind of data is required to solve the issue?
+Gather the data sources and describe the data and create a [data model](https://en.wikipedia.org/wiki/Data_model) 
+(both conceptual and logical). A diagram should be attached. 
+
+## Analysis
+
+![](../Images/analysis.png)
+
+This is where the skills you learned in class will be primarily used. First identify what kind of tools and the approach
+that needs to be taken. You will then model and validate your results, by using different methods, 
+add different types of data to get a better understanding of the problem. This should all
+be kept either in an .r file or .rmarkdown. 
+
+## Handoff
+
+![](../Images/handoff.png)
+
+Finally all of the work needs to be packaged up as a report with documentation and 
+assets. 
