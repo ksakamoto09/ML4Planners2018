@@ -190,7 +190,7 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * **Unsupervised Learning Week**
 * Kmeans
 * Heirarchical Clustering
-* Assignment 9 - Scoping
+* Assignment 9 - Scoping + Data (due in two weeks)
 * Discussion on Final Competition
 
 #### Week 12 - 4/9/2019
@@ -205,7 +205,6 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * **Feature Week**
 * Elasctic Net
 * PCA
-* Assignment 11 - Data
 
 #### Week 14 - 4/23/2019
 * **Model Evaluation Week**

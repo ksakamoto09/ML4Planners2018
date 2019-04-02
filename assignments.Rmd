@@ -23,6 +23,6 @@ Please upload to [Canvas](https://cas.columbia.edu/cas/login?service=https%3A%2F
 
 ## [Assignment 8](assignments/assignment8.html)
 
-## [Assignment 9](assignments/FinalProject.html) Final Project: Scoping
+## [Assignment 9](assignments/FinalProject.html) Final Project: Scoping + Data
 
 ## [Final Project](assignments/FinalProject.html)

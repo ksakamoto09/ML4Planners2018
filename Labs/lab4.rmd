@@ -1,97 +1,202 @@
 ---
-title: "Lab 4"
+title: "Unsupervised Learning"
 author: "Kaz Sakamoto"
-date: "4/1/2018"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
 ```
+# Unsupervised Learning
+
+"Contrary to supervised learning, if you give only the set of input data which is neither labeled nor classified, and has no corresponding outputs to the model, it shall find interesting patterns and relationships between the inputs which is called unsupervised learning.Based on the patterns, similarities or even differences, the sorting happens. Since the model is given unlabeled data, there is no error or supervisory signal to evaluate the potential solution." [link](https://medium.com/@aakankshaws/supervised-vs-unsupervised-learning-ba6e62cda4bf)
+
+# Clustering
+
+Clustering is a common unspervised learning tool. Coming from GIS clustering should be intuitive
+but instead of just nearness in physical distance, we can use other types of measures to 
+distinguish similar objets. 
+
+Clustering is useful in exploratory data analysis if you don't know too much about your data.
+
+## Types
+
+- **Hard Clustering:** is when each data point can only belong to one cluster.
+- **Soft Clustering:** is when each data point can belong to more tahn one cluster, usually
+based on some probability.
+
+## Methods
+
+- **Connectivity** -based clustering: the main idea behind this clustering is that data points that are closer in the data space are more related (similar) than to data points farther away.
+- **Centroid** -based clustering: in this type of clustering, clusters are represented by a central vector or a centroid. This centroid might not necessarily be a member of the dataset. 
+- **Distribution** -based clustering: this clustering is very closely related to statistics: distributional modeling. Clustering is based on the notion of how probable is it for a data point to belong to a certain distribution, such as the Gaussian distribution, for example. 
+- **Density** -based methods search the data space for areas of varied density of data points. Clusters are defined as areas of higher density within the data space compared to other regions.
+
+## Algorithm Selection
+
+"Clustering is in the eye of the beholder!"
+
+Clustering is an subjective task and there can be more than one correct clustering algorithm. Every algorithm follows a different set of rules for defining the 'similarity' among data points. The most appropriate clustering algorithm for a particular problem often needs to be chosen experimentally, unless there is a mathematical reason to prefer one clustering algorithm over another. An algorithm might work well on a particular dataset but fail for a different kind of dataset. [DataCamp](https://www.datacamp.com/community/tutorials/k-means-clustering-r)
+
 
 # K-means clustering
 
 Let's load some packages that we will be using
 ```{r}
-library(GGally)
 library(dplyr)
 library(ggplot2)
+library(readr)
+library(lubridate)
+library(GGally)
+
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
 ```
 
-we will load our data that we need which comes from the ACS. We have taken four
-demographic data points.
-
-- Average Household Size
-- Median Household Income
-- Median Gross Rent
-- Average Commute time in min
+we will load our data that we need which comes from the Uber. The data will
+include lat, lon, date/time, and base.
 
 ```{r}
-readr::read_csv("../Data/ACS2016Counties.csv") %>% 
-    select(Geo_COUNTY, starts_with("SE")) %>% 
-    filter(complete.cases(.))-> counties 
+# Load the .csv files
+apr14 <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-apr14.csv")
+may14 <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-may14.csv")
+jun14 <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-jun14.csv")
+jul14 <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-jul14.csv")
+aug14 <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-aug14.csv")
+sep14 <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-sep14.csv")
 
-names(counties) <- c("countyID", "AvgHHSize", 
-                     "MedHHIncome", "MedGrossRent", "AvgCommute")
+uber14 <- bind_rows(apr14,may14,jun14,jul14,aug14,sep14)
+glimpse(uber14)
 ```
 
-let's first normalize our data so it's easier to compare.
+We're going to clean up the date and time.
+
 ```{r}
-df <- scale(counties[-1]) %>% as.data.frame()
+uber14 <- uber14 %>% mutate(`Date/Time` = mdy_hms(`Date/Time`)) %>% 
+    rename(DT = `Date/Time`) %>% 
+    mutate(year = year(DT),
+           month = month(DT),
+           day = day(DT),
+           weekday = wday(DT),
+           hour = hour(DT),
+           minute = minute(DT),
+           second = second(DT))
 ```
+
+The goal of k-means clutstering is to minimizing the total intra-cluster variation also 
+known as the within-cluster variation. Basically we want to sum the squared distances in this case
+the Euclidean distnaces between items and the corresponding centroids being created. 
+
+$$W(C_{k}) = ∑_{x_{i}∈C_{k}}(x_{i}-μ_{k})^2$$
+$x_i$ is a data point $i$ belonging to cluster $C_k$. $\mu_k$ is the mean value of the points assigned to the cluster $C_k$.
+
+![](http://practicalcryptography.com/media/miscellaneous/files/k_mean_send.gif)
+
+k means is subject to random starting conditions so starting with 25 random centroids and 
+depending on where it gets placed you may get different results.
+
+```{r}
+samp14 <- uber14 %>%
+    sample_frac(size = 0.01)
+
+set.seed(20)
+clusters <- kmeans(samp14 %>% select(Lat, Lon), centers = 5, nstart = 20)
+
+samp14 <- samp14 %>% mutate(cluster = clusters$cluster)
+```
+
+Here we will plot out what our clusters look like.
+
+```{r}
+samp14 %>% 
+ggplot(aes(Lat, Lon, color = as.factor(cluster))) + 
+    geom_point(alpha = 0.3, shape = 1, size = .5) +
+    theme_minimal()
+
+samp14 %>% 
+ggplot(aes(Lat, Lon, color = as.factor(cluster))) + 
+    geom_point(alpha = 0.3, shape = 1, size = .5) + 
+    facet_wrap(~cluster) + theme_minimal()
+```
+
+Just plotting them might not be enough. 
+We will use a mapping library to actually make maps using the coordinates.
+```{r}
+library(tmap)
+library(sf)
+nybb <- sf::read_sf(file.path(dataDir, "gis/nybb"))
+uberPoint <- sf::st_as_sf(samp14, coords = c("Lon", "Lat"))
+tmap_mode("plot")
+tm_shape(shp = nybb) + tm_polygons(col = "white") + 
+    tm_shape(uberPoint) + tm_symbols(col = "cluster", scale = 0.5, size = 0.5) + 
+    tm_facets(by = "cluster",free.coords = FALSE) + tm_legend(show = FALSE)
+    
+```
+
+Here is an interactive example. 
+```{r}
+library(leaflet)
+nybbreProj <- sf::st_transform(nybb,'+proj=longlat +datum=WGS84')
+
+pal <- colorFactor(c("navy", "red", "green", "orange", "purple","yellow"), domain = 1:5)
+m <- samp14 %>% 
+leaflet() %>% setView(lng = -73.9976343, lat = 40.7411095, zoom = 11)
+m %>% addProviderTiles(providers$CartoDB.Positron) %>% 
+    addPolygons(data = nybbreProj, color = "gray", stroke = .5) %>% 
+    addCircleMarkers(lng = ~Lon, lat = ~Lat, color = ~pal(cluster), 
+                     radius = 2, stroke = FALSE, fillOpacity = 0.2)
+```
+
+### Calculating Ks
 
 Here is a calculation to create a chart of the total within-groups sums of squares against the number of clusters in a K-means solution.
+
 The output will start to look like a curve, and where the bend happens should be where we choose the number of K.
 ```{r}
 kMax <- 13 # Maximal number of clusters
-wss <- sapply(1:kMax, 
-        function(k){kmeans(df, k)$tot.withinss})
+out <- purrr::map_dbl(1:kMax, 
+               function(k){kmeans(samp14 %>% select(Lat, Lon), 
+                                  centers = k)$tot.withinss})
 
-data.frame(wss, clusters = 1:kMax) %>% 
-    ggplot(aes(x = clusters, y = wss)) + geom_point() +
+data.frame(out, clusters = 1:kMax) %>% 
+    ggplot(aes(x = clusters, y = out)) + geom_point() +
     geom_line() + xlab("Number of clusters K") +
        ylab("Total within-clusters sum of squares") + theme_minimal()
 
 ```
 
-Here is another method to find the best K for clusters.
-
+Or using the useful package
 ```{r}
-library(NbClust)
-set.seed(222)
-nc <- NbClust(df %>% sample_frac(.35), min.nc=2, max.nc=10, method="kmeans")
+uberBest <- useful::FitKMeans(samp14 %>% select(Lat, Lon), max.clusters = 20, nstart = 20,
+                seed = 1234)
 ```
 
-let's check to see which k performed the best
-
 ```{r}
-table(nc$Best.n[1,])
+useful::PlotHartigan(uberBest)
 ```
 
-if we plot it out we can see that 2 and 3 are being recommended 
+
+Now lets run kmeans with 6 clusters
 
 ```{r}
-barplot(table(nc$Best.n[1,]),
-          xlab="Numer of Clusters", ylab="Number of Criteria",
-          main="Number of Clusters Chosen by 26 Criteria")
+kmeans(samp14 %>% select(Lat, Lon), centers = 6) -> k6
 ```
 
-running kmeans with 3 clusters
-
-```{r}
-kmeans(df, 3) -> k3
-```
 checking the size and centers of the clusters
 
 ```{r}
-k3$size
-k3$centers
+k6$size
+k6$centers
 ```
 
 adding back labels to our dataset
 
 ```{r}
-df$cluster <- as.factor(k3$cluster)
+samp14 <- samp14 %>% 
+    mutate(cluster = as.factor(k6$cluster))
+
 ```
 
 Let's plot our results
@@ -103,54 +208,66 @@ ggally_mysmooth <- function(data, mapping, ...){
         geom_density(fill=NA)
 }
 
-ggpairs(df, 1:4, mapping = ggplot2::aes(color = cluster),
+ggpairs(samp14 %>% select(cluster, Lat, Lon), mapping = ggplot2::aes(color = cluster),
         lower = list(continuous = wrap("points", shape = 1, alpha = .25)),
         diag = list(continuous = ggally_mysmooth))
 
 ```
 
+```{r}
+samp14 %>% ungroup() %>%
+    group_by(cluster, month) %>%
+    count() %>%
+    ggplot(aes(x = month, y = n, color = factor(cluster))) +
+    geom_line() +
+    theme_minimal()
+```
+
+
 # K Nearest Neighbor
 
 Let's first read in the data
 ```{r}
- MN <- readr::read_csv("../Data/PLUTO/MN_pluto.csv")
+ MN <- readr::read_csv(file.path(dataDir,"MN_Pluto.csv"))
 ```
 
 Let's take a few columns and Multi-Family Elevator buildings and Industrial/Manufacturing Lots
 ```{r}
-MN %>% select(NumFloors, LotArea, AssessTot, LandUse, XCoord, YCoord) %>% 
-    filter(LandUse %in% c(5, 9) & complete.cases(.)) %>% 
-    mutate(LandUse = if_else(LandUse == 5, "Comm", "Park")) -> MN
+MNSelect <- MN %>% select(numfloors, lotarea, assesstot, landuse, xcoord, ycoord) %>% 
+    filter(landuse %in% c("05", "09") & complete.cases(.)) %>% 
+    mutate(landuse = if_else(landuse == "05", "Comm", "Park"))
 
 ```
 
 Now let's scale our variables
 
 ```{r}
-MN %>% mutate(NumFloors = scale(NumFloors),
-              LotArea = scale(LotArea),
-              AssessTot = scale(AssessTot),
-              LandUse = as.character(LandUse)) -> MN
+MNScaled <- MNSelect %>% mutate(numfloors = scale(numfloors),
+              lotarea = scale(lotarea),
+              assesstot = scale(assesstot),
+              landuse = as.character(landuse))
 ```
 
 ```{r}
-table(MN$LandUse)
+table(MNScaled$landuse)
 ```
 
 There is still 5,643 rows which might be too large for our analysis. For ease let's tak a sample fraction
 ```{r}
-MN %>% group_by(LandUse) %>% sample_frac(size = 0.5) %>% ungroup() -> MNSamp
+MNSamp <- MNScaled %>% group_by(landuse) %>% sample_frac(size = 0.5) %>% ungroup() 
 ```
 
 Let's visualize what this looks like so far first with as AssessTot and NumFloors
 
 ```{r}
-ggplot(MNSamp, aes(x = AssessTot, y = NumFloors, color = LandUse)) + geom_point()
+ggplot(MNSamp, aes(x = assesstot, y = numfloors, color = landuse)) + 
+    geom_point() + theme_minimal()
 ```
 
 Let's now take a look at plotting and XCoord and YCoord
 ```{r}
-ggplot(MNSamp, aes(x = XCoord, y = YCoord, color = LandUse)) + geom_point()
+ggplot(MNSamp, aes(x = xcoord, y = ycoord, color = landuse)) + 
+    geom_point() + theme_minimal()
 ```
 
 Now we are going to make the train test split of 70% train, 30% test.
@@ -163,71 +280,135 @@ smp <- sample(2, nrow(MNSamp), replace=TRUE, prob=c(0.7, 0.3))
 We will now take  this sample vector and filter through our data
 ```{r}
 trainDF <- MNSamp %>% filter(smp == 1) %>% 
-    select(AssessTot, NumFloors)
+    select(assesstot, numfloors)
 testDF <-  MNSamp %>% filter(smp == 2) %>% 
-    select(AssessTot, NumFloors)
+    select(assesstot, numfloors)
 
 trainLabel <- MNSamp %>% filter(smp == 1) %>% 
-    select(LandUse)
+    select(landuse)
 testLabel <- MNSamp %>% filter(smp == 2) %>% 
-    select(LandUse)
+    select(landuse)
 ```
 
 ```{r}
 library(class)
-dfPred <- knn(trainDF, testDF, trainLabel$LandUse, k = 9)
+dfPred <- knn(trainDF, testDF, trainLabel$landuse, k = 9)
 ```
 
 ```{r}
 library(gmodels)
-CrossTable(testLabel$LandUse,dfPred,prop.chisq = F)
+CrossTable(testLabel$landuse,dfPred,prop.chisq = F)
 ```
 
 ```{r}
 testDF %>% bind_cols(testLabel) %>% 
     mutate(pred = dfPred) %>% 
-    mutate(test = if_else(pred == LandUse, "Correct", "Wrong")) -> output
+    mutate(test = if_else(pred == landuse, "Correct", "Wrong")) -> output
 ```
 
-```{r, cache = FALSE}
-ggplot(output, aes(x = AssessTot, y = NumFloors, color = test)) + geom_point() +
-    facet_wrap( ~ LandUse)
+```{r}
+output %>% ggplot(aes(x = assesstot, y = numfloors, color = test)) + geom_point() +
+    facet_wrap( ~ landuse) + theme_minimal()
 ```
 
 Let's try with x and y coordinates
 
 ```{r}
 trainCoordDF <- MNSamp %>% filter(smp == 1) %>% 
-    select(XCoord, YCoord)
+    select(xcoord, ycoord)
 testCoordDF <-  MNSamp %>% filter(smp == 2) %>% 
-    select(XCoord, YCoord)
+    select(xcoord, ycoord)
 
 trainLabel <- MNSamp %>% filter(smp == 1) %>% 
-    select(LandUse)
+    select(landuse)
 testLabel <- MNSamp %>% filter(smp == 2) %>% 
-    select(LandUse)
+    select(landuse)
 ```
 
 ```{r}
 library(class)
-dfCoordPred <- knn(trainCoordDF, testCoordDF, trainLabel$LandUse, k = 9)
+dfCoordPred <- knn(trainCoordDF, testCoordDF, trainLabel$landuse, k = 9)
 ```
 
 ```{r}
 library(gmodels)
-CrossTable(testLabel$LandUse,dfCoordPred,prop.chisq = F)
+CrossTable(testLabel$landuse,dfCoordPred,prop.chisq = F)
 ```
 
 
 ```{r}
 testCoordDF %>% bind_cols(testLabel) %>% 
     mutate(pred = dfCoordPred) %>% 
-    mutate(test = if_else(pred == LandUse, "Correct", "Wrong")) -> output
+    mutate(test = if_else(pred == landuse, "Correct", "Wrong")) -> output
 ```
 
-```{r, cache = FALSE}
-ggplot(output, aes(x = XCoord, y = YCoord, color = test)) + geom_point() +
-    facet_wrap( ~ LandUse)
+```{r}
+output %>% ggplot(aes(x = xcoord, y = ycoord, color = test)) + geom_point() +
+    facet_wrap( ~ landuse) + theme_minimal()
 ```
 
+## Hierarchical Clustering
 
+<iframe width="315" height="560" src="https://council.nyc.gov/map-widget/" frameborder="0" allowfullscreen></iframe>
+
+```{r}
+MNcouncilScaled <- MN %>% 
+    filter(complete.cases(council,lotarea,comarea,resarea,garagearea,builtfar,facilfar,yearbuilt)) %>%   
+    group_by(council) %>% 
+    summarise(comarea = sum(comarea),
+              resarea = sum(resarea),
+              garagearea = sum(garagearea),
+              builtfar = sum(builtfar),
+              facilfar = sum(facilfar),
+              yearbuilt = median(yearbuilt)) %>% 
+    ungroup() %>% 
+    mutate(council = as.character(council)) %>% 
+    mutate_if(is.numeric, scale)
+
+```
+
+```{r}
+dist_mat <- dist(MNcouncilScaled %>% select(-council), method = 'euclidean')
+```
+
+```{r}
+hclust_avg <- hclust(dist_mat, method = 'average')
+plot(hclust_avg)
+```
+
+```{r}
+cut_avg <- cutree(hclust_avg, k = 5)
+```
+
+```{r}
+plot(hclust_avg)
+rect.hclust(hclust_avg , k = 5, border = 1:5)
+```
+
+```{r}
+library(dendextend)
+avg_dend_obj <- as.dendrogram(hclust_avg)
+avg_col_dend <- color_branches(avg_dend_obj,k = 5)
+plot(avg_col_dend)
+```
+```{r}
+MNcouncilScaled <- MNcouncilScaled %>% mutate(cluster = cut_avg)
+count(MNcouncilScaled, cluster)
+```
+
+```{r}
+MNcouncilScaled %>% 
+    ggplot(aes(x=comarea, y = resarea, color = factor(cluster))) + 
+    geom_point() + 
+    theme_minimal()
+
+```
+
+```{r}
+MNcouncilScaled %>% tidyr::gather("varY", "val", -c(council,resarea, cluster)) %>% 
+    ggplot(aes(x=val, y = resarea, color = factor(cluster))) + 
+    geom_point() + 
+    geom_text(aes(label= council),  check_overlap = TRUE, nudge_y = .1, nudge_x = .1) + 
+    facet_wrap(~varY) +
+    theme_minimal()
+```

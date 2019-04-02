@@ -34,7 +34,7 @@ do some research on what kind of problems they might need solving. Select three 
 that the agency faces and do some research into what has been done to mitigate these
 issues. For each problem, surmise if these problems are a machine learning solvable
 task, also is this really going to solve the problem. You must have at least one
-ML solveable problem.
+ML solvable problem.
 
 ## Data
 
@@ -59,3 +59,10 @@ be kept either in an .r file or .rmarkdown.
 
 Finally all of the work needs to be packaged up as a report with documentation and 
 assets. 
+
+## Examples
+
+- **NYPD** Predicting the location of future parking tickets.
+- **DOHMH** Classifying restaurant grades by new groupings on violations.
+- **DSNY** Forecast on-street trash pickups. 
+- **MODA** Cooling towers and Legionnaires Disease [link](https://moda-nyc.github.io/Project-Library/projects/cooling-towers/)
