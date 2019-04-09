@@ -27,6 +27,7 @@ library(ggplot2)
 library(readr)
 library(sf)
 library(raster)
+library(tmap)
 
 ## here we are going to find the root_file 
 root <- rprojroot::find_rstudio_root_file()
@@ -58,10 +59,385 @@ par()
 plot(world)
 ```
 
-## Coordinate Reference Systems
+## Coordinate Reference 
+
+The coordinate reference system is crucial since it ties the vector and raster data types to a location on the earth (or other bodies). To get this reference system, they rely on geodetic datums which are reference points located all around the earth. The most common datums we use ar the WGS 84 and NAD 83. Because the earth is not completely smooth nor sphereical, the common datums that we use approximate an ellipsoid, which is due to the fact the earth's rotation and effects of gravity flatten the poles while the equator slightly bulges. Many localities have specific datusm or elliposoid models to use and in the US the NAD 83 is very common. This data will me located in the `ellps` parameter of the `PROJ CRS` library. 
+
+Here are the important features when modeling the earth.
+- Actual Earth's surface:  has mountains and oceans.
+- Geoid: the shape that the ocean surface would take under the influence of the gravity and rotation of Earth alone, if other influences such as winds and tides were absent.
+- ellipsoid: The approximation of the Earth's surface into a more regular shape. 
+![](https://www.aalto.fi/sites/g/files/flghsv161/files/styles/medium/public/2018-06/surfacecomparison.jpg?itok=Zq-ObTTp)
+
+Also when you are working with multiple files with different CRSs you will have to transform them to a common CRS or they will not align. You can think of this as trying to do any calculation with data with different units. 
 
 ### Geographic Coordinate Systems
 
+Geographic coordinate systems use angular measurements to locate a place on the surface of the earth. These measures are called Latitude and Longitude, they are a measure from the center of earth to the location on the surface. Longitude is the E-W distance from the Prime Meridian plane, while latitude is the N-S distance from the equatorial plane. 
+
+One important aspect to highlight is that these are *angular* measurements. This means that it is not a distance like meters or miles and there fore a distance calculation is not straight forward since we are still talk about a curved surface of the earth and its location.
+
 ### Projected Coordinate Systems
 
+Projected coordinate systems are based on Cartesian coordinates if you recall making graphs in math classes with x and y locaitons. Unlike the angular measurements of the geographic coordinate systems, these are *linear* measusrements like meters and feet. Projected coordinate systems are based on geographic coordinate systems but take the 3D object of the earth and project it into 2D. 
+
+This projection will always cause some sort of distortion when you go from a 3D object to a 2D. The classic example is trying to flatten a orange peel, you can't do that with out tearing the skin, flattening and stretching it out. 
+
+![](https://learngis.org/Images/smashed_orange01.jpg)
+
+There are certain properties that we want to accurately capture when we are working with mapping, these are area, distance, direction, and shape. A projected coordinate can only preserve one or two properties, because of this the map maker must think about the trade-offs being made when projecting the earth on to a 2D map. This is apparent when you think about the debate betwen the "Euro-centric" Mercator projection that we have all become accostumed to compared with the Peters Projection that accurately displays areas. 
+![](https://external-preview.redd.it/6Vagn3BQ1Mwh4kN2-uldK7X8UM9_QAvYJCN2CCvoLWs.png?auto=webp&s=ca818d0e1049c02e6c0e82bf9223250822f30565)
+
+The last thing to cover is the three main groups of projections types which are conic, cylindrical and planar or azimuths. As you can probably infer by their names these are the shapes that are being used to capture the projection, if you think of earth with a light bulb in the middle and place these objects on the surface of the earth, you can see that the earths surface would be projected on the shape. Distortions are minimized where the projectino shape is tangent with the earths surface and greater the further you get from it. These shapes either can have a single line of tangency or two lines of tangency also.
+
+![](https://www.acsu.buffalo.edu/~dbertuca/maps/cat/cylindrical_final.gif)
+
+## Working with CRSs
+
+You can work with the CRS of geographic data with `epsg` codes or `proj4string` defintions. `epsg` codes are shorter and might be easier to remember while the `proj4string` will allow you more flexibility when dictating projections type, datum, and ellpsoid parameters. `epsg` only referes to one specific CRS which does not allow you to change different parameters. 
+
+
+```{r}
+
+nybb <- read_sf(file.path(dataDir, "gis/nybb"))
+st_crs(nybb)
+```
+
+```{r}
+centralPark = data.frame(lon = -73.9691305, lat = 40.7764627) %>% 
+  st_as_sf(coords = c("lon", "lat"))
+st_is_longlat(centralPark)
+```
+
+```{r}
+centralPark_geo = st_set_crs(centralPark, 4326)
+st_is_longlat(centralPark_geo)
+```
+
+Here you can see that only the second dataset created a warning. We are trying to run a distance based
+function, creating a buffer around a data with latitude and longitude. 
+```{r}
+centralPark_buff_no_crs = st_buffer(centralPark, dist = 1)
+cebtralPark_buff = st_buffer(centralPark_geo, dist = 1)
+```
+
+```{r}
+tm_shape(centralPark) + tm_symbols() + 
+    tm_shape(nybb) + tm_polygons()
+```
+
+
 ### Areal Exercises
+
+- [Equal Area](https://epsg.io/102008)
+- [Equal Distance](http://epsg.io/102005)
+- [Small Shapes Maintained](http://epsg.io/102004)
+- [State Plane](https://epsg.io/2263)
+
+```{r}
+Area_Albers <- 102008
+Area_Equidistant <- 102005
+Area_Lambert <- 102004
+Area_NYStatePlane <- 2263
+projections <- setNames(c(Area_Albers, Area_Lambert,Area_Equidistant, Area_NYStatePlane),
+         c("Area_Albers", "Area_Lambert","Area_Equidistant", "Area_NYStatePlane")) %>% 
+    as.list()
+```
+
+1 square meter  = 10.7639 square feet.
+
+```{r}
+massReproject <- function(shape, projection){
+    # we have to reporject and recalulate the area
+    st_transform(shape, projection) %>% st_area()
+}
+
+areaCalc <- purrr::map_df(projections, ~massReproject(nybb, .x)) %>% 
+    mutate_at(vars(Area_Albers, Area_Equidistant, Area_Lambert), function(x) x*10.7639) %>% 
+    mutate(BoroName = nybb$BoroName) %>% 
+    mutate(Albers_Diff = Area_Albers-Area_Albers,
+           Lambert_Diff = Area_Albers- Area_Lambert,
+           Equidistant_Diff = Area_Albers-Area_Equidistant,
+           NYStatePlane_Diff = Area_Albers-Area_NYStatePlane)
+
+areaCalc %>% dplyr::select(5:9) %>% 
+    tidyr::gather(projection, difference, -BoroName) %>% 
+    ggplot(aes(projection, difference, fill = difference)) +
+    geom_col() + 
+    coord_flip()+ 
+    facet_wrap(~BoroName, scales = "free") + 
+    theme_minimal() 
+```
+
+## Attribute data operations
+
+the `sf` library is great because it extends the data.frame and adds geographic features to it. Much like the tidy data
+paradigm, each row is still an observations and each column is a feature. The main difference between a normal data.frame 
+and an sf object is that there is another column `geometry` baked in which can contain a multitude of geographic types
+like points, lines and polygons. 
+
+You will see that a lot of methods that you are used to working with in data.frames will apply to sf objects. Like `rbind`,
+`$<-`, and `cbind`.
+```{r}
+methods(class = "sf")
+```
+
+If we ever wanted to go back to a normal data.frame object it's very simple
+```{r}
+st_drop_geometry(nybb) %>% class()
+```
+
+### Subsetting
+
+```{r}
+nybb[1,]
+nybb[,c(2,4)]
+```
+```{r}
+nybb %>% slice(1:2)
+nybb %>% dplyr::select(2)
+```
+
+
+```{r}
+nybb %>% filter(Shape_Area >= 1937566944)
+```
+
+
+## Joining data
+
+```{r}
+library(rvest)
+demographics <- read_html("https://en.wikipedia.org/wiki/Demographics_of_New_York_City") %>% 
+    html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>% 
+    html_table(header = FALSE) %>% "[["(1) %>% slice(4:8) %>% 
+    mutate(X1 = c("Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")) %>% 
+    dplyr::select(c(1,3:5))
+
+names(demographics) <- c("BoroName", "population",
+                         "GDP", "GDPperCapita")
+```
+
+```{r}
+nybb_demo <- nybb %>% left_join(demographics) %>% 
+    mutate_at(vars(population, GDP, GDPperCapita), function(x) stringr::str_remove_all(x, ",") %>% as.numeric())
+
+plot(nybb_demo["population"])
+
+```
+
+## Spatial Operations
+
+### intersects
+
+```{r}
+jul14 <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-jul14.csv")
+
+uberJuly <- st_as_sf(jul14, coords = c("Lon", "Lat"),crs = 4326)
+set.seed(1234)
+uberJuly <- st_transform(uberJuly, 2263) %>% sample_frac(0.2)
+set.seed(1234)
+uberSamp <- uberJuly %>% sample_n(100)
+```
+```{r}
+tm_shape(nybb) + tm_polygons()+
+    tm_shape(uberSamp) + tm_symbols(size = .2, col = "white") 
+```
+```{r}
+st_crs(nybb) <- 2263
+st_intersects(uberSamp, nybb)
+st_intersects(uberSamp, nybb, sparse = FALSE)
+```
+
+### disjoint
+```{r}
+st_disjoint(uberSamp, nybb)
+```
+
+### within
+
+```{r}
+st_within(uberSamp, nybb)
+```
+
+### within distance
+
+```{r}
+sel = st_is_within_distance(uberSamp, nybb, dist = 100)
+lengths(sel) > 0
+```
+
+### Selecting with Intersection
+`sgbp`  is a sparse geometry binary predicate
+```{r}
+sel_nycUber = st_intersects(x = uberJuly, y = nybb)
+class(sel_nycUber)
+#> [1] "sgbp"
+sel_logical = lengths(sel_nycUber) > 0
+nycUber = uberJuly[sel_logical, ]
+
+set.seed(1234)
+nycUberSamp <- nycUber %>% sample_n(100)
+
+tm_shape(nybb) + tm_polygons()+
+    tm_shape(nycUberSamp) + tm_symbols(size = .2, col = "white") 
+```
+
+### Spatial Joining
+```{r}
+st_crs(nybb_demo) <- 2263
+uberJoin <- st_join(nycUber, nybb_demo)
+```
+
+```{r}
+tm_shape(nybb) + tm_polygons(col = "white")+
+    tm_shape(uberJoin) + tm_symbols(size = .2, col = "BoroName", 
+                                    alpha = 0.4) 
+```
+
+### Spatial Data aggregation
+```{r}
+uberJuly %>% 
+    mutate(x = rnorm(n = 100 )) %>% aggregate(by = nybb, FUN = mean)
+```
+
+### Distances
+
+When we were looking at topological realationships, the results were only binary, either they
+intersect or does not, etc...
+
+```{r}
+nybb_centroid = st_centroid(nybb)
+
+st_distance(uberJuly[1,], nybb_centroid)
+```
+
+```{r}
+st_distance(uberJuly[1:10,], nybb_centroid)
+
+```
+
+```{r}
+plot(st_geometry(nybb_centroid))
+plot(st_geometry(uberJuly)[1:10], add = TRUE, col = "red")
+```
+
+## Geometric Operations
+
+### Simplification
+
+```{r}
+nyc_simp <- st_simplify(nybb, dTolerance = 500)
+plot(nyc_simp["BoroName"])
+plot(nybb["BoroName"])
+```
+
+```{r}
+object.size(nybb)
+object.size(nyc_simp)
+```
+
+```{r}
+nyc_ms = rmapshaper::ms_simplify(nybb, keep = 0.50,
+                                          keep_shapes = TRUE)
+```
+
+### Centroids
+```{r}
+nybb_centroid = st_centroid(nybb)
+
+tm_shape(nybb) + tm_polygons()+
+    tm_shape(nybb_centroid) + tm_symbols() 
+```
+
+```{r}
+subway <- read_sf(file.path(dataDir, "gis", "SubwayLines")) %>% 
+    st_transform(2263)
+tm_shape(nybb) + tm_polygons(col ="white")+
+tm_shape(subway) + tm_lines()
+```
+
+```{r}
+
+subwayRT <- subway %>% pull(rt_symbol) %>% unique()
+
+splitSubway <- subway %>% tidyr::nest(-rt_symbol) %>% 
+    dplyr::mutate(combine = purrr::map(data, st_combine))
+
+subwayLines <- splitSubway$combine %>% purrr::reduce(c) %>%
+    st_sf() %>% mutate(lines = subwayRT)
+
+subwayCentroids <- sf::st_centroid(subwayLines)
+subwaysurface <- st_point_on_surface(subwayLines)
+```
+
+```{r}
+tm_shape(nybb %>% filter(BoroName != "Staten Island")) + tm_polygons(col = "white")+
+tm_shape(subwayLines) + tm_lines(col = "lines") +
+    tm_shape(subwayCentroids) + tm_symbols(col = "lines", size =0.5, shape = 3)+
+    tm_shape(subwaysurface) + tm_symbols(col = "lines", size = 0.5, shape = 5)
+```
+
+### Buffers
+
+```{r}
+subwayQuarterBuffer = st_buffer(subwayLines, dist = 1320)
+subwayQuarterBuffer
+```
+
+```{r}
+tm_shape(nybb %>% filter(BoroName != "Staten Island")) + tm_polygons(col = "white") +
+tm_shape(subwayQuarterBuffer) + tm_polygons(col = "lines", alpha = 0.2) 
+```
+
+### Clipping
+
+![](https://geocompr.robinlovelace.net/figures/venn-clip-1.png)
+
+```{r}
+sel_subwayUber = st_intersects(x = uberJuly, y = subwayQuarterBuffer)
+sel_subwayUber = lengths(sel_subwayUber) > 0
+subwayUber = uberJuly[sel_subwayUber, ]
+
+tm_shape(nybb) + tm_polygons()+
+    tm_shape(subwayUber) + tm_symbols(size = .2, col = "white") 
+```
+
+Inverse choice
+```{r}
+sel_subwayUber = st_intersects(x = uberJuly, y = subwayQuarterBuffer)
+sel_subwayUber = lengths(sel_subwayUber) < 1
+subwayUber = uberJuly[sel_subwayUber, ]
+
+tm_shape(nybb) + tm_polygons()+
+    tm_shape(subwayUber) + tm_symbols(size = .2, col = "white") 
+```
+
+
+
+### Rasterize
+
+
+let's rasterize the uber data
+```{r}
+uberSP <- as(nycUber %>% dplyr::select(-`Date/Time`,-Base), "Spatial")
+uberSP = spTransform(uberSP, CRS("+init=epsg:2263"))
+rast <- raster(crs =  CRS("+init=epsg:2263"))
+
+extent(rast) <- extent(uberSP)
+ncol(rast) <- 50
+nrow(rast) <- 50
+
+rast2 <- rasterize(uberSP, rast, fun=function(x,...)length(x))
+
+plot(rast2)
+```
+
+```{r}
+uberSamp$density <- raster::extract(rast2, uberSamp)
+
+tm_shape(nybb) + tm_polygons(col = "white")+
+    tm_shape(uberSamp) + tm_symbols(size = .2, col = "density") 
+```
+
+
