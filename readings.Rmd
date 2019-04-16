@@ -29,6 +29,7 @@ Here are a list of readings, please check [Canvas](https://courseworks.columbia.
 * [Let’s Just Replace Our Government With Slime Molds (No, Really)](https://www.fastcompany.com/40536092/lets-just-replace-our-government-with-slime-molds-no-really)
 * [AI design for Emergent Behaviour](https://www.gamasutra.com/blogs/MikeDiskett/20130720/196675/AI_design_for_Emergent_Behaviour.php)
 * [Machine Learning for Humans](https://medium.com/machine-learning-for-humans/why-machine-learning-matters-6164faf1df12)
+* [Pig Facial Recognition](https://www.nytimes.com/2019/02/24/business/china-pig-technology-facial-recognition.html)
 
 ## Critical AI
 * [Musk and Zuckerberg are fighting over whether we rule technology—or it rules us](https://qz.com/1242331/musk-and-zuckerberg-are-fighting-over-whether-we-rule-technology-or-it-rules-us/#ampshare=https://qz.com/1242331/musk-and-zuckerberg-are-fighting-over-whether-we-rule-technology-or-it-rules-us/)
@@ -39,7 +40,12 @@ Here are a list of readings, please check [Canvas](https://courseworks.columbia.
 * [Machine Bias](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
 * [New York City Passes Bill to Study Biases in Algorithms Used by the City](https://motherboard.vice.com/en_us/article/xw4xdw/new-york-city-algorithmic-bias-bill-law)
 * [Big Data will be biased, if we let it](https://towardsdatascience.com/bias-in-big-data-for-the-non-tech-90fc53729025)
+* [Math Babe- Columbia Data Science Course](https://mathbabe.org/?s=columbia+data+science+course)
 
+## Smart Cities
+
+* [Move Carefully and Test Things](https://medium.com/city-as-a-service/move-carefully-and-test-things-71f1a83813c)
+* [Basing Laws on Nothing Is Easier Than Using Evidence](https://www.theatlantic.com/ideas/archive/2019/04/policy-makers-need-listen-researchers/587086/)
 
 ## Projects
 
