@@ -1,0 +1,378 @@
+---
+title: "Regularization"
+author: "Kaz Sakamoto"
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE, eval = TRUE)
+```
+
+## Reading in Data
+
+Let's download subway.csv and subway.xlsx from canvas and add it to a folder called Data in your project directory.
+
+### Reading in CSV
+
+CSVs are probably one of the most common data formats that you will work with.
+To read in data we will use the "readr" package.
+
+```{r}
+library(glmnet)
+library(dplyr)
+library(ggplot2)
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
+```
+
+## Regularization
+
+desensitazation 
+
+## Ridge Regression
+
+with two points it could be easy to over fit and introduce high variance in your results. Ridge regression tries to add some bias to drop the variance. So a sightly worse fit can give long term benefits. 
+
+
+### Oridnary Least Squares
+
+In normal linear regression, the sum of the squared residuals are minimized. In the case of the ridge regression, the sum of the squares residuals plus $\lambda*\text{the slope}^2$ where $\lambda$ is determines how severe the penalty term of the slope. The $\lambda$ value can be anything between 0 and infinity, when it is 0 there is no penalty and be the same as a normal regression. The larger the $\lambda$ gets the closer the slope will become to 0. 
+
+## Lambda Value
+
+To get the best $\lambda$ value, you can try a bunch of them and use cross validation to determine which one results with the lowest variance. 
+
+## Penalty Term
+
+If we have more than one predictor, each slope from the variable will be added as a penalty term and multiplied by the $\lambda$. The only thing that usually doesn't get added is the y intercept. 
+
+$$ y_i = \beta_0 1 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \varepsilon_i$$
+
+For instance we could have
+
+House Value = y-intercep + slope1 x sqft + slope2 x #bedrooms
+
+usually we need to have at least enough data points for each parameter. so one more than the number of parameters.
+
+```{r}
+ggplot(data.frame(x=2, y =2), aes(x,y)) + 
+    geom_point() + theme_minimal()
+```
+
+How can you get the right slope if you only have one point?
+
+
+## Lasso Regression
+
+In Lasso, unlike the Ridge, instead of taking the square of the slope as a penalty term, we use the absolute value. The biggest difference is here, because when you increase $\lambda$ the slope will eventually shrink to 0, where in Ridge that was not possible.
+
+Because of this, Lasso can remove or exclude predictors that are not very predictive. This is good when you have lots of useless variables, where Ridge is great when you have lots of useful variables since it will never completely remove any of them. 
+
+
+## Elastic-Net Regression
+
+In the real world you might be using tens of thousands of variables and you may not know how useful all of these variables are. 
+
+The combination of Ridge and Lasso is called Elastic-Net. Which means that both $\lambda$ values will be combined. Say that Ridge had a $\lambda$ of 0, and Lasso had a $\lambda$ greater than 0, then only Lasso will be used and vice versa. 
+
+When both $\lambda$ is greater than 0, this hybrid approach is good at dealing with situationw when they are correlations between parameters. Usually Lasso will only select one of the correlated terms and eliminates the others while Ridge dimishes the parameters of the coorelated variables and leaves them in rather than removing them completely.
+
+For glmnet $\alpha$ will dictate the mixture of the penalty terms and will be between 0 and 1. When $\alpha$ is 0 the Ridge is used, when $\alpha$ is 1 the Lasso is used and when
+it is in between 0 and 1 a mixture will be used. you can see in the equation below where 1-1 would the first $\alpha$ will negate that portion of the equation to be used which is Ridge and the Lasso part of the equation will be used. the $\lambda$ in this case dictates how much of the penalty to be used. So when the $\lambda$ is 0 there will be no penatly included. 
+
+$$\min_{\beta_0,\beta} \frac{1}{N} \sum_{i=1}^{N} w_i l(y_i,\beta_0+\beta^T x_i) + \lambda\left[(1-\alpha)||\beta||_2^2/2 + \alpha ||\beta||_1\right],$$
+Let's first read in some data
+
+```{r}
+library(rvest)
+demographics <- read_html("https://en.wikipedia.org/wiki/Demographics_of_New_York_City") %>% 
+    html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>% 
+    html_table(header = FALSE) %>% "[["(1) %>% 
+    slice(4:8) %>% 
+    dplyr::select(c(1,3:5)) %>%
+    mutate_at(vars(X3, X4, X5), function(x) stringr::str_remove_all(x, ",") %>% as.numeric())
+
+names(demographics) <- c("BoroName", "population",
+                         "GDP", "GDPperCapita")
+
+BoroPres <- read_html("https://en.wikipedia.org/wiki/Borough_president") %>% 
+    html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>% 
+    html_table(header = TRUE) %>% "[["(1) %>% 
+    dplyr::select(Borough, President, Party) %>% 
+    dplyr::mutate(President = ordered(President),
+                  Party = ordered(Party))
+
+nyc <- full_join(demographics, BoroPres, by = c("BoroName" = "Borough"))
+```
+
+glmnet works with matrices so we must convert our tibble object into a matrix.
+
+```{r}
+model.matrix(GDP~population + BoroName  + President + Party, nyc)
+```
+You will notice that for president and Party, the values are not 0 or 1. This is because the inpiuts were
+ordered so they have a some value attached to their factors. 
+
+Also you will notice that one of the values are dropped from our discrete variables. If we want to keep all of them in
+we can use the useful package, but leaving them all in might lead to multicollinearity. 
+```{r}
+library(useful)
+build.x(GDP~population + BoroName  + President + Party, nyc, 
+        contrasts = FALSE)
+
+build.x(GDP~population + BoroName  + President + Party, nyc, 
+        contrasts = c(President = TRUE, Party = FALSE))
+
+```
+
+Let's read in some PLUTO data now that you are comfortable with matrices. 
+
+```{r}
+mnPluto <- readr::read_csv(file.path(dataDir, "MN_Pluto.csv"))
+
+singleZip <- mnPluto %>% count(zipcode) %>% filter(n < 10) %>% pull(zipcode)
+
+mnPluto <- mnPluto %>% mutate(assesstotZ = scale(assesstot)) %>% 
+    filter(assesstotZ < 3 & assesstotZ > -3 ) %>% 
+    mutate(numbldgs =as.numeric(numbldgs),
+          bldgarea = as.numeric(bldgarea)) %>% 
+    dplyr::select(assesstot, zipcode, exempttot, 
+                        numbldgs, lotarea, bldgarea, comarea, resarea,
+                        officearea, retailarea, garagearea, strgearea, numfloors, 
+                        landuse, builtfar, yearbuilt, bbl) %>% 
+    mutate(landuse = as.character(landuse),
+           zipcode = as.character(zipcode))%>% 
+    filter(complete.cases(.)) %>% 
+    filter(!zipcode %in% singleZip)
+    
+set.seed(1234)
+trainMN <- mnPluto %>% group_by(zipcode) %>%  
+    dplyr::sample_frac(size = .75,replace = FALSE) %>% 
+    ungroup()
+testMN <- mnPluto %>% filter(!bbl %in% trainMN$bbl)
+
+```
+
+```{r}
+trainMNX <- build.x(assesstot ~  zipcode  + exempttot  + 
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, trainMN, contrasts = FALSE)
+dim(trainMNX)
+```
+
+```{r}
+trainMNY <- build.y(assesstot ~  zipcode  + exempttot  + 
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, trainMN)
+head(trainMNY)
+
+```
+```{r}
+testMNX <- build.x(assesstot ~  zipcode  + exempttot  + 
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, testMN, contrasts = FALSE)
+dim(testMNX)
+```
+
+```{r}
+testMNY <- build.y(assesstot ~  zipcode  + exempttot +
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, testMN)
+head(testMNY)
+```
+
+```{r}
+set.seed(1234)
+mnPlutoCV1 <- cv.glmnet(x=trainMNX, y=trainMNY, family="gaussian", nfolds = 5)
+```
+
+```{r}
+mnPlutoCV1$lambda.min
+mnPlutoCV1$lambda.1se
+```
+
+```{r}
+plot(mnPlutoCV1)
+```
+
+```{r}
+coef(mnPlutoCV1, s="lambda.1se")
+```
+
+```{r}
+plot(mnPlutoCV1$glmnet.fit, xvar = "lambda")
+abline(v=log(c(mnPlutoCV1$lambda.min, mnPlutoCV1$lambda.1se)), lty=2)
+```
+
+```{r}
+mnPlutoCV1Predicted <- 
+    predict(mnPlutoCV1, s=mnPlutoCV1$lambda.1se, newx=testMNX)
+
+mean((testMNY - mnPlutoCV1Predicted)^2)
+
+```
+
+
+```{r}
+
+linearMod <- lm(assesstot ~  zipcode  + exempttot  + 
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt, data = trainMN)
+lmPredicted <- 
+    predict(linearMod, newx=testMN)
+
+mean((testMNY - lmPredicted)^2)
+```
+
+## Ridge
+```{r}
+set.seed(1234)
+mnPlutoCVRidge <- cv.glmnet(x=trainMNX, y=trainMNY, family="gaussian", nfolds = 5, alpha = 0)
+```
+
+```{r}
+mnPlutoCVRidge$lambda.min
+mnPlutoCVRidge$lambda.1se
+```
+
+```{r}
+coef(mnPlutoCVRidge, s="lambda.1se")
+```
+
+```{r}
+plot(mnPlutoCVRidge)
+```
+
+
+```{r}
+plot(mnPlutoCVRidge$glmnet.fit, xvar = "lambda")
+abline(v=log(c(mnPlutoCVRidge$lambda.min, mnPlutoCVRidge$lambda.1se)), lty=2)
+```
+
+## Lasso 
+
+```{r}
+set.seed(1234)
+mnPlutoCVLasso <- cv.glmnet(x=trainMNX, y=trainMNY, family="gaussian", nfolds = 5, alpha = 1)
+```
+```{r}
+mnPlutoCVLasso$lambda.min
+mnPlutoCVLasso$lambda.1se
+```
+
+```{r}
+coef(mnPlutoCVLasso, s="lambda.1se")
+```
+
+```{r}
+plot(mnPlutoCVLasso)
+```
+
+
+```{r}
+plot(mnPlutoCVLasso$glmnet.fit, xvar = "lambda")
+abline(v=log(c(mnPlutoCVLasso$lambda.min, mnPlutoCVLasso$lambda.1se)), lty=2)
+```
+
+## In Search of Alpha
+
+```{r}
+library(parallel)
+library(doParallel)
+```
+
+```{r}
+set.seed(1234)
+theFolds <- sample(rep(x=1:5, length.out=nrow(trainMNX)))
+alphas <- seq(from = 0.5, to = 1, by = 0.05)
+```
+
+for parallelzation, you have to set the number of cores, registers them and also stop the cluster. 
+```{r}
+set.seed(1234)
+cl <- makeCluster(2)
+registerDoParallel(cl)
+```
+
+```{r}
+plutoDouble <- foreach(i=1:length(alphas),
+                       .errorhandling = "remove",
+                       .inorder = FALSE, 
+                       .multicombine = TRUE, 
+                       .export = c("trainMNX", "trainMNY", "alphas", "theFolds"),
+                       .packages = "glmnet") %dopar% {
+                           print(alphas[i])
+                           cv.glmnet(x = trainMNX, y = trainMNY, 
+                                    family = "gaussian", nfolds = 5, 
+                                    foldid = theFolds, alpha = alphas[i])
+                       }
+
+stopCluster(cl)
+```
+
+```{r}
+sapply(plutoDouble, class)
+```
+
+```{r}
+extractGlmnetInfo <- function(object){
+    lambdaMin <- object$lambda.min
+    lambda1se <- object$lambda.1se
+    whichMin <- which(object$lambda == lambdaMin)
+    which1se <- which(object$lambda == lambda1se)
+    data.frame(lambda.min = lambdaMin,
+               error.min = object$cvm[whichMin],
+               lambda.1se = lambda1se,
+               error.1se=object$cvm[which1se])
+}
+
+alphaInfo <- purrr::map_df(plutoDouble, ~extractGlmnetInfo(.x)) %>% bind_cols(alpha = alphas)
+```
+
+```{r}
+alphaClean <- alphaInfo %>% tidyr::gather(key = Measure, Value, -alpha) %>% 
+    mutate(type = stringr::str_extract(Measure,"min|1se")) %>% 
+    mutate(Measure = stringr::str_replace(Measure,"\\.(min|1se)",
+                                            "")) %>% 
+    tidyr::spread(Measure, Value)
+```
+```{r}
+alphaClean %>% ggplot(aes(alpha, error)) +
+    geom_line(aes(group=type)) + 
+    facet_wrap(~type, scales = "free_y", ncol = 1) +
+    geom_point(aes(size = lambda)) + theme_minimal()
+```
+
+```{r}
+set.seed(1234)
+mnPlutoCV2 <- cv.glmnet(x=trainMNX, y=trainMNY, family="gaussian", nfolds = 5, alpha = 0.75)
+```
+
+```{r}
+plot(mnPlutoCV2)
+```
+
+```{r}
+plot(mnPlutoCV2$glmnet.fit, xvar = "lambda")
+abline(v=log(c(mnPlutoCV2$lambda.min, mnPlutoCV2$lambda.1se)), lty=2)
+```
+```{r}
+theCoef <- as.matrix(coef(mnPlutoCV2, s="lambda.1se"))
+coefDF <- data.frame(value = theCoef, coefficient = rownames(theCoef))
+
+coefDF <- coefDF[nonzeroCoef(coef(mnPlutoCV2, s="lambda.1se")),]
+coefDF %>% ggplot(aes(X1, reorder(coefficient, X1))) + 
+    geom_vline(xintercept = 0, color = "grey", linetype = 2) + 
+    geom_point(color = "blue") + 
+    labs(x="Value", y="Coefficient", title="Coefficient Plot") + 
+    theme_minimal()
+```
+

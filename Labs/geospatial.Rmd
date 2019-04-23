@@ -489,6 +489,8 @@ $$ANN_{ratio}=\dfrac{ANN}{ANN_{expected}}$$
 
 Average Nearest Neighbor Expected
 $$ANN_{Expected}=\dfrac{0.5}{\sqrt{n/A}} $$
+
+
 The parameter k can take on any order neighbor (up to n-1 where n is the total number of points).
 
 The average nearest neighbor function can be expended to generate an ANN vs neighbor order plot. In the following example, we’ll plot ANN as a function of neighbor order for the first 100 closest neighbors:
@@ -594,13 +596,20 @@ nyctSP  <- as(nyct, "Spatial")
 
 
 nb <- poly2nb(nyctSP, queen=TRUE)
-
+c(612, 806, 1623)
+nb <- subset(nb,
+  !(1:length(nb) %in% c(612, 806, 1623)))
 nb[[1]]
 ```
 
 ```{r}
 nyctSP$CT2010[1]
 nyctSP$CT2010[nb[[1]]]
+```
+
+```{r}
+par(bg = 'black')
+plot(nb, coordinates(nyctSP[-c(612, 806, 1623),]), points=FALSE, lwd = 0.5, add = TRUE, col = "#DC16C3")
 ```
 
 Next, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight `(style="W")`. This is accomplished by assigning the fraction $1/(\text{# of neighbors})$to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors’ values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we’ll stick with the `style="W"` option for simplicity’s sake but note that other more robust options are available, notably `style="B"`.
@@ -622,6 +631,85 @@ Inc.lag <- lag.listw(lw, nyct$MedIncome)
 
 ## Moran's I
 ```{r}
-#moran.test( nyctSP$MedIncome,lw)
+moran.test(nyctSP$MedIncome,lw)
+```
+
+```{r}
+MC<- moran.mc(nyctSP$MedIncome, lw, nsim=599)
+MC
+```
+
+```{r}
+# Plot the distribution (note that this is a density plot instead of a histogram)
+plot(MC, main="", las=1)
+```
+
+## Moran's I as function fo distance
+
+```{r}
+coo <- coordinates(nyctSP)
+```
+```{r}
+S.dist  <-  dnearneigh(coo, 0, 7920)  
+c(612, 1677)
+S.dist <- subset(S.dist,
+  !(1:length(S.dist) %in% c(612, 1677)))
+S.dist
+```
+
+```{r}
+lwD <- nb2listw(S.dist, style="W",zero.policy=T) 
+MI  <-  moran.mc(nyct %>% slice(-c(612,1677)) %>% pull(MedIncome), lwD, nsim=599,zero.policy=T) 
+MI
+```
+```{r}
+plot(MI, main="", las=1) 
+
+```
+
+### Rayshader
+
+```{r}
+elev <- sf::st_read(file.path(dataDir, "gis/Elevationpoints"))
+elevs <- elev %>% sample_frac(0.05)
+elevsp <- as(elevs["elevation"], "Spatial")
+# Create an empty grid where n is the total number of cells
+grd              <- as.data.frame(spsample(elevsp, "regular", n=1000))
+names(grd)       <- c("X", "Y")
+coordinates(grd) <- c("X", "Y")
+gridded(grd)     <- TRUE  # Create SpatialPixel object
+fullgrid(grd)    <- TRUE  # Create SpatialGrid object
+
+# Add P's projection information to the empty grid
+proj4string(grd) <- proj4string(elevsp)
+
+# Interpolate the grid cells using a power value of 2 (idp=2.0)
+P.idw <- gstat::idw(elevation~1, elevsp, newdata=grd, idp=2.0)
+
+# Convert to raster object then clip to Texas
+r       <- raster(P.idw)
+nybblatlong <- st_transform(nybb, 4326)
+r.m     <- mask(r, nybblatlong)
+plot(r.m)
+plot(r)
+
+
+raster::getValues(r, format = "matrix") %>%
+  sphere_shade(texture = "desert")  %>%
+  plot_3d(r.m, zscale = 75)
+```
+
+
+```{r}
+library(rayshader)
+montereybay %>%
+  sphere_shade(texture = "desert") %>%
+  add_water(detect_water(montereybay), color="desert") %>%
+  plot_3d(montereybay,zscale=50)
+```
+
+
+```{r}
+
 ```
 

@@ -39,5 +39,6 @@ These labs were generously shared by Jared Lander and modified to meet class nee
 ## [Dimensionality Reduction](Labs/pca.html)
 ## [Geocomputation](Labs/geospatial.html)
 ## [Unsupervised Learning](Labs/lab4.html)
+## [Regularization](Labs/Regularization.html)
 
 
