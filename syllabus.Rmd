@@ -197,7 +197,6 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * **Geocomputation Week**
 * Sf
 * Rgdal
-* Assignment 10 - Geocomputation
 * Reading -Weapons of Math Destruction | O'Neill
 * Reading Reponse 6
 
@@ -207,11 +206,9 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * PCA
 
 #### Week 14 - 4/23/2019
-* **Model Evaluation Week**
-* RMSE
-* AUC
-* Confusion Matrix
-* Cross Validation
+* **Feature Week**
+* Elasctic Net
+* Assignment 10 - Analysis
 
 #### Week 15 - 4/30/2019
 * Work day
