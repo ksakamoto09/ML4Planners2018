@@ -9,14 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE, eval = TRUE)
 ```
 
-## Reading in Data
-
-Let's download subway.csv and subway.xlsx from canvas and add it to a folder called Data in your project directory.
-
-### Reading in CSV
-
-CSVs are probably one of the most common data formats that you will work with.
-To read in data we will use the "readr" package.
 
 ```{r}
 library(glmnet)
@@ -30,8 +22,25 @@ dataDir <- file.path(root, 'Data')
 
 ## Regularization
 
-desensitazation 
+```{r}
+data.frame(x = 1:5, y = rnorm(n = 5,sd = .2) + 1:5) %>% 
+    ggplot(aes(x,y)) + geom_point() +
+    geom_smooth(method = "lm",se = FALSE) + 
+    theme_minimal()
+```
 
+
+```{r}
+data.frame(x = 1:2, y = rnorm(n = 2,sd = .2) + 1:2) %>% 
+    ggplot(aes(x,y)) + geom_point() +    
+    xlim(0,5) + 
+    ylim(0,5) + 
+    geom_smooth(method = "lm",se = FALSE, fullrange = TRUE) + 
+    theme_minimal()
+```
+
+![](https://cdn-images-1.medium.com/max/1600/1*xwtSpR_zg7j7zusa4IDHNQ.png)
+![](https://cdn-images-1.medium.com/max/1600/1*9hPX9pAO3jqLrzt0IE3JzA.png)
 ## Ridge Regression
 
 with two points it could be easy to over fit and introduce high variance in your results. Ridge regression tries to add some bias to drop the variance. So a sightly worse fit can give long term benefits. 
