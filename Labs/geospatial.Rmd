@@ -26,6 +26,7 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 library(sf)
+library(sp)
 library(raster)
 library(tmap)
 
@@ -35,10 +36,54 @@ root <- rprojroot::find_rstudio_root_file()
 dataDir <- file.path(root, 'Data')
 ```
 
-## Data Models
+## Introduction to GIS
+
+Geography was essential to the survival of humans from the early hunter-gathers 
+locating their food supply, water, and housing. Humans have been exploring and 
+cataloguing the world around them, through collective memory,
+etched on clay tablets, or stored on data bases. We humans no longer need to take
+inventory of our natural surroundings quite like our anciet ancestors, but the need 
+to navigate spatial information has only increased. A myriad of
+apps require a geographic location, such as ride sharing apps like Uber
+and Lyft, tracking packages from Amazon and other e-retailers, and even posting/check-ins
+on social media apps like Instagram and Facebook.
+
+![Imago Mundi: Babylonia 500 BCE](https://www.geolounge.com/wp-content/uploads/2014/11/Baylonianmaps.jpg)
+
+Cartogprahy completely changed in 1854 with John Snow's Cholera map. For the first time 
+data and summary statistics were combined on to a map. You can see that there is a barchart
+on the streets showing the number of deaths per building.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Snow-cholera-map-1.jpg/300px-Snow-cholera-map-1.jpg)
+
+So what is a GIS? 
+
+*A GIS is a computer-based system to aid in the collection, maintenance, storage, analysis, output, and distribution of spatial data and information.* 
+
+GIS allows us to define the "where" and "what" types of questions that we have.
+Previously GIS was not user-friendly and sequestered in government and academia.
+With the advances in data storage, computing power, and graphics cards GIS
+was able to become more widespread hearlding in many more users. Unlike most tabular 
+data, spatial data is still unique which is why GIS is important in unlocking
+insights from geography. 
+
+## Geographic Data Models
+
+The two most fundamental data models used in geographic data is **vector** and **raster**.
+If you are familiar with the Adobe Creative Suite programs, **vector** will be analgous
+to Illustrator, and **raster** to Photoshop. The vector model uses points, lines, and polygons
+to represent spatial features, while the raster model divides the surface into cells or pixels.
+
+You can define spatial data in vector or raster but which to use?
+ - Vector data has dominated the social sciences since human settlements tend to have discrete boundaries
+ - Raster is utilized most in environmental sciences since remote sensing data comes in as images.
+
+![](../Images/gisDataModel.png)
 
 ### Vector
 
+
+![](../Images/SpatialDataRepresentation.png)
 ### Raster
 
 ## Simple Features
@@ -609,7 +654,7 @@ nyctSP$CT2010[nb[[1]]]
 
 ```{r}
 par(bg = 'black')
-plot(nb, coordinates(nyctSP[-c(612, 806, 1623),]), points=FALSE, lwd = 0.5, add = TRUE, col = "#DC16C3")
+plot(nb, coordinates(nyctSP[-c(612, 806, 1623),]), points=FALSE, lwd = 0.5, col = "#DC16C3")
 ```
 
 Next, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight `(style="W")`. This is accomplished by assigning the fraction $1/(\text{# of neighbors})$to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors’ values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we’ll stick with the `style="W"` option for simplicity’s sake but note that other more robust options are available, notably `style="B"`.
@@ -630,6 +675,18 @@ Inc.lag <- lag.listw(lw, nyct$MedIncome)
 ```
 
 ## Moran's I
+
+Moran's I is a common measure of spatial autocorrelation, which is an extension of temporal autocorrelation from time series analysis. While time is only one dimensional, in spatial statistics, we are dealing with two dimensions(usually, could be more). Building on what we have learned in class already, it's up to the analyst to understand what "near" or neighbors mean in our analysis.
+
+In normal autocorrelation, things like your weight change gradually over time so weight is highly correalted with the days that are consecutive. In spatial autocorrelation we try to see how a location, whether it is a polygon, point, or raster grid are similar to eachother. 
+
+Here is the equation for Moran's I:
+
+$$I = \frac N W \frac {\sum_i \sum_j w_{ij}(x_i-\bar x) (x_j-\bar x)} {\sum_i (x_i-\bar x)^2} $$
+where $N$ is the number of spatial units indexed by $i$ and $ j$;$x$ is the variable of interest; $\bar{x}$ is the mean of $x$;$w_{ij}$ is a matrix of spatial weights with zeroes on the diagonal (i.e., $w_{ii}=0$); and $W$ is the sum of all $w_{ij}$.[^1]
+
+The values of $I$ usually range from -1 to 1. This shouldn't come as a suprise if you think of values that get outputed when we talk about correlations between two variables, there is usually a negative correlation (-1), no correlation (0), or positive correlation (1). In Moran's I -1 means evenly dispersed, 0 is random, and 1 is perfectly clustered. 
+
 ```{r}
 moran.test(nyctSP$MedIncome,lw)
 ```
@@ -667,49 +724,50 @@ plot(MI, main="", las=1)
 
 ```
 
-### Rayshader
+<!-- ### Rayshader -->
 
-```{r}
-elev <- sf::st_read(file.path(dataDir, "gis/Elevationpoints"))
-elevs <- elev %>% sample_frac(0.05)
-elevsp <- as(elevs["elevation"], "Spatial")
-# Create an empty grid where n is the total number of cells
-grd              <- as.data.frame(spsample(elevsp, "regular", n=1000))
-names(grd)       <- c("X", "Y")
-coordinates(grd) <- c("X", "Y")
-gridded(grd)     <- TRUE  # Create SpatialPixel object
-fullgrid(grd)    <- TRUE  # Create SpatialGrid object
+<!-- ```{r} -->
+<!-- elev <- sf::st_read(file.path(dataDir, "gis/Elevationpoints")) -->
+<!-- elevs <- elev %>% sample_frac(0.05) -->
+<!-- elevsp <- as(elevs["elevation"], "Spatial") -->
+<!-- # Create an empty grid where n is the total number of cells -->
+<!-- grd              <- as.data.frame(spsample(elevsp, "regular", n=1000)) -->
+<!-- names(grd)       <- c("X", "Y") -->
+<!-- coordinates(grd) <- c("X", "Y") -->
+<!-- gridded(grd)     <- TRUE  # Create SpatialPixel object -->
+<!-- fullgrid(grd)    <- TRUE  # Create SpatialGrid object -->
 
-# Add P's projection information to the empty grid
-proj4string(grd) <- proj4string(elevsp)
+<!-- # Add P's projection information to the empty grid -->
+<!-- proj4string(grd) <- proj4string(elevsp) -->
 
-# Interpolate the grid cells using a power value of 2 (idp=2.0)
-P.idw <- gstat::idw(elevation~1, elevsp, newdata=grd, idp=2.0)
+<!-- # Interpolate the grid cells using a power value of 2 (idp=2.0) -->
+<!-- P.idw <- gstat::idw(elevation~1, elevsp, newdata=grd, idp=2.0) -->
 
-# Convert to raster object then clip to Texas
-r       <- raster(P.idw)
-nybblatlong <- st_transform(nybb, 4326)
-r.m     <- mask(r, nybblatlong)
-plot(r.m)
-plot(r)
-
-
-raster::getValues(r, format = "matrix") %>%
-  sphere_shade(texture = "desert")  %>%
-  plot_3d(r.m, zscale = 75)
-```
+<!-- # Convert to raster object then clip to Texas -->
+<!-- r       <- raster(P.idw) -->
+<!-- nybblatlong <- st_transform(nybb, 4326) -->
+<!-- r.m     <- mask(r, nybblatlong) -->
+<!-- plot(r.m) -->
+<!-- plot(r) -->
 
 
-```{r}
-library(rayshader)
-montereybay %>%
-  sphere_shade(texture = "desert") %>%
-  add_water(detect_water(montereybay), color="desert") %>%
-  plot_3d(montereybay,zscale=50)
-```
+<!-- raster::getValues(r, format = "matrix") %>% -->
+<!--   sphere_shade(texture = "desert")  %>% -->
+<!--   plot_3d(r.m, zscale = 75) -->
+<!-- ``` -->
 
 
-```{r}
+<!-- ```{r} -->
+<!-- library(rayshader) -->
+<!-- montereybay %>% -->
+<!--   sphere_shade(texture = "desert") %>% -->
+<!--   add_water(detect_water(montereybay), color="desert") %>% -->
+<!--   plot_3d(montereybay,zscale=50) -->
+<!-- ``` -->
 
-```
 
+<!-- ```{r} -->
+
+<!-- ``` -->
+
+[^1]: [Moran's I](https://en.wikipedia.org/wiki/Moran%27s_I)

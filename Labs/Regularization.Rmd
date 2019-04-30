@@ -58,6 +58,8 @@ To get the best $\lambda$ value, you can try a bunch of them and use cross valid
 
 If we have more than one predictor, each slope from the variable will be added as a penalty term and multiplied by the $\lambda$. The only thing that usually doesn't get added is the y intercept. 
 
+
+
 $$ y_i = \beta_0 1 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \varepsilon_i$$
 
 For instance we could have

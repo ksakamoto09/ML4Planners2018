@@ -1,0 +1,250 @@
+---
+title: "Hyperparameter Tuning with XGBoost"
+author: "Kaz Sakamoto"
+date: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE, eval = TRUE)
+```
+
+
+```{r}
+library(caret)
+library(dplyr)
+library(ggplot2)
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
+```
+
+## Boosting vs Bagging
+
+We have actually already been working with Bagging already through the
+Random Forest algorithm. Unline single learner systems like a decision tree,
+Random Forest and XGBoost have many learners.
+
+![](https://quantdare.com/wp-content/uploads/2016/04/bb1.png)
+
+The way they sample is a little different though. A single learner will use
+all it's data to create a tree, while bagging could use random sampling with
+replacement which means that for every learner being created, only a sample of 
+the total data is used and the same data point could be used. Boosting on the
+otherhand will have weighted observations and some of them will take part in 
+the samples more frequently. 
+
+![](https://quantdare.com/wp-content/uploads/2016/04/bb2.png)
+
+The last point about the weights are important becasue this is the main differentiator
+between bagging and boosting. Bagging create learners in parallel or all at once,
+while boosting creates them sequentially. Therefore it is a btit slower but it can
+continually learn from the previous iteration to improve upon the model. Harder to 
+classify or predict observations will receive greater weights. 
+
+![](https://quantdare.com/wp-content/uploads/2016/04/bb3.png)
+
+
+**Which is the best, Bagging or Boosting?**
+
+There’s not an outright winner; it depends on the data, the simulation and the circumstances.
+Bagging and Boosting decrease the variance of your single estimate as they combine several estimates from different models. So the result may be a model with higher stability.
+
+If the problem is that the single model gets a very low performance, Bagging will rarely get a better bias. However, Boosting could generate a combined model with lower errors as it optimises the advantages and reduces pitfalls of the single model.
+
+By contrast, if the difficulty of the single model is over-fitting, then Bagging is the best option. Boosting for its part doesn’t help to avoid over-fitting; in fact, this technique is faced with this problem itself. For this reason, Bagging is effective more often than Boosting. [source](https://www.kdnuggets.com/2017/11/difference-bagging-boosting.html)
+
+## Caret
+ 
+ Caret stands for Classification And REgression Training. Caret is a powerful package
+ since it can preprocess and split data. We are going to explore how we can use this 
+ package for tuning parameters based on some measures of model performance.
+ 
+ ## Training
+ 
+ For the sake of training, we are going to be using the formula interface for
+ putting in our response and predictor variables. This will change them into a 
+ matrix. XGBoost requires all numeric inputs to all categorical variables must be
+ convereted into numeric such as One Hot Encoding as a tool. 
+ 
+ ## Training Controls
+ 
+ - `method` is the type of resampling technique should be applied. Common ones are 'boot' for 
+ bootstrap, or 'reapeatedcv' for repeated cross-validation. look out for extra arguments that need
+ to be filled out.
+ - `summaryFunction` is the way in which the performance of the model is judged. Some of them 
+ can include Area Under the Curve (AUC) for classification or root meas squared erro (RMSE) for 
+ regression. 
+ - `allowParallel` will turn parllel processing on of off. 
+ 
+ ## Search Grid
+ 
+ The main reason Caret is being introduced is the ability to select optimal model parameters
+ through a grid search. In the case of XGBoost, this could be the maximum tree depth and/or the
+ amount of shirnkage. If you recall from glmnet (elasticnet) you could find the best lambda value
+ of the penalty or the alpha, the best mix between ridge and lasso.
+ 
+ The search grid is included as a data.frame and passed into the `train` function's tuneGrid parameter. 
+ Each parameter should be in a column and each row the set of parameters. 
+ 
+```{r}
+mnPluto <- readr::read_csv(file.path(dataDir, "MN_Pluto.csv"))
+
+singleZip <- mnPluto %>% count(zipcode) %>% filter(n < 10) %>% pull(zipcode)
+
+mnPluto <- mnPluto %>% mutate(assesstotZ = scale(assesstot)) %>% 
+    filter(assesstotZ < 3 & assesstotZ > -3 ) %>% 
+    mutate(numbldgs =as.numeric(numbldgs),
+          bldgarea = as.numeric(bldgarea)) %>% 
+    dplyr::select(assesstot, zipcode, exempttot, 
+                        numbldgs, lotarea, bldgarea, comarea, resarea,
+                        officearea, retailarea, garagearea, strgearea, numfloors, 
+                        landuse, builtfar, yearbuilt, bbl) %>% 
+    mutate(landuse = as.character(landuse),
+           zipcode = as.character(zipcode))%>% 
+    filter(complete.cases(.)) %>% 
+    filter(!zipcode %in% singleZip)
+    
+set.seed(1234)
+trainMN <- mnPluto %>% group_by(zipcode) %>%  
+    dplyr::sample_frac(size = .75,replace = FALSE) %>% 
+    ungroup()
+testMN <- mnPluto %>% filter(!bbl %in% trainMN$bbl)
+```
+ 
+```{r}
+plutoFormula <- assesstot ~  zipcode  + exempttot  + 
+    numbldgs + lotarea + bldgarea + comarea + resarea +
+    officearea + retailarea + garagearea + strgearea + numfloors +
+    landuse  + builtfar + yearbuilt
+```
+ 
+```{r}
+trainMNX <- useful::build.x(assesstot ~  zipcode  + exempttot  + 
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, trainMN, contrasts = FALSE)
+dim(trainMNX)
+```
+
+```{r}
+trainMNY <- useful::build.y(assesstot ~  zipcode  + exempttot  + 
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, trainMN)
+head(trainMNY)
+```
+
+```{r}
+testMNX <- useful::build.x(assesstot ~  zipcode  + exempttot  + 
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, testMN, contrasts = FALSE)
+dim(testMNX)
+```
+
+```{r}
+testMNY <- useful::build.y(assesstot ~  zipcode  + exempttot +
+                        numbldgs + lotarea + bldgarea + comarea + resarea +
+                        officearea + retailarea + garagearea + strgearea + numfloors +
+                        landuse  + builtfar + yearbuilt - 1, testMN)
+head(testMNY)
+```
+ 
+```{r}
+grid_default <- expand.grid(
+  nrounds = 100,
+  max_depth = 6,
+  eta = 0.3,
+  gamma = 0,
+  colsample_bytree = 1,
+  min_child_weight = 1,
+  subsample = 1
+)
+
+train_control <- caret::trainControl(
+  method = "none",
+  verboseIter = FALSE, # no training log
+  allowParallel = FALSE # FALSE for reproducible results 
+)
+
+xgb_base <- caret::train(
+  x = trainMNX,
+  y = trainMNY,
+  trControl = train_control,
+  tuneGrid = grid_default,
+  method = "xgbTree",
+  verbose = TRUE,
+  nthreads = 4
+)
+```
+
+```{r}
+basePred <- predict(xgb_base,testMNX)
+baseRMSE <- caret::RMSE(basePred, testMNY)
+baseRMSE
+```
+
+ 
+ 
+```{r}
+tune_grid <- expand.grid(
+  nrounds = 100,
+  eta = c(0.01, 0.1, 0.3),
+  max_depth = c(2, 3, 5, 10),
+  gamma = c(0),
+  colsample_bytree = 1,
+  min_child_weight = 1,
+  subsample = 1
+)
+
+tune_control <- caret::trainControl(
+  method = "cv", # cross-validation
+  number = 3, # with n folds 
+  verboseIter = FALSE, # no training log
+  allowParallel = FALSE # FALSE for reproducible results 
+)
+
+xgb_tune <- caret::train(
+  x = trainMNX,
+  y = trainMNY,
+  trControl = tune_control,
+  tuneGrid = tune_grid,
+  method = "xgbTree",
+  verbose = TRUE,
+  nthreads = 4
+)
+```
+ 
+```{r}
+plot(xgb_tune)
+```
+ 
+```{r}
+tunePred <- predict(xgb_tune,testMNX)
+tuneRMSE <- caret::RMSE(tunePred, testMNY)
+tuneRMSE
+```
+
+```{r}
+data.frame(baseResidual = testMNY-basePred, 
+           tuneResidual = testMNY-tunePred,
+           row = 1:length(basePred)) %>% 
+    tidyr::gather(type, value, -row) %>%  
+    ggplot(aes(x =value, fill = type)) + 
+    geom_histogram() + facet_wrap(~type) + 
+    theme_minimal()
+```
+
+```{r}
+data.frame(baseResidual = testMNY-basePred, 
+           tuneResidual = testMNY-tunePred,
+           row = 1:length(basePred)) %>% 
+    tidyr::gather(type, value, -row) %>%  
+    ggplot(aes(x = row, y =value, color = type)) + 
+    geom_line() + facet_wrap(~type) + 
+    theme_minimal()
+```
+ 
+ 
