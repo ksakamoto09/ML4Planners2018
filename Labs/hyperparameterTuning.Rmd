@@ -61,14 +61,14 @@ By contrast, if the difficulty of the single model is over-fitting, then Bagging
  since it can preprocess and split data. We are going to explore how we can use this 
  package for tuning parameters based on some measures of model performance.
  
- ## Training
+## Training
  
  For the sake of training, we are going to be using the formula interface for
  putting in our response and predictor variables. This will change them into a 
  matrix. XGBoost requires all numeric inputs to all categorical variables must be
  convereted into numeric such as One Hot Encoding as a tool. 
  
- ## Training Controls
+## Training Controls
  
  - `method` is the type of resampling technique should be applied. Common ones are 'boot' for 
  bootstrap, or 'reapeatedcv' for repeated cross-validation. look out for extra arguments that need
@@ -78,7 +78,7 @@ By contrast, if the difficulty of the single model is over-fitting, then Bagging
  regression. 
  - `allowParallel` will turn parllel processing on of off. 
  
- ## Search Grid
+## Search Grid
  
  The main reason Caret is being introduced is the ability to select optimal model parameters
  through a grid search. In the case of XGBoost, this could be the maximum tree depth and/or the
@@ -87,6 +87,11 @@ By contrast, if the difficulty of the single model is over-fitting, then Bagging
  
  The search grid is included as a data.frame and passed into the `train` function's tuneGrid parameter. 
  Each parameter should be in a column and each row the set of parameters. 
+ 
+## Example
+
+Let's load in the data set from last week. I'm going to split the dataset
+into train and test.
  
 ```{r}
 mnPluto <- readr::read_csv(file.path(dataDir, "MN_Pluto.csv"))
@@ -112,13 +117,9 @@ trainMN <- mnPluto %>% group_by(zipcode) %>%
     ungroup()
 testMN <- mnPluto %>% filter(!bbl %in% trainMN$bbl)
 ```
- 
-```{r}
-plutoFormula <- assesstot ~  zipcode  + exempttot  + 
-    numbldgs + lotarea + bldgarea + comarea + resarea +
-    officearea + retailarea + garagearea + strgearea + numfloors +
-    landuse  + builtfar + yearbuilt
-```
+
+Using the `useful` package lets create the train and test matrix and the labels
+for validation.
  
 ```{r}
 trainMNX <- useful::build.x(assesstot ~  zipcode  + exempttot  + 
@@ -152,6 +153,8 @@ testMNY <- useful::build.y(assesstot ~  zipcode  + exempttot +
 head(testMNY)
 ```
  
+Below is the default training search grid and training controls. 
+
 ```{r}
 grid_default <- expand.grid(
   nrounds = 100,
@@ -166,7 +169,7 @@ grid_default <- expand.grid(
 train_control <- caret::trainControl(
   method = "none",
   verboseIter = FALSE, # no training log
-  allowParallel = FALSE # FALSE for reproducible results 
+  allowParallel = TRUE 
 )
 
 xgb_base <- caret::train(
@@ -180,14 +183,28 @@ xgb_base <- caret::train(
 )
 ```
 
+We can use the default model to make some predictions and create a RMSE value.
+
 ```{r}
 basePred <- predict(xgb_base,testMNX)
 baseRMSE <- caret::RMSE(basePred, testMNY)
 baseRMSE
 ```
 
+Now let's tune some of our parameters and create a new model.
+
+- **eta:** 
+
+Learning (or shrinkage) parameter. It controls how much information from a new tree will be used in the Boosting. This parameter must be bigger than 0 and limited to 1. If it is close to zero we will use only a small piece of information from each new tree. If we set eta to 1 we will use all information from the new tree. Big values of eta result in a faster convergence and more over-fitting problems. Small values may need to many trees to converge.
  
- 
+- **colsample_bylevel:**
+
+Just like Random Forests, some times it is good to look only at a few variables to grow each new node in a tree. If we look at all variables the algorithm needs less trees to converge, but looking at, for example, 2/3 of the variables may result in models more robust to over-fitting. There is a similar parameter called colsample_bytree that re-sample the variables in each new tree instead of each new node.
+
+- **max_depth:** 
+
+Controls the maximum depth of the trees. Deeper trees have more terminal nodes and fit more data. Convergence also requires less trees if we grow them deep. However, if the trees are to deep we will be using a lot of information from the first trees and the final trees of the algorithm will have less importance on the loss function. The Boosting benefits from using information from many trees. Therefore it is intuitive that huge trees are not desirable. Smaller trees also grow faster and because the Boosting grow new trees in a pseudo-residual and we do not require any amazing adjustment for an individual tree.
+
 ```{r}
 tune_grid <- expand.grid(
   nrounds = 100,
@@ -203,7 +220,7 @@ tune_control <- caret::trainControl(
   method = "cv", # cross-validation
   number = 3, # with n folds 
   verboseIter = FALSE, # no training log
-  allowParallel = FALSE # FALSE for reproducible results 
+  allowParallel = TRUE #
 )
 
 xgb_tune <- caret::train(
@@ -217,15 +234,21 @@ xgb_tune <- caret::train(
 )
 ```
  
+We can plot out the different etas used and compare the max depths.
+
 ```{r}
 plot(xgb_tune)
 ```
- 
+
+We can compute the RMSE for the tuned model. 
+
 ```{r}
 tunePred <- predict(xgb_tune,testMNX)
 tuneRMSE <- caret::RMSE(tunePred, testMNY)
 tuneRMSE
 ```
+
+Let's create a histogram of the residuals.
 
 ```{r}
 data.frame(baseResidual = testMNY-basePred, 
@@ -236,6 +259,8 @@ data.frame(baseResidual = testMNY-basePred,
     geom_histogram() + facet_wrap(~type) + 
     theme_minimal()
 ```
+
+Let's create a line chart of the residuals.
 
 ```{r}
 data.frame(baseResidual = testMNY-basePred, 
