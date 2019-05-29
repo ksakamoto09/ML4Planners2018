@@ -1,0 +1,1497 @@
+---
+title: "GIS with R"
+author: "Kaz Sakamoto"
+output: 
+    html_document:
+        toc: yes
+        toc_float:
+            collapsed: no
+            smooth_scoll: yes
+        number_sections: yes
+---
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans|VT323');
+body{
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 12px;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4 {
+  font-family: 'VT323', monospace;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, cache = TRUE, message = FALSE)
+```
+
+## Spatial Libraries
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(sf)
+library(sp)
+library(raster)
+library(tmap)
+library(spatstat)
+library(maptools)
+library(tmaptools)
+library(spdep)
+library(purrr)
+##tidyr
+library(gstat)
+#coefplot
+library(spgwr)
+
+## here we are going to find the root_file 
+root <- rprojroot::find_rstudio_root_file()
+## we are going to set the data file path here
+dataDir <- file.path(root, 'Data')
+```
+
+# Introduction
+
+## Cartorgaphic History
+
+Geographic knowledge was essential for the survival of early hunter-gathers in
+locating their food supply, water, and housing. Humans have been exploring and 
+cataloging the world around them, from shared collective memories,
+etchings on clay tablets, or storage on modern data bases. We humans may 
+no longer need to take inventory of our natural surroundings quite like our 
+ancient ancestors, but the need to navigate spatial information has only increased.
+A myriad of apps require a geographic location, such as ride sharing apps like Uber
+and Lyft, tracking packages from Amazon, and even posting/checking in
+on social media like Instagram and Facebook.
+
+```{r clayTablet, echo=FALSE, fig.cap="Imago Mundi: Babylonia 500 BCE"}
+knitr::include_graphics('https://www.geolounge.com/wp-content/uploads/2014/11/Baylonianmaps.jpg')
+```
+
+```{r googleMaps, echo=FALSE, fig.cap="Google Maps Routes"}
+knitr::include_graphics('https://nyc.streetsblog.org/wp-content/uploads/2010/03/08/Picture_2.png')
+```
+
+## Data and Maps
+
+Cartography completely changed in 1854 with John Snow's Cholera map. For the first time 
+data and summary statistics were combined on to a map. You can see that there is a bar chart
+on the streets showing the number of deaths per building. Maps no longer have to solely
+function for wayfinding and directions but could be used for analysis.
+
+```{r JohnSnow, echo=FALSE}
+knitr::include_graphics('https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Snow-cholera-map-1.jpg/300px-Snow-cholera-map-1.jpg')
+```
+
+## GIS
+
+So what is a GIS? 
+
+**A GIS is a computer-based system to aid in the collection, maintenance, storage, analysis, output, and distribution of spatial data and information.**
+
+GIS allows us to define the "where" and "what" types of questions that we have.
+Previously GIS was not user-friendly and sequestered in government and academia.
+With the advances in data storage, computing power, and graphics cards, GIS
+was able to become more widespread heralding an age of increased users. Unlike most tabular 
+data, spatial data is still unique which is why GIS is important in unlocking
+insights from geography. 
+
+## Spatial Statistics
+
+GIS isn't useful just for visualizing data, and it's end goal is not just making maps.
+We can start to answer questions about how features are distributed in space, what kind
+of patterns are created by the feature, where clusters might be located, and the 
+relationship between a set of features over space. We can also go beyond visual
+exploration and inspection but utilize statistics to examine and describe these
+spatial phoenomena. 
+```{r spatialStats, echo=FALSE, fig.cap="Spatial Statistics"}
+knitr::include_graphics('https://freshbiostats.files.wordpress.com/2013/03/spatial_map2.png')
+```
+
+
+# Working with Geographic Data
+
+## Geographic Data Models
+
+The two most fundamental data models used in geographic data is **vector** and **raster** formats.
+If you are familiar with the Adobe Creative Suite programs, **vector** will be analogous
+to Illustrator, and **raster** to Photoshop. The vector model uses points, lines, and polygons
+to represent spatial features, while the raster model divides the surface into cells or pixels.
+
+You can define spatial data in vector or raster but which to use?
+ - Vector data has dominated the social sciences since human settlements tend to have discrete boundaries
+ - Raster is utilized most in environmental sciences since remote sensing data comes in as images.
+
+```{r dataModel, echo=FALSE, fig.cap="GIS Data Models"}
+knitr::include_graphics(file.path(root, "Images", "gisDataModel.png"))
+```
+
+### Vector
+
+The vector model are made up of points, usually lat/long, or x-y pairs. These points
+are the fundamentals that create other features such as lines, points connected to 
+one another, and polygons where the first point of origin and the end point connect
+to enclose the shape. 
+
+```{r representation, echo=FALSE, fig.cap="Phomena vs. Representation"}
+knitr::include_graphics(file.path(root, "Images", "SpatialDataRepresentation.png"))
+```
+
+### Raster
+
+In spatial analysis, the other type of data model used are rasters. Rasters are
+matrices with rows and columns representing equally spaced cells often referred
+to as pixels. Each cell has a dimension whether it is 10 ft x 10 ft, 1 m x 1 m which is
+known as the cell-size resolution. There is also a header with CRS information,
+the extent, and origin (if you recall graphing in high school).
+
+Unlike vector data, cells of a raster can have only one value, and it could represent
+continuous or discrete data. 
+
+![](https://geocompr.robinlovelace.net/figures/raster-intro-plot2-1.png)
+
+### Layers
+
+The power of GIS are all about layers. We are trying to model the real world 
+and to do that we create layers of information whether they are modeled as rasters
+or vectors to create a simplified but meaningful explanation of the world.
+
+![](https://saylordotorg.github.io/text_essentials-of-geographic-information-systems/section_11/ca6ce94cdd2e09a1da8aa6ec22336835.jpg)
+
+## Simple Features
+
+There are seventeen geometry types supported by the Open Geospatial Consortium(OGC),
+but there are seven that are most commonly used. As you can see these are all vector
+formats, as `sf` does not handle raster data. 
+![](https://geocompr.robinlovelace.net/figures/sf-classes.png)
+
+The `sf` package relies on the `rgdal` package for reading and writing spatial data and
+`rgeos` for spatial operations. 
+
+```{r}
+library(spData)
+
+world %>% head()
+
+names(world)
+```
+
+```{r}
+plot(world)
+```
+
+## Coordinate Reference 
+
+The coordinate reference system is crucial since it ties the vector and raster data types to a location on the earth (or other bodies). To get this reference system, they rely on geodetic datums which are reference points located all around the earth. The most common datums we use are the WGS 84 and NAD 83. Because the earth is not completely smooth nor spherical, the common datums that we use approximate an ellipsoid, which is due to the fact the earth's rotation and effects of gravity flatten the poles while the equator slightly bulges. Many localities have specific datums or ellipsoid models to use and in the US the NAD 83 is very common. This data will me located in the `ellps` parameter of the `PROJ CRS` library. 
+
+Here are the important features when modeling the earth.
+- Actual Earth's surface:  has mountains and oceans.
+- Geoid: the shape that the ocean surface would take under the influence of the gravity and rotation of Earth alone, if other influences such as winds and tides were absent.
+- ellipsoid: The approximation of the Earth's surface into a more regular shape. 
+![](https://www.aalto.fi/sites/g/files/flghsv161/files/styles/medium/public/2018-06/surfacecomparison.jpg?itok=Zq-ObTTp)
+
+Also when you are working with multiple files with different CRSs you will have to transform them to a common CRS or they will not align. You can think of this as trying to do any calculation with data with different units. 
+
+### Geographic Coordinate Systems
+
+Geographic coordinate systems use angular measurements to locate a place on the surface of the earth. These measures are called Latitude and Longitude, they are a measure from the center of earth to the location on the surface. Longitude is the E-W distance from the Prime Meridian plane, while latitude is the N-S distance from the equatorial plane. 
+
+One important aspect to highlight is that these are *angular* measurements. This means that it is not a distance like meters or miles and there fore a distance calculation is not straight forward since we are still talk about a curved surface of the earth and its location.
+
+### Projected Coordinate Systems
+
+Projected coordinate systems are based on Cartesian coordinates if you recall making graphs in math classes with x and y locations. Unlike the angular measurements of the geographic coordinate systems, these are *linear* measurements like meters and feet. Projected coordinate systems are based on geographic coordinate systems but take the 3D object of the earth and project it into 2D. 
+
+This projection will always cause some sort of distortion when you go from a 3D object to a 2D. The classic example is trying to flatten a orange peel, you can't do that with out tearing the skin, flattening and stretching it out. 
+
+![](https://learngis.org/Images/smashed_orange01.jpg)
+
+There are certain properties that we want to accurately capture when we are working with mapping, these are area, distance, direction, and shape. A projected coordinate can only preserve one or two properties, because of this the map maker must think about the trade-offs being made when projecting the earth on to a 2D map. This is apparent when you think about the debate between the "Euro-centric" Mercator projection that we have all become accustomed to compared with the Peters Projection that accurately displays areas. 
+
+Tissot's Indicatrix is a way of visualizing some of these distortions. It can
+illustrate linear, angular, and areal distortions. 
+
+![](https://upload.wikimedia.org/wikipedia/commons/8/87/Tissot_mercator.png)
+
+![](https://upload.wikimedia.org/wikipedia/commons/8/87/Azimuthal_equidistant_projection_with_Tissot%27s_indicatrix.png)
+
+![](https://upload.wikimedia.org/wikipedia/commons/e/e7/Tissot_indicatrix_world_map_Gall-Peters_equal-area_proj.svg)
+
+![](https://external-preview.redd.it/6Vagn3BQ1Mwh4kN2-uldK7X8UM9_QAvYJCN2CCvoLWs.png?auto=webp&s=ca818d0e1049c02e6c0e82bf9223250822f30565)
+
+The last thing to cover is the three main groups of projections types which are conic, cylindrical and planar or azimuths. As you can probably infer by their names these are the shapes that are being used to capture the projection, if you think of earth with a light bulb in the middle and place these objects on the surface of the earth, you can see that the earths surface would be projected on the shape. Distortions are minimized where the projection shape is tangent with the earths surface and greater the further you get from it. These shapes can either create one line of tangency or secant along two lines.
+
+![](https://www.acsu.buffalo.edu/~dbertuca/maps/cat/cylindrical_final.gif)
+
+![](http://gisedu.colostate.edu/webcontent/nr505/2012_Projects/Team6/images/GIS_concepts/Figure2_proj.PNG)
+
+![](http://wiki.gis.com/wiki/images/9/9a/Secant-calculus.png)
+
+![](http://geokov.com/Images/coordref/cylindrical-projection.png)
+
+
+![](https://imgs.xkcd.com/comics/map_projections.png)
+
+## Working with CRSs
+
+You can work with the CRS of geographic data with `epsg` codes or `proj4string` definitions. `epsg` codes are shorter and might be easier to remember while the `proj4string` will allow you more flexibility when dictating projections type, datum, and ellipsoid parameters. `epsg` only refers to one specific CRS which does not allow you to change different parameters. 
+
+
+```{r}
+nybb <- read_sf(file.path(dataDir, "gis/nybb"))
+st_crs(nybb)
+st_crs(nybb) <- 2263
+st_crs(nybb)
+```
+
+```{r}
+centralPark <- data.frame(lon = -73.9691305, lat = 40.7764627) %>% 
+  st_as_sf(coords = c("lon", "lat"))
+st_is_longlat(centralPark)
+st_crs(centralPark)
+```
+
+```{r}
+centralPark_geo <- st_set_crs(centralPark, 4326)
+st_is_longlat(centralPark_geo)
+```
+
+Here you can see that only the second data set created a warning. We are trying to run a distance based
+function, creating a buffer around a data with latitude and longitude
+. 
+```{r}
+centralPark_buff_no_crs <- st_buffer(centralPark, dist = 1)
+centralPark_buff <- st_buffer(centralPark_geo, dist = 1)
+```
+
+If you try to map our borough boundary and central park, it will luckily 
+assume that the CRS is for WGS84, but you cannot rely on this!
+
+```{r, warning=TRUE}
+tm_shape(nybb) + tm_polygons() + 
+tm_shape(centralPark) + tm_symbols() 
+```
+
+Here with the properly encoded geometry it won't give us any warnings.
+They are still different CRSs one projected and one geographic so you won't be able
+to make any linear calculations across them.
+
+```{r}
+tm_shape(nybb) + tm_polygons() + 
+tm_shape(centralPark_geo) + tm_symbols() 
+```
+
+# Mapping Basics
+
+Very similar to the ggplot2 paradigm you first start with the shape,
+then you specify how you want to represent the geometry.
+
+```{r}
+# Add fill layer to nz shape
+tm_shape(nybb) +
+  tm_fill() 
+# Add border layer to nz shape
+tm_shape(nybb) +
+  tm_borders() 
+# Add fill and border layers to nz shape
+tm_shape(nybb) +
+  tm_fill() +
+  tm_borders()
+```
+
+## Aestheics 
+
+```{r}
+map1 <- tm_shape(nybb) + tm_fill(col = "red")
+map2 <- tm_shape(nybb) + tm_fill(col = "red", alpha  = .2)
+map3 <- tm_shape(nybb) + tm_borders(col = "grey")
+map4 <- tm_shape(nybb) + tm_borders(col = "blue", lwd = 0.5, lty = 2)
+tmap_arrange(map1, map2, map3, map4)
+```
+
+```{r}
+tm_shape(nybb) + tm_fill(col = "BoroName") + 
+    tm_borders(col = "blue", lwd = 0.5, lty = 2)
+```
+
+```{r}
+tm_shape(nybb) + tm_fill(col = "BoroName", title = "Boroughs") + 
+    tm_borders(col = "white", lwd = 0.5) + 
+    tm_text(text = "BoroName", size = 0.7, col = "black") + 
+    tm_layout(title = "NYC", bg.color = "lightblue")
+```
+
+
+## Areal Exercise
+
+No we will see what the consequences are of using different projections when we
+are calculating area. We will use the Equal Area projection as our standard since
+we know that we are preserving area with this type of projection. We will compare this
+again the Equal Distance, Conformal, and State Plane projections. 
+
+- [Equal Area](https://epsg.io/102008)
+- [Equal Distance](http://epsg.io/102005)
+- [Small Shapes Maintained](http://epsg.io/102004)
+- [State Plane](https://epsg.io/2263)
+
+```{r}
+Area_Albers <- 102008
+Area_Equidistant <- 102005
+Area_Lambert <- 102004
+Area_NYStatePlane <- 2263
+projections <- setNames(c(Area_Albers, Area_Lambert,Area_Equidistant, Area_NYStatePlane),
+         c("Area_Albers", "Area_Lambert","Area_Equidistant", "Area_NYStatePlane")) %>% 
+    as.list()
+```
+
+We will now read in our usCounties shapefile.
+
+```{r}
+usCounties <- st_read(file.path(dataDir, "gis/us_county"),stringsAsFactors = FALSE)
+```
+
+We will now create a function to calculate our areas and map through them.
+
+- 1 m^2  = 10.7639 ft^2
+
+```{r}
+massReproject <- function(shape, projection){
+    # we have to reporject and recalulate the area
+    st_transform(shape, projection) %>% st_area()
+}
+
+areaCalc <- purrr::map_df(projections, ~massReproject(usCounties, .x)) %>% 
+    mutate_at(vars(Area_Albers, Area_Equidistant, Area_Lambert), function(x) x*10.7639) %>% 
+    mutate(GEOID = usCounties$GEOID) %>% 
+    mutate(Albers_Diff = Area_Albers-Area_Albers,
+           Lambert_Diff = Area_Albers- Area_Lambert,
+           Equidistant_Diff = Area_Albers-Area_Equidistant,
+           NYStatePlane_Diff = Area_Albers-Area_NYStatePlane)
+```
+
+We'll join our new calculation to our sf object.
+
+```{r}
+usCounties <- usCounties %>% left_join(areaCalc %>% dplyr::select(5:9))
+```
+
+
+You can add a projection on the fly.
+
+```{r}
+tm_shape(usCounties, projection = 2163, unit = "mi") + 
+    tm_polygons(col = "Lambert_Diff", lwd = 0.1, palette = "RdBu", n = 7, midpoint = 0, style = "fisher") + 
+    tm_compass(position = c("right","bottom"),
+               text.color = "grey", 
+               color.dark = "grey",
+               size = 1) +
+    tm_scale_bar(position = c("center", "bottom"),
+                 text.color = "grey",
+                 color.dark = "grey") +
+    tm_legend(position=c("left", "bottom"),
+              just = "right") + 
+    tm_layout(inner.margins = c(0.1,0.08,0.01,0.08))
+
+```
+
+```{r}
+tm_shape(usCounties, projection = 2163, unit = "mi") + 
+    tm_polygons(col = "Equidistant_Diff", lwd = 0.1, palette = "RdBu", n = 7, midpoint = 0, style = "fisher") + 
+    tm_compass(position = c("right","bottom"),
+               text.color = "grey", 
+               color.dark = "grey",
+               size = 1) +
+    tm_scale_bar(position = c("center", "bottom"),
+                 text.color = "grey",
+                 color.dark = "grey") +
+    tm_legend(position=c("left", "bottom"),
+              just = "right") + 
+    tm_layout(inner.margins = c(0.1,0.08,0.01,0.08))
+```
+
+```{r}
+tm_shape(usCounties, projection = 2163, unit = "mi") + 
+    tm_polygons(col = "NYStatePlane_Diff", lwd = 0.1,palette = "RdBu", n = 4, midpoint = 0, style = "fisher") + 
+    tm_compass(position = c("right","bottom"),
+               text.color = "grey", 
+               color.dark = "grey",
+               size = 1) +
+    tm_scale_bar(position = c("center", "bottom"),
+                 text.color = "grey",
+                 color.dark = "grey") +
+    tm_legend(position=c("left", "bottom"),
+              just = "right") + 
+    tm_layout(inner.margins = c(0.1,0.08,0.01,0.08))
+```
+
+
+# Data
+
+## Attribute data operations
+
+the `sf` library is great because it extends the data.frame and adds geographic features to it. Much like the tidy data
+paradigm, each row is still an observations and each column is a feature. The main difference between a normal data.frame 
+and an sf object is that there is another column `geometry` baked in which can contain a multitude of geographic types
+like points, lines and polygons. 
+
+You will see that a lot of methods that you are used to working with in data.frames will apply to sf objects. Like `rbind`,
+`$<-`, and `cbind`.
+```{r}
+methods(class = "sf")
+```
+
+If we ever wanted to go back to a normal data.frame object it's very simple
+```{r}
+st_drop_geometry(nybb) %>% class()
+```
+
+### Subsetting
+
+Subsetting attribute data will be done in the same ways you have been dealing
+with `data.frame` object types. The first way of doing it is through the `[` 
+notation. The left-hand side represents the rows and the right-hand side columns.
+```{r}
+nybb[1,]
+nybb[,c(2,4)]
+```
+
+If you like the dplyr verbs, `slice` and `select` will also work. This is the
+convenience of storing data in an `sf` object.
+
+```{r}
+nybb %>% slice(1:2)
+nybb %>% dplyr::select(2)
+```
+
+As with filtering data, logical operations can be used to subset data as well. 
+Below we can filter on areas greater than 1,937,566,944 sqft. 
+
+```{r}
+nybb %>% filter(Shape_Area >= 1937566944)
+```
+
+
+## Joining data
+
+For storage purposes, most geographic data does not come with much extra attribute data.
+Therefore joining in data with unique key is going to be important. You'll have to make sure
+that there is a geographic ID or key that you can use in your data. For instance
+if you are working with Census information there are the [FIPS code](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards), or 
+zipcodes, or unique state names all work.
+
+
+We're going to scrape some information from Wikipedia on the boroughs of NYC.
+
+```{r}
+library(rvest)
+demographics <- read_html("https://en.wikipedia.org/wiki/Demographics_of_New_York_City") %>% 
+    html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>% 
+    html_table(header = FALSE) %>% "[["(1) %>% slice(4:8) %>% 
+    mutate(X1 = c("Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island")) %>% 
+    dplyr::select(c(1,3:5))
+
+names(demographics) <- c("BoroName", "population",
+                         "GDP", "GDPperCapita")
+```
+
+We'll create a new variable called `nybb_demo` and join in our table we just scraped.
+There is a little bit of cleaning to be done too.
+
+```{r}
+nybb_demo <- nybb %>% left_join(demographics) %>% 
+    mutate_at(vars(population, GDP, GDPperCapita), function(x) stringr::str_remove_all(x, ",") %>% as.numeric())
+```
+
+Now we can make a [choropleth map](https://en.wikipedia.org/wiki/Choropleth_map)
+with our population column. 
+
+```{r}
+tm_shape(nybb_demo) + tm_polygons(col = "population")
+```
+
+
+## Spatial Operations
+
+The main reason we want to use GIS is for spatial operations or geoprocessing tools.
+Before we working with attribute data, but we will be selecting and filtering
+based on their location and shape. Common tools are intersects, clip, spatial joins,
+and buffers. 
+
+### Intersects
+
+Now we will load in Capital Improvement Projects data from the NYC Department of Education.
+You'll notice that we are reading in normal csv first and then casting it as an sf
+object with the `Longitude` and `Latitude` columns in the data.frame.
+
+```{r}
+cip <- read_csv(file.path(dataDir, "CIP2019.csv"))
+
+cip %>% head()
+
+cip <- cip %>% arrange(`Building ID`,Latitude) %>% tidyr::fill(Latitude, Longitude, .direction = "down") %>% 
+    group_by(`Building ID`, Latitude, Longitude) %>% summarise(Award = sum(`Construction Award`, na.rm = TRUE)) %>% 
+    ungroup()
+
+cipSF <- st_as_sf(cip, coords = c("Longitude", "Latitude"),crs = 4326)
+
+cipSF <- cipSF %>% filter(Award > 0)
+
+cipSF <- st_transform(cipSF, 2263) 
+```
+
+let's subset just Brooklyn so we can use it as our selection criteria.
+```{r}
+BK <- nybb %>% filter(BoroName == "Brooklyn")
+```
+
+and we can see what it looks like. 
+```{r}
+tm_shape(nybb) + tm_polygons(col = "white") +
+    tm_shape(BK) + tm_fill(col = "grey")+
+    tm_shape(cipSF) + tm_symbols(size = .2, col = "purple", shape = 1) 
+```
+
+Let's see which cipSF intersects our BK geometry. You'll see that there are either
+1 for every intersection or empty values from our sparse matrix, this means if that if any spatial relationship
+between these two inputs are expressed it'll be indicated once.
+
+```{r}
+cipBKsparse <- st_intersects(cipSF, nybb)
+cipBKsparse
+```
+
+A dense matrix can be created by adding the `sparse = FALSE` argument. 
+
+```{r}
+cipNY <- st_intersects(cipSF, nybb, sparse = FALSE)
+cipNY %>% head()
+```
+
+
+### Disjoint
+
+The opposite of `st_intersects()` is disjoints.  Here we can the dense matrix
+where the geometries do not spatially relate. 
+
+```{r}
+st_disjoint(cipSF, nybb, sparse = FALSE) %>% head()
+```
+
+### Within
+
+While intersect is kind of the catch-all of spatial relationships,
+you can be more specific. within checks if x is within y.  
+```{r}
+st_within(cipSF, nybb, sparse = FALSE) %>% head()
+```
+
+### Within Distance
+
+if you want to add a search distance with your spatial query, `st_is_within_distance`
+is your tool. You can add a dist argument(remember what your units are) and 
+go and expand your search.
+
+```{r}
+sel <- st_is_within_distance(cipSF, nybb, dist = 100, sparse = FALSE)
+sel %>% head()
+```
+
+### Spatial Joining
+
+sometimes, you want to add attribute data from one geometry to another. In a normal
+join we did it with a unique key, but a spatial join will happen with intersect. 
+It will be a left or inner join type. 
+
+```{r}
+cipJoin <- st_join(cipSF, nybb_demo)
+cipJoin
+```
+
+```{r}
+tm_shape(nybb) + tm_polygons(col = "white")+
+    tm_shape(cipJoin) + tm_symbols(size = .2, col = "BoroName", 
+                                    alpha = 0.4) 
+```
+
+### Spatial Data Aggregation
+
+```{r}
+cipJoin %>% aggregate(by = nybb, FUN = mean)
+```
+
+### Distances
+
+When we were looking at topological relationships, the results were only binary, either they
+intersect or does not, etc...
+
+```{r}
+nybb_centroid <- st_centroid(nybb)
+
+st_distance(cipSF[1,], nybb_centroid)
+```
+
+```{r}
+st_distance(cipSF %>% slice(1:10), nybb_centroid)
+```
+
+```{r}
+tm_shape(nybb) +tm_polygons(col = "white") + 
+tm_shape(nybb_centroid) + tm_symbols(col = "blue", size = .2) + 
+tm_shape(cipSF %>% slice(1:10)) + tm_symbols(col = "red", size = .2, shape = 1)
+```
+
+## Geometric Operations
+
+### Simplification
+
+```{r}
+nyc_simp <- st_simplify(nybb, dTolerance = 500)
+plot(nyc_simp["BoroName"])
+plot(nybb["BoroName"])
+```
+
+```{r}
+object.size(nybb)
+object.size(nyc_simp)
+```
+
+```{r}
+nyc_ms <- rmapshaper::ms_simplify(nybb, keep = 0.01,
+                                          keep_shapes = TRUE)
+```
+
+```{r}
+tm_shape(nyc_ms) + tm_polygons()
+```
+
+
+
+### Centroids
+```{r}
+nybb_centroid <- st_centroid(nybb)
+
+tm_shape(nybb) + tm_polygons()+
+    tm_shape(nybb_centroid) + tm_symbols() 
+```
+
+```{r}
+subway <- read_sf(file.path(dataDir, "gis", "SubwayLines")) %>% 
+    st_transform(2263)
+tm_shape(nybb) + tm_polygons(col ="white")+
+tm_shape(subway) + tm_lines()
+```
+
+```{r}
+
+subwayRT <- subway %>% pull(rt_symbol) %>% unique()
+
+splitSubway <- subway %>% tidyr::nest(-rt_symbol) %>% 
+    dplyr::mutate(combine = purrr::map(data, st_combine))
+
+subwayLines <- splitSubway$combine %>% purrr::reduce(c) %>%
+    st_sf() %>% mutate(lines = subwayRT)
+
+subwayCentroids <- st_centroid(subwayLines)
+subwaysurface <- st_point_on_surface(subwayLines)
+```
+
+```{r}
+tm_shape(nybb %>% filter(BoroName != "Staten Island")) + tm_polygons(col = "white")+
+tm_shape(subwayLines) + tm_lines(col = "lines") +
+    tm_shape(subwayCentroids) + tm_symbols(col = "lines", size =0.5, shape = 3)+
+    tm_shape(subwaysurface) + tm_symbols(col = "lines", size = 0.5, shape = 5)
+```
+
+### Buffers
+
+```{r}
+subwayQuarterBuffer <- st_buffer(subwayLines, dist = 1320)
+subwayQuarterBuffer
+```
+
+```{r}
+tm_shape(nybb %>% filter(BoroName != "Staten Island")) + tm_polygons(col = "white") +
+tm_shape(subwayQuarterBuffer) + tm_polygons(col = "lines", alpha = 0.2) 
+```
+
+### Clipping
+
+![](https://geocompr.robinlovelace.net/figures/venn-clip-1.png)
+
+
+### Selecting with Intersect
+
+If you want to create a new geometry from the selection `st_intersection` will
+create a new object for you.
+
+```{r}
+bkSelect <- st_intersection(x = cipSF, y = BK)
+```
+
+```{r}
+tm_shape(nybb) + tm_polygons() + 
+    tm_shape(bkSelect) + tm_symbols(size = 0.2, shape = 1, col = "purple")
+```
+
+
+### Selecting with Difference
+
+If you want to create a new geometry from the selection `st_intersection` will
+create a new object for you.
+
+```{r}
+bkDiff <- st_difference(x = cipSF, y = BK)
+```
+
+```{r}
+tm_shape(nybb) + tm_polygons() + 
+    tm_shape(bkDiff) + tm_symbols(size = 0.2, shape = 1, col = "purple")
+```
+
+
+### Creating Rasters
+
+A RasterLayer can easily be created from scratch using the function raster.
+The default settings will create a global raster data structure with a 
+longitude/latitude coordinate reference system and 1 by 1 degree cells. You can
+change these settings by providing additional arguments such as xmin, nrow,
+ncol, and/or crs, to the function. You can also change these parameters after
+creating the object. If you set the projection, this is only to properly define it,
+not to change it. To transform a RasterLayer to another coordinate reference
+system (projection) you can use the function projectRaster
+
+let's rasterize the CIP data
+First we must convert our sf object into an sp object. 
+```{r}
+cipSP <- as(cipSF, "Spatial")
+cipSP <- spTransform(cipSP, CRS("+init=epsg:2263"))
+```
+
+We will no create an empty raster object named `rast`
+we'll also will in the CRS, extent, and dimensions.
+```{r}
+rast <- raster(crs =  CRS("+init=epsg:2263"))
+
+extent(rast) <- extent(nybb)
+ncol(rast) <- 100
+nrow(rast) <- 100
+```
+
+```{r}
+rast2 <- rasterize(cipSP[,"Award"], rast, field =cipSP$Award, fun=sum)
+
+tm_shape(rast2) + tm_raster()
+```
+
+
+## Density
+
+```{r}
+cipSF$density <- raster::extract(rast2, cipSF)
+
+tm_shape(nybb) + tm_polygons(col = "white")+
+    tm_shape(cipSF) + tm_symbols(size = .2, col = "density") 
+```
+
+
+## Kerenel Density
+```{r}
+cipPPP <- as(cipSP, "ppp") 
+```
+
+```{r}
+cipKerneldefault <- density(cipPPP)
+plot(cipKerneldefault, main=NULL, las=1)
+raster::contour(cipKerneldefault, add = TRUE)
+```
+
+```{r}
+cipKernel5000 <- density(cipPPP,sigma = 5000)
+plot(cipKernel5000, main=NULL, las=1)
+raster::contour(cipKernel5000, add = TRUE)
+```
+
+```{r}
+cipKernelWeighted <- density(cipPPP,sigma = 5000, weights = cipSF$Award)
+plot(cipKernelWeighted, main=NULL, las=1)
+raster::contour(cipKernelWeighted, add = TRUE)
+```
+
+
+```{r}
+kernelRast <- raster(cipKernelWeighted)
+crs(kernelRast) <- "+init=epsg:2263"
+
+cip_smooth <- tmaptools::smooth_map(cipSF, smooth.raster = TRUE, nlevels = 10, cover = nybb)
+
+tm_shape(cip_smooth$polygons) +
+    	tm_fill("level", palette=cm.colors(11), title="CIP Density") +
+    	tm_shape(cip_smooth$iso) +
+    	tm_iso(col = "grey", size = 0.1) +
+    	tm_legend( position=c("left", "top"), bg.color="white", frame = FALSE)
+```
+
+## Leaflet
+
+
+```{r}
+library(leaflet)
+m <- leaflet() %>% 
+    setView(lng = -73.9691305, lat = 40.7764627, zoom = 11) %>% 
+    addProviderTiles(providers$CartoDB.Positron)
+m
+
+```
+
+```{r}
+kernelMask <- mask(kernelRast, nybb)
+pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values(kernelMask),
+  na.color = "transparent")
+
+m %>% 
+  addRasterImage(kernelMask, opacity = 0.8, color = pal,
+group = "Kernel") %>%
+  addLegend(pal = pal, values = values(kernelMask),
+    title = "CIP Kernel Density", position = "topleft") %>% 
+    addCircleMarkers(data = cip,
+    stroke = FALSE, fillOpacity = 0.5,
+    radius = 3, color = "purple",
+    popup = ~`Building ID`,
+        group = "Schools"
+  ) %>% 
+    addLayersControl(
+    overlayGroups = c("Kernel", "Schools"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+```
+
+
+## Distance Based Analysis
+
+pattern analysis whereby the interest lies in how the points are distributed relative to one another (a second-order property of the point pattern) as opposed to how the points are distributed relative to the study extent. An average nearest neighbor (ANN) analysis measures the average distance from each point in the study area to its nearest point. 
+
+The parameter k can take on any order neighbor (up to n-1 where n is the total number of points).
+
+The average nearest neighbor function can be expended to generate an ANN vs neighbor order plot. In the following example, we’ll plot ANN as a function of neighbor order for the first 100 closest neighbors:
+
+```{r}
+annCIP <- mean(nndist(cipPPP, k=1))
+
+mean(nndist(cipPPP, k=2))
+```
+
+
+```{r}
+ANN <- 1:(cipPPP$n-1) %>% 
+    as.list() %>% 
+    purrr::map_dbl(function(x)mean(nndist(cipPPP, k = x)))
+
+plot(ANN ~eval(1:(cipPPP$n-1)), type = "b",main = "Average Nearest Neighbor")
+```
+
+The bottom axis shows the neighbor order number and the left axis shows the average nearest neighbor distance in feet.
+
+Do you see a problem here? Could different shapes encompassing the same point pattern have the same surface area? If so, shouldn’t the shape of our study area be a parameter in our ANN analysis? 
+
+
+
+![Three different point patterns: a single cluster, a dual cluster and a randomly scattered pattern.](https://mgimond.github.io/Spatial/11-Point-Patterns_files/figure-html/f11-diff-patterns-1.png)
+
+![Three different ANN vs. neighbor order plots. The black ANN line is for the first point pattern (single cluster); the blue line is for the second point pattern (double cluster) and the red line is for the third point pattern.](https://mgimond.github.io/Spatial/11-Point-Patterns_files/figure-html/f11-diff-ANN-plots-1.png)
+
+Popular spatial analysis techniques compare observed point patterns to ones generated by an 
+independent random process (IRP) also called complete spatial randomness (CSR). 
+Any event has equal probability of being in any location.
+
+Average Nearest Neighbors. 
+
+$$ANN_{ratio}=\dfrac{ANN}{ANN_{expected}}$$
+
+Average Nearest Neighbor Expected
+$$ANN_{Expected}=\dfrac{0.5}{\sqrt{n/A}} $$
+
+Remember the average nearest neighbor for schools is 1511 feet
+```{r}
+annCIP
+```
+
+our ratio is 0.5 which means that our locations are randomly distributed. 
+```{r}
+annRatio <- annCIP / (0.5/(sqrt(cipPPP$n/area(cipPPP))))
+annRatio
+```
+
+![](https://pro.arcgis.com/en/pro-app/tool-reference/data-management/GUID-EFBA5DB8-A161-4FE1-B2CB-792B65DC1469-web.png)
+
+We can see how if we change our area of study the ratio will go up where 
+a dispersed pattern would be observed. 
+
+```{r}
+annRatio <- annCIP / (0.5/(sqrt(cipPPP$n/(area(cipPPP)/10))))
+annRatio
+```
+
+Now we'll create the simulation using Monte Carlo Methods.
+```{r}
+n     <- 599L               # Number of simulations
+ann.r <- vector(length = n) # Create an empty object to be used to store simulated ANN values
+for (i in 1:n){
+  rand.p   <- rpoint(n=cipPPP$n, win= as.owin(sf::st_bbox(nybb)))  # Generate random point locations
+  ann.r[i] <- mean(nndist(rand.p, k=1))  # Tally the ANN values
+}
+```
+
+```{r}
+Window(rand.p) <- as.owin(sf::st_bbox(nybb))
+plot(rand.p, pch=16, main=NULL, cols=rgb(0,0,0,0.5))
+```
+```{r}
+tibble(ANN = ann.r) %>% ggplot(aes(x = ANN)) + 
+    geom_histogram(fill = "green", col = "gray") +theme_minimal()
+```
+
+```{r}
+
+tibble(ANN = ann.r) %>% ggplot(aes(x = ANN)) + 
+    geom_histogram(fill = "green", col = "gray") +
+    geom_vline(xintercept = annCIP,linetype = "dashed") + theme_minimal()
+```
+
+A (pseudo) p-value can be extracted from a Monte Carlo simulation. We’ll work off of the last simulation. First, we need to find the number of simulated ANN values greater than our observed ANN value.
+
+```{r}
+N.greater <- sum(ann.r > annCIP)
+p <- min(N.greater + 1, n + 1 - N.greater) / (n +1)
+p
+```
+
+In our working example, you’ll note that or simulated ANN value was nowhere near the range of ANN values computed under the null yet we don’t have a p-value of zero. This is by design since the strength of our estimated p will be proportional to the number of simulations–this reflects the chance that given an infinite number of simulations at least one realization of a point pattern could produce an ANN value more extreme than ours.
+
+
+It’s important to remember that the ANN tool is a distance based approach to point pattern analysis. Even though we are randomly generating points following some underlying probability distribution map we are still concerning ourselves with the repulsive/attractive forces that might dictate the placement of Walmarts relative to one another–i.e. we are not addressing the question “can some underlying process explain the X and Y placement of the stores”.
+
+## Spatial Autocorrelation
+
+from Manny Gimond's [github](https://mgimond.github.io/Spatial/spatial-autocorrelation.html)
+
+![](https://mgimond.github.io/Spatial/img/Random_maps.png)
+
+```{r}
+nyct <- read_sf(file.path(dataDir, "gis/nyct2010"))
+nycACS <- read_csv(file.path(dataDir, "nycACS2017.csv"))
+nycACS %<>% dplyr::select(Geo_COUNTY, Geo_TRACT, SE_A14006_001) %>% 
+    dplyr::rename(BoroCode = Geo_COUNTY,
+                  CT2010 =Geo_TRACT,
+           MedIncome = SE_A14006_001) %>% 
+    dplyr::mutate(BoroCode = case_when(
+        BoroCode == "047" ~"3",
+        BoroCode == "061" ~"1",
+        BoroCode == "081" ~"4",
+        BoroCode == "085" ~"5",
+        BoroCode == "005" ~ "2"
+        
+    ))
+st_crs(nyct)
+nyct = st_set_crs(nyct, 2263)
+
+nyct <- nyct %>% left_join(nycACS, by = c("BoroCode" = "BoroCode", 
+                                          "CT2010" = "CT2010")) %>% 
+    mutate(MedIncome = tidyr::replace_na(MedIncome, 0 ))
+```
+
+```{r}
+tm_shape(nyct) + tm_polygons(col = "MedIncome")
+```
+
+
+Defining Neighboring polygons 
+
+for creating neighbors from sf [article](https://cran.r-project.org/web/packages/spdep/vignettes/nb_sf.html)
+
+![](http://www.lpc.uottawa.ca/publications/moransi/image2.gif)
+
+```{r}
+library(spdep)
+nyctSP  <- as(nyct, "Spatial")
+
+
+nb <- poly2nb(nyctSP, queen=TRUE)
+c(612, 806, 1623)
+nb <- subset(nb,
+  !(1:length(nb) %in% c(612, 806, 1623)))
+nb[[1]]
+```
+
+```{r}
+nyctSP$CT2010[1]
+nyctSP$CT2010[nb[[1]]]
+```
+
+```{r}
+par(bg = 'black')
+plot(nb, coordinates(nyctSP[-c(612, 806, 1623),]), points=FALSE, lwd = 0.5, col = "#DC16C3")
+```
+
+Next, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight `(style="W")`. This is accomplished by assigning the fraction $1/(\text{# of neighbors})$to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors’ values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we’ll stick with the `style="W"` option for simplicity’s sake but note that other more robust options are available, notably `style="B"`.
+```{r}
+lw <- nb2listw(nb, style="W", zero.policy=TRUE)
+```
+To see the weight of the first polygon’s four neighbors type:
+```{r}
+lw$weights[[1]]
+```
+each neighbor gets a fifth of the weight.
+
+
+Finally, we’ll compute the average neighbor income value for each polygon. These values are often referred to as spatially lagged values.
+
+```{r}
+nyctMedInc <-  nyct %>% slice(-c(612, 806, 1623)) %>% pull(MedIncome)
+Inc.lag <- lag.listw(lw, nyctMedInc)
+```
+
+## Moran's I
+
+Moran's I is a common measure of spatial autocorrelation, which is an extension of temporal autocorrelation from time series analysis. While time is only one dimensional, in spatial statistics, we are dealing with two dimensions(usually, could be more). Building on what we have learned in class already, it's up to the analyst to understand what "near" or neighbors mean in our analysis.
+
+In normal autocorrelation, things like your weight change gradually over time so weight is highly correlated with the days that are consecutive. In spatial autocorrelation we try to see how a location, whether it is a polygon, point, or raster grid are similar to each other. 
+
+The Spatial Autocorrelation (Global Moran's I) tool is an inferential statistic, which means that the results of the analysis are always interpreted within the context of its null hypothesis. For the Global Moran's I statistic, the null hypothesis states that the attribute being analyzed is randomly distributed among the features in your study area; said another way, the spatial processes promoting the observed pattern of values is random chance. Imagine that you could pick up the values for the attribute you are analyzing and throw them down onto your features, letting each value fall where it may. This process (picking up and throwing down the values) is an example of a random chance spatial process.
+
+Here is the equation for Moran's I:
+
+$$I = \frac N W \frac {\sum_i \sum_j w_{ij}(x_i-\bar x) (x_j-\bar x)} {\sum_i (x_i-\bar x)^2} $$
+where $N$ is the number of spatial units indexed by $i$ and $ j$;$x$ is the variable of interest; $\bar{x}$ is the mean of $x$;$w_{ij}$ is a matrix of spatial weights with zeroes on the diagonal (i.e., $w_{ii}=0$); and $W$ is the sum of all $w_{ij}$.[^1]
+
+The values of $I$ usually range from -1 to 1. This shouldn't come as a surprise if you think of values that get outputted when we talk about correlations between two variables, there is usually a negative correlation (-1), no correlation (0), or positive correlation (1). In Moran's I -1 means evenly dispersed, 0 is random, and 1 is perfectly clustered. 
+
+```{r}
+moran.test(nyctMedInc,lw)
+```
+
+```{r}
+MC <- moran.mc(nyctMedInc, lw, nsim=599)
+MC
+```
+
+```{r}
+# Plot the distribution (note that this is a density plot instead of a histogram)
+par(bg = "white")
+plot(MC, main="", las=1)
+```
+
+## Moran's I as function of distance
+
+```{r}
+coo <- coordinates(nyctSP)
+```
+7920 feet
+```{r}
+dist1  <-  dnearneigh(coo, 0, 7920)  
+c(612, 1677)
+dist1 <- subset(dist1,
+  !(1:length(dist1) %in% c(612, 1677)))
+dist1
+```
+
+This depends on how many permutations you take. this is the computational approach for inference.
+It can changes with the number of simulations.
+p = (M + 1) / (N + 1)
+```{r}
+lwD1 <- nb2listw(dist1, style="W",zero.policy=T) 
+MI1  <-  moran.mc(nyct %>% slice(-c(612,1677)) %>% pull(MedIncome), lwD1, nsim=599,zero.policy=T) 
+MI1
+```
+```{r}
+plot(MI1, main="", las=1) 
+
+```
+
+
+```{r}
+dist2  <-  dnearneigh(coo, 0, 10000)  
+```
+
+This depends on how many permutations you take. this is the computational approach for inference.
+It can changes with the number of simulations.
+p = (M + 1) / (N + 1)
+```{r}
+lwD2 <- nb2listw(dist2, style="W",zero.policy=T) 
+MI2  <-  moran.mc(nyct %>% pull(MedIncome), lwD2, nsim=599,zero.policy=T) 
+MI2
+```
+```{r}
+plot(MI2, main="", las=1) 
+
+```
+
+## Local Moran's I
+
+```{r}
+localMoran <- localmoran(nyctMedInc, lw)
+nyctLocal <- nyct %>% slice(-c(612, 806, 1623)) %>% cbind(localMoran)
+```
+
+```{r}
+tm_shape(nyctLocal) + 
+    tm_polygons(col = "Ii", lwd = 0.1, palette = "-RdBu", n = 7, midpoint = 0, style = "jenks") 
+```
+
+A high positive z-score for a feature indicates that the surrounding features have similar values (either high values or low values). The COType field in the Output Feature Class will be HH for a statistically significant cluster of high values and LL for a statistically significant cluster of low values.
+
+A low negative z-score (for example, less than -3.96) for a feature indicates a statistically significant spatial data outlier. The COType field in the Output Feature Class will indicate if the feature has a high value and is surrounded by features with low values (HL) or if the feature has a low value and is surrounded by features with high values (LH).
+
+## Getis Gi*
+
+```{r}
+getis <- localG(nyctMedInc, lw)
+nyctLocal <- nyctLocal %>% mutate(G = getis)
+```
+
+```{r}
+tm_shape(nyctLocal) + 
+    tm_polygons(col = "G", lwd = 0.1, palette = "-RdBu", n = 7, midpoint = 0, style = "jenks") 
+```
+
+# Spatial Lag
+
+spatial lag is a smoother, which is created by the weighted average of neighboring 
+values. more similar to distributed lag rather than temporal lag. If there are four
+neighbor the weight is 1/4 which is a convention to split weights equally. 
+
+This way you can bring in spatial variables as new explanatory variables, or 
+dependent variables. 
+
+You can now include spatially lagged variables into regression
+
+- Spatial Lag Model: spatially lagged dependent variable is used
+- Spatial Error Model: spatially lagged error term is used
+- Spatial Cross-Regressive Model: spatially lagged explanatory variables are added
+
+## Inverse Distance Weighted
+
+Inverse distance weighted (IDW) interpolation determines cell values using a linearly weighted combination of a set of sample points. The weight is a function of inverse distance. The surface being interpolated should be that of a spatially dependent variable.
+
+```{r}
+elevation <- read_csv(file.path(dataDir, "elevation.csv"))
+
+elevationSF <-  st_as_sf(elevation,coords = c("Lon", "Lat"),crs = 4326)
+elevationSF <- st_transform(elevationSF, crs = 2263)
+
+elevationsp <- as(elevationSF, "Spatial")
+tm_shape(nybb) + tm_polygons() + 
+tm_shape(elevationSF) + tm_symbols(size= .1, shape = 1, col = "green", alpha = .3) 
+# Create an empty grid where n is the total number of cells
+grd              <- as.data.frame(spsample(elevationsp, "regular", n=50000))
+names(grd)       <- c("X", "Y")
+coordinates(grd) <- c("X", "Y")
+gridded(grd)     <- TRUE  # Create SpatialPixel object
+fullgrid(grd)    <- TRUE  # Create SpatialGrid object
+# Add P's projection information to the empty grid
+proj4string(grd) <- proj4string(elevationsp)
+# Interpolate the grid cells using a power value of 2 (idp=2.0)
+P.idw <- gstat::idw(ELEVATION ~ 1, elevationsp, newdata=grd, idp=2)
+
+# Convert to raster object then clip to Texas
+r       <- raster(P.idw)
+r.m     <- mask(r, nybb)
+# Plot
+tm_shape(r.m) + 
+  tm_raster(style = "cont", palette = "Greens",
+            title="Elevation \n(in feet)") + 
+  tm_shape(cipSF) + tm_symbols(size=0.1, shape = 1) 
+```
+
+```{r, results="hide"}
+# Leave-one-out validation routine
+IDW.out <- vector(length = length(elevationsp))
+for (i in 1:length(elevationsp)) {
+  IDW.out[i] <- gstat::idw(ELEVATION ~ 1, elevationsp[-i,], elevationsp[i,], idp=2)$var1.pred
+}
+
+```
+```{r}
+# Plot the differences
+OP <- par(pty="s", mar=c(4,3,0,0))
+  plot(IDW.out ~ elevationsp$ELEVATION, asp=1, xlab="Observed", ylab="Predicted", pch=16,
+       col=rgb(0,0,0,0.5))
+  abline(lm(IDW.out ~ elevationsp$ELEVATION), col="red", lw=2,lty=2)
+  abline(0,1)
+par(OP)
+```
+
+```{r}
+# Compute RMSE
+sqrt( sum((IDW.out - elevationsp$ELEVATION)^2) / length(elevationsp))
+```
+
+## Cross-validation
+
+```{r, results="hide"}
+# Implementation of a jackknife technique to estimate 
+# a confidence interval at each unsampled point.
+
+# Create the interpolated surface
+img <- gstat::idw(ELEVATION~1, elevationsp, newdata=grd, idp=2.0)
+n   <- length(elevationsp)
+Zi  <- matrix(nrow = length(img$var1.pred), ncol = n)
+
+# Remove a point then interpolate (do this n times for each point)
+st <- stack()
+for (i in 1:n){
+  Z1 <- gstat::idw(ELEVATION~1, elevationsp[-i,], newdata=grd, idp=2.0)
+  st <- addLayer(st,raster(Z1,layer=1))
+  # Calculated pseudo-value Z at j
+  Zi[,i] <- n * img$var1.pred - (n-1) * Z1$var1.pred
+}
+
+
+```
+
+```{r}
+# Jackknife estimator of parameter Z at location j
+Zj <- as.matrix(apply(Zi, 1, sum, na.rm=T) / n )
+
+# Compute (Zi* - Zj)^2
+c1 <- apply(Zi,2,'-',Zj)            # Compute the difference
+c1 <- apply(c1^2, 1, sum, na.rm=T ) # Sum the square of the difference
+
+# Compute the confidence interval
+CI <- sqrt( 1/(n*(n-1)) * c1)
+
+# Create (CI / interpolated value) raster
+img.sig   <- img
+img.sig$v <- CI /img$var1.pred 
+
+# Clip the confidence raster to Texas
+r <- raster(img.sig, layer="v")
+r.m <- mask(r, nybb)
+
+# Plot the map
+tm_shape(r.m) + tm_raster(n=7,title="95% confidence interval \n(in feet)") +
+    tm_shape(elevationsp) + tm_symbols(size=0.1, shape = 1) 
+```
+
+# Regression Analysis
+
+Normal Ordinary Least Squares regression (OLS) have some assumptions that spatial
+data violates. A misspecified model is one that is not complete, it is where
+you are missing important explanatory variables. This can be easily diagnosed
+when you map the residuals and find significant spatial autocreelation. Say that
+you find that the model is always over predicting in higher elevations and under predicting
+in the lower elevations, then your model is probably missing an elevation variable.
+
+There are times with the missing variable(s) are complex and or difficult to measure.
+In such cases other spatial regression methods can be deployed such as Geographically
+Weighted Regression.
+
+**Regression Pitfalls**
+
+- omitted explanatory variables
+- nonlinear relationships
+- outliers
+- nonstationarity (regional variation)
+- multicollinearity
+
+## Geographically Weighted Regression
+
+Global models, like OLS regression, create equations that best describe the overall data relationships in a study area. When those relationships are consistent across the study area, the OLS regression equation models those relationships well. When those relationships behave differently in different parts of the study area, however, the regression equation is more of an average of the mix of relationships present, and in the case where those relationships represent two extremes, the global average will not model either extreme well. When your explanatory variables exhibit nonstationary relationships (regional variation), global models tend to fall apart unless robust methods are used to compute regression results.
+
+- Include a variable in the model that explains the regional variation. If you see that your model is always over predicting in the north and under predicting in the south, for example, add a regional variable set to 1 for northern features and set to 0 for southern features.
+- Use methods that incorporate regional variation into the regression model such as geographically weighted regression.
+- Redefine/Reduce the size of the study area so that the processes within it are all stationary (so they no longer exhibit regional variation).
+
+Geographically Weighted Regression (GWR) is one of several spatial regression techniques increasingly used in geography and other disciplines. GWR provides a local model of the variable or process you are trying to understand/predict by fitting a regression equation to every feature in the data set. GWR constructs these separate equations by incorporating the dependent and explanatory variables of features falling within the bandwidth of each target feature. The shape and size of the bandwidth is dependent on user input for the Kernel type, Bandwidth method, Distance, and Number of neighbors parameters.
+
+
+Local regression. bin(bandwidth) values by location. take weighted average of $y$ observed for $x$ close to $x_0$
+
+moving weighted average for every x point. a combination of weighted averages. the data determines the variability.
+
+local regression vs GWR is that geographic closeness vs variable closeness.  so large and it's one slope, too little and there's no
+variation sample of one for selecting the right bandwidth. adaptive kernel for sparse or dense locations. used more as an exploratory
+tool, we haven't explained anything yet only that the relationship we posited isn't stable across space. 
+
+```{r}
+nySales <- read_csv(file.path(dataDir, "nycSales.csv"))
+set.seed(1234)
+condos <- nySales %>% filter(type == "condo") %>% 
+    tidyr::separate(gps_coordinates, c("Lat", "Lon"), " ") %>%
+    mutate(Lat = as.numeric(Lat),
+           Lon = as.numeric(Lon)) %>% 
+    filter(Lat > 0, borough != "staten_island") %>% 
+    mutate(z = scale(price),
+           zLat = scale(Lat)) %>% 
+    filter(z < 3,(zLat < -4 | zLat < 4)) %>% 
+    mutate(num_baths = as.numeric(num_baths),
+           num_beds = as.numeric(num_beds),
+           num_beds = if_else(is.na(num_beds), 0, num_beds),
+           borough = as.factor(borough)) %>% 
+    filter(complete.cases(.)) %>% 
+    group_by(borough) %>% 
+    sample_frac(0.14) %>% 
+    ungroup()
+
+```
+
+```{r}
+condos %>% ggplot(aes(log(price))) + geom_histogram()
+```
+
+```{r}
+mod1 <- lm(log(price) ~  num_beds + num_baths + num_sqft + built_date, condos)
+plot(mod1, which = 3)
+coefplot::coefplot(mod1, sort = "mag", intercept = FALSE)
+```
+
+Now let's get our residuals
+
+```{r}
+resids1 <- residuals(mod1)
+condoSF <- condos %>% mutate(resids1 = resids1) %>% 
+    st_as_sf(coords = c("Lon", "Lat"),crs = 4326) %>% 
+    st_transform(crs = 2263)
+```
+
+by mapping out our residuals, we can definitely see that there are other factors
+that our causing some autocorrelation. If you looks up at Harlem and in downtown.
+```{r}
+nycNeighb <- read_sf(file.path(dataDir, "gis/nynta_19a"))
+nycNeighb <- st_transform(nycNeighb, crs = 2263)
+```
+
+```{r}
+tm_shape(nycNeighb) + tm_borders() + 
+    tm_shape(condoSF) + tm_dots(col ="resids1", palette = "RdBu", n = 7, midpoint = 0, style = "fisher",
+                                   size =0.1, alpha = 0.5) 
+```
+
+What we add the borough variable?
+
+```{r}
+mod2 <- lm(log(price) ~  borough + num_beds + num_baths + num_sqft + built_date, condos)
+plot(mod2, which = 3)
+coefplot::coefplot(mod2, sort = "mag", intercept = FALSE)
+```
+
+Now let's get our residuals
+
+```{r}
+resids2 <- residuals(mod2)
+condoSF <- condoSF %>% mutate(resids2 = resids2) 
+```
+
+```{r}
+tm_shape(nycNeighb) + tm_borders() + 
+    tm_shape(condoSF) + tm_dots(col ="resids2", palette = "RdBu", n = 7, midpoint = 0, style = "fisher",
+                                   size =0.1, alpha = 0.5) 
+```
+
+first we will calibrate the bandwidth of the kernel that will be sued to capture the points fro each regression
+(this will take a little while).
+
+The bandwidth is hard to specify a priori and the preferred approach is
+to carry out a cross-validation, minimizing the root mean square prediction
+error.
+
+```{r}
+condoSP <- as(condoSF, "Spatial")
+#GWRbandwidth <- spgwr::gwr.sel(price ~  num_beds + num_baths + num_sqft + built_date, data=condoSP, gweight = gwr.Gauss) 
+```
+Once the bandwidth has been found, or chosen by hand, the gwr function may be
+used to fit the model with the chosen local kernel and bandwidth.
+
+This function creates an
+object that contains a data frame with the individual coefficient estimates
+for each variable and each location. 
+```{r}
+no_cores <- parallel::detectCores() - 1 # Calculate the number of cores
+cl <-parallel:: makeCluster(no_cores)# Initiate cluster
+gwrG <-spgwr::gwr(log(price) ~  num_beds + num_baths + num_sqft + built_date, data=condoSP, bandwidth = 3400,
+                  gweight = gwr.Gauss, hatmatrix = TRUE, se.fit = TRUE, cl = cl)
+parallel::stopCluster(cl)
+
+gwrG
+```
+
+
+```{r}
+results <- as.data.frame(gwrG$SDF)
+results %>% head()
+condoComb <- condoSF %>% 
+    mutate(
+           coefnum_beds = results$num_beds,
+           coefnum_baths = results$num_baths,
+           coefbuilt_date = results$built_date,
+           coefnum_sqft = results$num_sqft,
+           residuals = results$gwr.e)
+```
+```{r}
+tm_shape(condoComb %>% filter(!is.na(coefnum_baths))) + tm_dots(col ="coefnum_baths", 
+                                   palette = "RdBu", n = 7, midpoint = 0,
+                                   size =0.1) + 
+    tm_shape(nycNeighb) + tm_borders() + 
+    tm_legend(position = c("left", "top"))
+```
+```{r}
+tm_shape(condoComb %>% filter(!is.na(coefbuilt_date))) + tm_dots(col ="coefbuilt_date", 
+                                  palette = "RdBu", n = 7, midpoint = 0,
+                                   size =0.1) + 
+    tm_shape(nycNeighb) + tm_borders() + 
+    tm_legend(position = c("left", "top"))
+```
+```{r}
+tm_shape(condoComb %>% filter(!is.na(coefnum_beds))) + tm_dots(col ="coefnum_beds", 
+                                   palette = "RdBu", n = 7, midpoint = 0,
+                                   size =0.1) + 
+    tm_shape(nycNeighb) + tm_borders() + 
+    tm_legend(position = c("left", "top"))
+```
+
+```{r}
+tm_shape(condoComb %>% filter(!is.na(residuals))) + tm_dots(col ="residuals", 
+                                  palette = "RdBu", n = 7, midpoint  = 0,
+                                   size =0.1) + 
+    tm_shape(nycNeighb) + tm_borders()
+```
+
+```{r}
+distances <- st_distance(condoComb %>% filter(!is.na(residuals)),condoComb %>% filter(!is.na(residuals)))
+
+# Set block diagonal elements to NA
+for (i in seq(1, nrow(distances), 1)) {
+    distances[i:(i),i:(i)] = NA
+}
+
+distVec <- apply(distances %>% as.data.frame(), 1, min, na.rm = TRUE)
+max(distVec)
+condoDist  <-  dnearneigh(condoComb %>% filter(!is.na(residuals)), 0, 7920) 
+c(2492, 2542)
+
+condoDist <- subset(condoDist,
+  !(1:length(condoDist) %in% c(2492, 2542)))
+
+par(bg = 'black')
+
+plot(condoDist, st_coordinates(condoComb[-c(2492, 2542),]), 
+     points=FALSE, lwd = 0.5, col = alpha("#DC16C3", 0.05))
+
+```
+
+```{r}
+lw3 <- nb2listw(condoDist, style="W", zero.policy=TRUE)
+MI3  <-  moran.mc(condoComb %>% slice(-c(2492, 2542)) %>% pull(residuals), 
+                  lw3, nsim=599,zero.policy=T) 
+
+MI3
+par(bg = 'white')
+plot(MI3, main="", las=1) 
+moran.test(condoComb %>% slice(-c(2492, 2542)) %>% pull(residuals), 
+                  lw3)
+```
+
+
+[^1]: [Moran's I](https://en.wikipedia.org/wiki/Moran%27s_I)
