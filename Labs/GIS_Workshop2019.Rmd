@@ -21,6 +21,10 @@ body{
 h1,h2,h3,h4 {
   font-family: 'VT323', monospace;
 }
+p.caption {
+  font-style: italic;
+  font-size: 10px;
+}
 </style>
 
 ```{r setup, include=FALSE}
@@ -82,7 +86,7 @@ data and summary statistics were combined on to a map. You can see that there is
 on the streets showing the number of deaths per building. Maps no longer have to solely
 function for wayfinding and directions but could be used for analysis.
 
-```{r JohnSnow, echo=FALSE}
+```{r JohnSnow, echo=FALSE, fig.cap="Broad Street Cholrea Map"}
 knitr::include_graphics('https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Snow-cholera-map-1.jpg/300px-Snow-cholera-map-1.jpg')
 ```
 
@@ -106,7 +110,8 @@ We can start to answer questions about how features are distributed in space, wh
 of patterns are created by the feature, where clusters might be located, and the 
 relationship between a set of features over space. We can also go beyond visual
 exploration and inspection but utilize statistics to examine and describe these
-spatial phoenomena. 
+spatial phoenomena.
+
 ```{r spatialStats, echo=FALSE, fig.cap="Spatial Statistics"}
 knitr::include_graphics('https://freshbiostats.files.wordpress.com/2013/03/spatial_map2.png')
 ```
@@ -151,7 +156,9 @@ the extent, and origin (if you recall graphing in high school).
 Unlike vector data, cells of a raster can have only one value, and it could represent
 continuous or discrete data. 
 
-![](https://geocompr.robinlovelace.net/figures/raster-intro-plot2-1.png)
+```{r rasterMap, echo=FALSE, fig.cap="GIS Data Models"}
+knitr::include_graphics("https://geocompr.robinlovelace.net/figures/raster-intro-plot2-1.png")
+```
 
 ### Layers
 
@@ -159,14 +166,19 @@ The power of GIS are all about layers. We are trying to model the real world
 and to do that we create layers of information whether they are modeled as rasters
 or vectors to create a simplified but meaningful explanation of the world.
 
-![](https://saylordotorg.github.io/text_essentials-of-geographic-information-systems/section_11/ca6ce94cdd2e09a1da8aa6ec22336835.jpg)
+```{r layers, echo=FALSE, fig.cap="Layers in GIS"}
+knitr::include_graphics("https://saylordotorg.github.io/text_essentials-of-geographic-information-systems/section_11/ca6ce94cdd2e09a1da8aa6ec22336835.jpg")
+```
 
 ## Simple Features
 
 There are seventeen geometry types supported by the Open Geospatial Consortium(OGC),
 but there are seven that are most commonly used. As you can see these are all vector
 formats, as `sf` does not handle raster data. 
-![](https://geocompr.robinlovelace.net/figures/sf-classes.png)
+
+```{r simplefeatures, echo=FALSE, fig.cap="Common simple features"}
+knitr::include_graphics("https://geocompr.robinlovelace.net/figures/sf-classes.png")
+```
 
 The `sf` package relies on the `rgdal` package for reading and writing spatial data and
 `rgeos` for spatial operations. 
@@ -183,7 +195,7 @@ names(world)
 plot(world)
 ```
 
-## Coordinate Reference 
+## Coordinate Reference Systems
 
 The coordinate reference system is crucial since it ties the vector and raster data types to a location on the earth (or other bodies). To get this reference system, they rely on geodetic datums which are reference points located all around the earth. The most common datums we use are the WGS 84 and NAD 83. Because the earth is not completely smooth nor spherical, the common datums that we use approximate an ellipsoid, which is due to the fact the earth's rotation and effects of gravity flatten the poles while the equator slightly bulges. Many localities have specific datums or ellipsoid models to use and in the US the NAD 83 is very common. This data will me located in the `ellps` parameter of the `PROJ CRS` library. 
 
@@ -191,7 +203,10 @@ Here are the important features when modeling the earth.
 - Actual Earth's surface:  has mountains and oceans.
 - Geoid: the shape that the ocean surface would take under the influence of the gravity and rotation of Earth alone, if other influences such as winds and tides were absent.
 - ellipsoid: The approximation of the Earth's surface into a more regular shape. 
-![](https://www.aalto.fi/sites/g/files/flghsv161/files/styles/medium/public/2018-06/surfacecomparison.jpg?itok=Zq-ObTTp)
+
+```{r CRSMods, echo=FALSE, fig.cap=""}
+knitr::include_graphics("https://www.aalto.fi/sites/g/files/flghsv161/files/styles/medium/public/2018-06/surfacecomparison.jpg?itok=Zq-ObTTp")
+```
 
 Also when you are working with multiple files with different CRSs you will have to transform them to a common CRS or they will not align. You can think of this as trying to do any calculation with data with different units. 
 
@@ -205,35 +220,74 @@ One important aspect to highlight is that these are *angular* measurements. This
 
 Projected coordinate systems are based on Cartesian coordinates if you recall making graphs in math classes with x and y locations. Unlike the angular measurements of the geographic coordinate systems, these are *linear* measurements like meters and feet. Projected coordinate systems are based on geographic coordinate systems but take the 3D object of the earth and project it into 2D. 
 
-This projection will always cause some sort of distortion when you go from a 3D object to a 2D. The classic example is trying to flatten a orange peel, you can't do that with out tearing the skin, flattening and stretching it out. 
+This projection will always cause some sort of distortion when you go from a 3D object to a 2D. The classic example is trying to flatten a orange peel, you can't do that with out tearing the skin, flattening and stretching it out. A developable surface is a surface can 
+be flattened onto a plane without distortion (i.e. "stretching" or "compressing").
 
-![](https://learngis.org/Images/smashed_orange01.jpg)
+While we many cartographic projections involve projecting the Earth to a developable surface and then "unrolling" the surface into a region on the plane. Since they may be constructed by bending a flat sheet, they are also important in manufacturing objects from sheet metal, cardboard, and plywood. An industry which uses developed surfaces extensively is shipbuilding.^[[Developable Surface](https://en.wikipedia.org/wiki/Developable_surface)]
+
+```{r distortion, echo=FALSE, fig.cap="An orange is not considered a developable surface"}
+knitr::include_graphics("https://learngis.org/Images/smashed_orange01.jpg")
+```
 
 There are certain properties that we want to accurately capture when we are working with mapping, these are area, distance, direction, and shape. A projected coordinate can only preserve one or two properties, because of this the map maker must think about the trade-offs being made when projecting the earth on to a 2D map. This is apparent when you think about the debate between the "Euro-centric" Mercator projection that we have all become accustomed to compared with the Peters Projection that accurately displays areas. 
+
+```{r Projections2, echo=FALSE, fig.cap="Maps can be Political"}
+knitr::include_graphics("https://external-preview.redd.it/6Vagn3BQ1Mwh4kN2-uldK7X8UM9_QAvYJCN2CCvoLWs.png?auto=webp&s=ca818d0e1049c02e6c0e82bf9223250822f30565")
+```
 
 Tissot's Indicatrix is a way of visualizing some of these distortions. It can
 illustrate linear, angular, and areal distortions. 
 
-![](https://upload.wikimedia.org/wikipedia/commons/8/87/Tissot_mercator.png)
+```{r Tissot1, echo=FALSE, fig.cap="Mercator Projection"}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/8/87/Tissot_mercator.png")
+```
 
-![](https://upload.wikimedia.org/wikipedia/commons/8/87/Azimuthal_equidistant_projection_with_Tissot%27s_indicatrix.png)
+```{r Tissot2, echo=FALSE, fig.cap="Equidistant Projection"}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/8/87/Azimuthal_equidistant_projection_with_Tissot%27s_indicatrix.png")
+```
 
-![](https://upload.wikimedia.org/wikipedia/commons/e/e7/Tissot_indicatrix_world_map_Gall-Peters_equal-area_proj.svg)
-
-![](https://external-preview.redd.it/6Vagn3BQ1Mwh4kN2-uldK7X8UM9_QAvYJCN2CCvoLWs.png?auto=webp&s=ca818d0e1049c02e6c0e82bf9223250822f30565)
+```{r Tissot3, echo=FALSE, fig.cap="Equal Area Projection"}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/e/e7/Tissot_indicatrix_world_map_Gall-Peters_equal-area_proj.svg")
+```
 
 The last thing to cover is the three main groups of projections types which are conic, cylindrical and planar or azimuths. As you can probably infer by their names these are the shapes that are being used to capture the projection, if you think of earth with a light bulb in the middle and place these objects on the surface of the earth, you can see that the earths surface would be projected on the shape. Distortions are minimized where the projection shape is tangent with the earths surface and greater the further you get from it. These shapes can either create one line of tangency or secant along two lines.
 
-![](https://www.acsu.buffalo.edu/~dbertuca/maps/cat/cylindrical_final.gif)
+```{r lightsource, echo=FALSE, fig.cap="Light bulb projection"}
+knitr::include_graphics("https://www.acsu.buffalo.edu/~dbertuca/maps/cat/cylindrical_final.gif")
+```
 
-![](http://gisedu.colostate.edu/webcontent/nr505/2012_Projects/Team6/images/GIS_concepts/Figure2_proj.PNG)
+```{r projectionSurface, echo=FALSE, fig.cap=""}
+knitr::include_graphics("http://gisedu.colostate.edu/webcontent/nr505/2012_Projects/Team6/images/GIS_concepts/Figure2_proj.PNG")
+```
 
-![](http://wiki.gis.com/wiki/images/9/9a/Secant-calculus.png)
+Intersections of the projection surface usually only happen once or twice, these terms are tangents and secants. In geometry, a secant of a curve is a line that intersects the curve in at least two (distinct) points.
 
-![](http://geokov.com/Images/coordref/cylindrical-projection.png)
+```{r secantLine, echo=FALSE, fig.cap="Common lines and line segments on a circle"}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/CIRCLE_LINES.svg/1280px-CIRCLE_LINES.svg.png")
+```
 
+Here's another graphic showing that if the cylinder fits just around the equator, there is a point of tangency. On the otherhand,
+if the developable surface is smaller, some of it will be inside of the object we are trying to project which makes it secant where it
+intersects the object twice.
+```{r projectionObjects, echo=FALSE, fig.cap=""}
+knitr::include_graphics("http://geokov.com/Images/coordref/cylindrical-projection.png")
+```
 
-![](https://imgs.xkcd.com/comics/map_projections.png)
+Here are more diagrams showing secant projections. You'll see the points where the projection
+surface(in this case a cone or cylinder) create these bands called Standard Parallels. These lines
+are where there are no distortions along the projection. Between the parallels, these is a negative
+distoration, meaning that there is more object than space on the developable surface, while outside of the
+parellels there is positive distortion because there is less objectfor the surface and gets blown up. 
+
+```{r secants, echo=FALSE, fig.cap=""}
+knitr::include_graphics("https://www.e-education.psu.edu/geog862/sites/www.e-education.psu.edu.geog862/files/images/Lesson06/Decreasing%20Distortion.png")
+```
+
+and just for fun, you can see people really get into projections!
+
+```{r xkcdProjections, echo=FALSE, fig.cap=""}
+knitr::include_graphics("https://imgs.xkcd.com/comics/map_projections.png")
+```
 
 ## Working with CRSs
 
@@ -286,23 +340,145 @@ tm_shape(centralPark_geo) + tm_symbols()
 
 # Mapping Basics
 
-Very similar to the ggplot2 paradigm you first start with the shape,
-then you specify how you want to represent the geometry.
+Making charts with your regular data, so naturally making maps with your
+spatial data is just as crucial. Here we will dive into two methods or mapping,
+static maps and interactive maps. While interactive maps are great, static maps
+are still a powerful and should be thought of as curated experiences for your audience.
 
-```{r}
-# Add fill layer to nz shape
-tm_shape(nybb) +
-  tm_fill() 
-# Add border layer to nz shape
-tm_shape(nybb) +
-  tm_borders() 
-# Add fill and border layers to nz shape
-tm_shape(nybb) +
-  tm_fill() +
-  tm_borders()
+Outside of the static vs. interactive paradigms there are many types of maps that are created.
+
+Here are a sample:
+
+- Physical maps show landscape features like rivers and land masses
+- Topographic maps show the contours of elevation lines
+- Cliamte maps can show atmostpheric condtions
+- Thematic maps show special topics like election results or even energy usage in areas.
+
+```{r barometricPressure, echo=FALSE, fig.cap="Barometric Pressure"}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/January_17_1982_500-Millibar_Height_Contours.png/1280px-January_17_1982_500-Millibar_Height_Contours.png")
 ```
 
-## Aestheics 
+## Mapping Elements
+
+Here is a list of items that should be added to each map. How we will be using
+maps are for thematic mapping and should be thought of more as data visulation.
+This doesn't mean graphic design principles should be thrown out the door, but
+as much ambiguity should be removed from the product. 
+
+- Title : Should clearly introduce the topic of the map
+- Legend : Gives an undestanding of the range, and variation in data (make the units easy to read)
+- North Arrow : Offers orientation for caridinal directions
+- Scale Bar : Shows the scale whether it is large or small scale map and amount of detail to be excepted.^[[Scale](https://en.wikipedia.org/wiki/Scale_(map))]
+- Sources : Give credit where credit is deserved
+- Date : It's a good practice to date your maps so you remember when it was made
+- Name : Also don't forget to take credit for your work
+
+```{r MapElements, echo=FALSE, fig.cap="Elements of a basic map"}
+knitr::include_graphics("https://saylordotorg.github.io/text_essentials-of-geographic-information-systems/section_13/0c71cd48743695df3cb5ca49fd858393.jpg")
+```
+
+## Static Maps
+
+Static maps are your traditional maps that you may find in an atlas, a poster, or
+in a report. As they say if "A picture is worth a thousand words", I would go further
+and say that "A map is worth ten thousand words". It's an information rich document
+and it's the deft hand of the creator to dictate how much detail and data needs to 
+be added to get your point across. 
+
+As I say in my classes, you have to be a good map consumer to be a good map producer.
+Not all maps are created eqaul and honing a critical eye towards good data visualzation
+and graphic design will take you far. Also once you create your aestheic whether it's 
+more modern, or tradiational looking, it'll be easier to stick with it. 
+
+```{r mapDesign, echo=FALSE, fig.cap="Modern map making example | Center for Spatial Research"}
+knitr::include_graphics("http://c4sr.columbia.edu/sites/default/files/styles/project-page-image/public/Green_Origins-01.png?itok=X1-dgsUv")
+```
+
+### tmap
+
+tmap is based on the grammar of graphics, just like ggplot2. We can think of mapping
+our geometries to the input data and string them together to make sentences with `+`.
+
+As a caveat tmap can also be used for interactive maps with `tmap_mode("view")` but I will be showing you
+how to use it for static mapping which is `tmap_mode("plot")`. 
+
+Like the `ggplot` object, we first start with the shape,
+then you specify how you want to represent the geometry.
+
+```{r, eval = FALSE}
+# create borders
+tm_shape(nybb) +
+  tm_borders() 
+
+# create the fill
+tm_shape(nybb) +
+  tm_fill() 
+
+# combine them
+tm_shape(nybb) +
+  tm_fill() +
+  tm_borders() 
+
+# or polygons
+tm_shape(nybb) + 
+    tm_polygons() 
+```
+
+```{r, echo=FALSE}
+# create borders
+tm_shape(nybb) +
+  tm_borders() +
+    tm_layout(title = "tm_shape(nybb) + 
+              tm_borders()")
+
+# create the fill
+tm_shape(nybb) +
+  tm_fill() +
+    tm_layout(title = "tm_shape(nybb) + 
+              tm_fill()")
+
+# combine them
+tm_shape(nybb) +
+  tm_fill() +
+  tm_borders() +
+    tm_layout(title = "tm_shape(nybb) +
+              tm_fill() + 
+              tm_borders()")
+
+# or polygons
+tm_shape(nybb) + 
+    tm_polygons() +
+    tm_layout(title = "tm_shape(nybb) + 
+              tm_polygons()")
+```
+
+### Aesthetic Mappings
+
+Here is how `tmap` has organized their Aesthetic mappings
+
+Aesthetics base layers:
+
+- `tm_polygons` Create a polygon layer (with borders)
+- `tm_symbols` Create a layer of symbols
+- `tm_lines` Create a layer of lines
+- `tm_raster` Create a raster layer
+- `tm_text` Create a layer of text labels
+- `tm_basemap` Create a layer of basemap tiles
+- `tm_tiles` Create a layer of overlay tiles
+
+Aesthetics derived layers:
+
+- `tm_fill` Create a polygon layer (without borders)
+- `tm_borders` Create polygon borders
+- `tm_bubbles` Create a layer of bubbles
+- `tm_squares` Create a layer of squares
+- `tm_dots` Create a layer of dots
+- `tm_markers` Create a layer of markers
+- `tm_iso` Create a layer of iso/contour lines
+- `tm_rgb` Create a raster layer of an image
+
+Working with colors requires specifying the `col` argument, here we specify
+a color by name. We can also change the line width, or line type. 
 
 ```{r}
 map1 <- tm_shape(nybb) + tm_fill(col = "red")
@@ -312,10 +488,20 @@ map4 <- tm_shape(nybb) + tm_borders(col = "blue", lwd = 0.5, lty = 2)
 tmap_arrange(map1, map2, map3, map4)
 ```
 
+We can also use a variable(either continous or categorical) to change the color too.
+
 ```{r}
 tm_shape(nybb) + tm_fill(col = "BoroName") + 
     tm_borders(col = "blue", lwd = 0.5, lty = 2)
 ```
+
+Layout elements:
+
+- `tm_layout` Adjust the layout (main function)
+- `tm_legend` Adjust the legend
+- `tm_view` Configure the interactive view mode
+- `tm_style` Apply a predefined style
+- `tm_format` Apply a predefined format
 
 ```{r}
 tm_shape(nybb) + tm_fill(col = "BoroName", title = "Boroughs") + 
@@ -324,13 +510,93 @@ tm_shape(nybb) + tm_fill(col = "BoroName", title = "Boroughs") +
     tm_layout(title = "NYC", bg.color = "lightblue")
 ```
 
+Attributes:
 
-## Areal Exercise
+- `tm_grid` Create grid lines
+- `tm_scale_bar` Create a scale bar
+- `tm_compass` Create a map compass
+- `tm_credits` Create a text for credits
+- `tm_logo` Create a logo
+- `tm_xlab` and tm_ylab Create axis labels
+- `tm_minimap` Create a minimap (view mode only)
 
-No we will see what the consequences are of using different projections when we
+```{r}
+tm_shape(nybb) + tm_fill(col = "BoroName", title = "Boroughs") + 
+    tm_borders(col = "white", lwd = 0.5) + 
+    tm_text(text = "BoroName", size = 0.7, col = "black") + 
+    tm_layout(title = "NYC", bg.color = "lightblue") +
+    tm_compass() + 
+    tm_scale_bar() + 
+    tm_credits("New York City Department of City Planning 5/20/2019",
+               size = 0.5,align = "right")
+    
+```
+
+### Affine Transformation
+
+What happens when you need to rotate your map? Affine transformation to the rescue. Here
+we will use a matrix to help us rotate the map by radians(converted from degrees).
+
+This might be important if you are used to seeing geographies in a particular orientation
+such as Manhattan. So even though Manahttan is not perfectly vertically aligned with North
+a lot of dpecition show it as such.
+^[[Affube Tranformations](https://www.mathworks.com/discovery/affine-transformation.html)]
+
+```{r}
+rot <- function(radians){
+    matrix(c(cos(radians), sin(radians), 
+             -sin(radians), cos(radians)), 2, 2)  
+} 
+
+radianConv <- function(degrees){
+    (degrees /180) * pi
+}                                         
+nybbg <- st_geometry(nybb)
+nybbd <- st_drop_geometry(nybb)
+nybbg2 <- (nybbg) * rot(radianConv(331))
+nybbg2 <- st_set_crs(nybbg2, 2263)
+nybbRot <- st_sf(nybbg2, nybbd)
+tm_shape(nybbRot) +  tm_fill(col = "BoroName", title = "Boroughs") + 
+    tm_borders(col = "white", lwd = 0.5) + 
+    tm_text(text = "BoroName", size = 0.7, col = "black") + 
+    tm_layout(title = "NYC", bg.color = "lightblue") +
+    tm_compass(north = 331) + 
+    tm_scale_bar() + 
+    tm_credits("New York City Department of City Planning 5/20/2019",
+               size = 0.5,align = "right")
+```
+
+
+## Interactive Maps
+
+There are times when interactive maps are more beneficial than having a static map.
+In my experience, interactive mapping is best used when exploration might be needed
+by the user. Unlike a static map experience, zooming, panning, clicking can be utilized
+to explore your output.
+
+### leaflet
+
+Leaflet is a great interactive mapping platform and couldn't be simpler to add to your
+rmarkdown document/slides or shiny dashboards. It can deal with `sf` and `sp` objects
+so you don't have to make any conversions with your spatial data!
+
+Here's a basic example using leaflet, first load the library. Than
+
+```{r}
+library(leaflet)
+m <- leaflet() %>% 
+    setView(lng = -73.9691305, lat = 40.7764627, zoom = 11) %>% 
+    addProviderTiles(providers$CartoDB.Positron)
+m
+
+```
+
+# Exercise 1 | Areal Mapping 
+
+Now we will see what the consequences are of using different projections when we
 are calculating area. We will use the Equal Area projection as our standard since
 we know that we are preserving area with this type of projection. We will compare this
-again the Equal Distance, Conformal, and State Plane projections. 
+against the Equal Distance, Conformal, and State Plane projections. 
 
 - [Equal Area](https://epsg.io/102008)
 - [Equal Distance](http://epsg.io/102005)
@@ -347,13 +613,16 @@ projections <- setNames(c(Area_Albers, Area_Lambert,Area_Equidistant, Area_NYSta
     as.list()
 ```
 
-We will now read in our usCounties shapefile.
+We will now read in our usCounties shapefile using the `st_read` function.
 
 ```{r}
 usCounties <- st_read(file.path(dataDir, "gis/us_county"),stringsAsFactors = FALSE)
 ```
 
-We will now create a function to calculate our areas and map through them.
+We will now create a function to calculate our areas and map through them. You have to
+be careful of what units the projections are and some of them are in meters, while
+some of them are in feet. Here we will convert the square meters areas to square feet,
+and the conversion is below:
 
 - 1 m^2  = 10.7639 ft^2
 
@@ -379,7 +648,10 @@ usCounties <- usCounties %>% left_join(areaCalc %>% dplyr::select(5:9))
 ```
 
 
-You can add a projection on the fly.
+You can add a projection on the fly. by specifying the `projection` attribute
+in tm_shape too. 
+
+Lambert Conformal Conic:
 
 ```{r}
 tm_shape(usCounties, projection = 2163, unit = "mi") + 
@@ -397,6 +669,8 @@ tm_shape(usCounties, projection = 2163, unit = "mi") +
 
 ```
 
+Equidistant:
+
 ```{r}
 tm_shape(usCounties, projection = 2163, unit = "mi") + 
     tm_polygons(col = "Equidistant_Diff", lwd = 0.1, palette = "RdBu", n = 7, midpoint = 0, style = "fisher") + 
@@ -411,6 +685,8 @@ tm_shape(usCounties, projection = 2163, unit = "mi") +
               just = "right") + 
     tm_layout(inner.margins = c(0.1,0.08,0.01,0.08))
 ```
+
+NY State Plane:
 
 ```{r}
 tm_shape(usCounties, projection = 2163, unit = "mi") + 
@@ -443,7 +719,8 @@ You will see that a lot of methods that you are used to working with in data.fra
 methods(class = "sf")
 ```
 
-If we ever wanted to go back to a normal data.frame object it's very simple
+If we ever wanted to go back to a normal data.frame object it's very simple with `st_drop_geometry`
+
 ```{r}
 st_drop_geometry(nybb) %>% class()
 ```
@@ -474,7 +751,7 @@ nybb %>% filter(Shape_Area >= 1937566944)
 ```
 
 
-## Joining data
+### Joining data
 
 For storage purposes, most geographic data does not come with much extra attribute data.
 Therefore joining in data with unique key is going to be important. You'll have to make sure
@@ -645,7 +922,24 @@ tm_shape(cipSF %>% slice(1:10)) + tm_symbols(col = "red", size = .2, shape = 1)
 
 ## Geometric Operations
 
+So far you have worked with attribute data, and spatial operations. One we thing 
+we haven't really done is work with the geometric operations or the shapes that
+make up the shapefile. These operations are also unique because their outputs are
+new geoemtires!
+
 ### Simplification
+
+Remember that all of this data is generated by hand, where someone painstakingly
+hand-coded these vectors from often statellite imagery or historic maps. The level
+of detail might be greater than you would like sometimes and generalizing these
+geometries might be needed. This helps to reduce the memory it takes to store
+these complex objects too. 
+
+The `st_simplify` will help you remove some of the detail from a shape. One argument
+you can play around with is the `dTolerance` which will be the distance in the 
+projection's units that will be tolerated. Here is the behind the scenes explanation:
+
+*This is done by selecting the endpoints of the line and the point farthest from the arc joining the end points, known as the “worst point”. If the worst point is farther from the joining arc than the tolerance value, it is kept and the substrings between the start and worst points, and worst and end points are considered recursively. In this way, a linestring comprised of enough of the original points can be produced that is “similar” to the original line. The units of tolerance are the same as the projection of the input geometry.*
 
 ```{r}
 nyc_simp <- st_simplify(nybb, dTolerance = 500)
@@ -653,10 +947,16 @@ plot(nyc_simp["BoroName"])
 plot(nybb["BoroName"])
 ```
 
+Now we can compare the space allocation
+
 ```{r}
 object.size(nybb)
 object.size(nyc_simp)
 ```
+
+The issue wwith our previous function is that topology between geometries
+are not preserved. The mapshaper version will actually preserve the
+relationship between geometries with the `keep_shapes` argument set to TRUE.
 
 ```{r}
 nyc_ms <- rmapshaper::ms_simplify(nybb, keep = 0.01,
@@ -667,9 +967,20 @@ nyc_ms <- rmapshaper::ms_simplify(nybb, keep = 0.01,
 tm_shape(nyc_ms) + tm_polygons()
 ```
 
+the sf implementation uses the [Ramer-Douglas-Peucker Algorithm](https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm),
+while the rmapshaper uses the [Visvalingam-Whyatt Line Simplification Algorithm](https://hull-repository.worktribe.com/output/459275)
 
+Here is a [great explanation](https://bost.ocks.org/mike/simplify/) with example.
+This is a [cool comparisson](http://bl.ocks.org/msbarry/9152218)
 
 ### Centroids
+
+Centroids are also known as the geometric center which is the artithmetic mean position of all the points that consist of a geometry. 
+You can think of it as the place where if you were to put your finger on the spot it 
+would balance perfectly.
+
+To create the centroid use the `st_centroid` function.
+
 ```{r}
 nybb_centroid <- st_centroid(nybb)
 
@@ -677,12 +988,20 @@ tm_shape(nybb) + tm_polygons()+
     tm_shape(nybb_centroid) + tm_symbols() 
 ```
 
+There are times when the centroid falls outside of the shape. For polyline features
+this is often the case. 
+
+Let's load in the subway lines data
+
 ```{r}
 subway <- read_sf(file.path(dataDir, "gis", "SubwayLines")) %>% 
     st_transform(2263)
 tm_shape(nybb) + tm_polygons(col ="white")+
 tm_shape(subway) + tm_lines()
 ```
+
+We will do some cleaning first. Then the `st_point_on_surface` will create
+the centroid along the original shape.
 
 ```{r}
 
@@ -698,6 +1017,8 @@ subwayCentroids <- st_centroid(subwayLines)
 subwaysurface <- st_point_on_surface(subwayLines)
 ```
 
+We can compare the differences in this new map.
+
 ```{r}
 tm_shape(nybb %>% filter(BoroName != "Staten Island")) + tm_polygons(col = "white")+
 tm_shape(subwayLines) + tm_lines(col = "lines") +
@@ -706,6 +1027,13 @@ tm_shape(subwayLines) + tm_lines(col = "lines") +
 ```
 
 ### Buffers
+
+Sometimes you need to create a radius around your original geometry. Maybe you need a
+1 mile buffer around a nuclear power plant to see what is in the vicinity of the plant?
+Or maybe you need to make a catchment area for how many school age children live in 
+the interserction of a half-mile from the school and a half-mile from a public library?
+
+To use the function call `st_buffer` with the specified distance.
 
 ```{r}
 subwayQuarterBuffer <- st_buffer(subwayLines, dist = 1320)
@@ -719,7 +1047,13 @@ tm_shape(subwayQuarterBuffer) + tm_polygons(col = "lines", alpha = 0.2)
 
 ### Clipping
 
-![](https://geocompr.robinlovelace.net/figures/venn-clip-1.png)
+clipping is a form of spatial subsetting except kind of like a cookie cutter you will be 
+extracting the portion you would like to keep. Here are some common uses for
+clipping.
+
+```{r clipping, echo=FALSE, fig.cap="Geometric Verbs"}
+knitr::include_graphics("https://geocompr.robinlovelace.net/figures/venn-clip-1.png")
+```
 
 
 ### Selecting with Intersect
@@ -751,10 +1085,11 @@ tm_shape(nybb) + tm_polygons() +
     tm_shape(bkDiff) + tm_symbols(size = 0.2, shape = 1, col = "purple")
 ```
 
+# Raster Analysis
 
-### Creating Rasters
+## Creating Rasters
 
-A RasterLayer can easily be created from scratch using the function raster.
+A RasterLayer can easily be created from scratch using the function `raster`.
 The default settings will create a global raster data structure with a 
 longitude/latitude coordinate reference system and 1 by 1 degree cells. You can
 change these settings by providing additional arguments such as xmin, nrow,
@@ -770,8 +1105,8 @@ cipSP <- as(cipSF, "Spatial")
 cipSP <- spTransform(cipSP, CRS("+init=epsg:2263"))
 ```
 
-We will no create an empty raster object named `rast`
-we'll also will in the CRS, extent, and dimensions.
+We will no create an empty raster object named `rast`,
+we'll also add the CRS, extent, and dimensions.
 ```{r}
 rast <- raster(crs =  CRS("+init=epsg:2263"))
 
@@ -780,6 +1115,8 @@ ncol(rast) <- 100
 nrow(rast) <- 100
 ```
 
+we will use `rasterize` to add a cipSP data into the empty raster
+
 ```{r}
 rast2 <- rasterize(cipSP[,"Award"], rast, field =cipSP$Award, fun=sum)
 
@@ -787,20 +1124,104 @@ tm_shape(rast2) + tm_raster()
 ```
 
 
-## Density
+## Extract
+
+We can extract data from our raster back to our points with the `extract` function.
 
 ```{r}
-cipSF$density <- raster::extract(rast2, cipSF)
+cipSF$raster <- raster::extract(rast2, cipSF)
 
 tm_shape(nybb) + tm_polygons(col = "white")+
-    tm_shape(cipSF) + tm_symbols(size = .2, col = "density") 
+    tm_shape(cipSF) + tm_symbols(size = .2, col = "raster") 
 ```
 
+# Point Pattern Analysis
+
+It's one thing to map our points of interest and eyeball some patterns. The real
+interesting part is the statistics behind the data. 
+
+## Centrography
+
+The foundations of point pattern analysis is the summary statistcs that we
+can collect from our points. Much like normal descriptive stats we can get the
+mean center, standard distance and standard deviational ellipse if your points may 
+have a non uniform trend. 
+
+```{r centrography, echo=FALSE, fig.cap="Central Measures"}
+knitr::include_graphics("https://mgimond.github.io/Spatial/img/centrography.svg")
+```
+
+First we will convert our sp object to a ppp object.
+```{r}
+cipPPP <- as(cipSP["Award"], "ppp") 
+Window(cipPPP) <- as(nybb,"Spatial") %>% as("owin")
+```
+
+```{r}
+aspace::calc_sdd(id = 1, filename = "Data/sdd.txt", points = data.frame(cipPPP$x, cipPPP$y))
+```
+
+You can see that our standard distance is 41,324 feet where roughly 68% of our data will be covered in from
+the center which is (1006143,201747.6).
+
+Other uses:
+
+- compare two or more distrubutions
+- compare the same feature but over time
+
+## Global Density
+
+if we look at the whole study area we can calculate the point density as $\frac{n}{a}$
+where $n$ is the observed number of points and $a$ is the study region's area. For
+instance if we had 10 schools in 100 acres, our point density is $\frac{10}{100} = 0.1$
+schools per acre. 
+
+## Local Density
+
+We looked global density, but what about point patterns that cane be measured across differenct location within the study region?
+We can then contrast if density is equal across the region, or if there maybe an underlying 
+local process at play. 
+
+## Quadrat Density
+
+The first method uses quadrats or sub-divisions, these are often squares, but many other
+shapes such as hexagons and triangles can be implored. 
+
+We can first create a 3x3 quadrat using the `quadratcount` funciton which will divide
+up our schools and count up the number of schools.
+
+```{r}
+quad <- quadratcount(cipPPP, nx = 3, ny = 3)
+```
+
+Now we can explore the schools with our quadrat.
+```{r}
+plot(cipPPP, cols = "light blue")
+plot(quad, add = TRUE)
+```
+
+or you could also do it by borough by spatially joining the boro info,
+doing group_by on boro, and summarizing the data.
+
+```{r}
+st_join(cipSF, nybb) %>% group_by(BoroName) %>% 
+    summarise(schools = n(),
+              area = first(Shape_Area),
+              density = schools/area) %>% 
+    arrange(desc(density))
+```
 
 ## Kerenel Density
-```{r}
-cipPPP <- as(cipSP, "ppp") 
-```
+
+The kernel density is a method for exploring desnity from sampled features. A circula search area
+is applied that determines the distance to search for sample locations to spread values around the
+locations. 
+
+
+We will now calculate the density and plot it out with the default values. we are
+using the `density` function from `spatstat`. The default kernel is the "gaussian smoothin kernel"
+and the default sigma is the standard deviation of the distribution. For more info about
+Gaussian smoothing check out this [link](https://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm).
 
 ```{r}
 cipKerneldefault <- density(cipPPP)
@@ -808,6 +1229,9 @@ plot(cipKerneldefault, main=NULL, las=1)
 raster::contour(cipKerneldefault, add = TRUE)
 ```
 
+
+We can specify the `sigma` value, here we will use 5000 ft, larger sigmas will produce
+smoother and more generalized density rasters. 
 ```{r}
 cipKernel5000 <- density(cipPPP,sigma = 5000)
 plot(cipKernel5000, main=NULL, las=1)
@@ -832,40 +1256,6 @@ tm_shape(cip_smooth$polygons) +
     	tm_shape(cip_smooth$iso) +
     	tm_iso(col = "grey", size = 0.1) +
     	tm_legend( position=c("left", "top"), bg.color="white", frame = FALSE)
-```
-
-## Leaflet
-
-
-```{r}
-library(leaflet)
-m <- leaflet() %>% 
-    setView(lng = -73.9691305, lat = 40.7764627, zoom = 11) %>% 
-    addProviderTiles(providers$CartoDB.Positron)
-m
-
-```
-
-```{r}
-kernelMask <- mask(kernelRast, nybb)
-pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values(kernelMask),
-  na.color = "transparent")
-
-m %>% 
-  addRasterImage(kernelMask, opacity = 0.8, color = pal,
-group = "Kernel") %>%
-  addLegend(pal = pal, values = values(kernelMask),
-    title = "CIP Kernel Density", position = "topleft") %>% 
-    addCircleMarkers(data = cip,
-    stroke = FALSE, fillOpacity = 0.5,
-    radius = 3, color = "purple",
-    popup = ~`Building ID`,
-        group = "Schools"
-  ) %>% 
-    addLayersControl(
-    overlayGroups = c("Kernel", "Schools"),
-    options = layersControlOptions(collapsed = FALSE)
-  )
 ```
 
 
@@ -1064,7 +1454,7 @@ The Spatial Autocorrelation (Global Moran's I) tool is an inferential statistic,
 Here is the equation for Moran's I:
 
 $$I = \frac N W \frac {\sum_i \sum_j w_{ij}(x_i-\bar x) (x_j-\bar x)} {\sum_i (x_i-\bar x)^2} $$
-where $N$ is the number of spatial units indexed by $i$ and $ j$;$x$ is the variable of interest; $\bar{x}$ is the mean of $x$;$w_{ij}$ is a matrix of spatial weights with zeroes on the diagonal (i.e., $w_{ii}=0$); and $W$ is the sum of all $w_{ij}$.[^1]
+where $N$ is the number of spatial units indexed by $i$ and $ j$;$x$ is the variable of interest; $\bar{x}$ is the mean of $x$;$w_{ij}$ is a matrix of spatial weights with zeroes on the diagonal (i.e., $w_{ii}=0$); and $W$ is the sum of all $w_{ij}$.^[[Moran's I](https://en.wikipedia.org/wiki/Moran%27s_I)]
 
 The values of $I$ usually range from -1 to 1. This shouldn't come as a surprise if you think of values that get outputted when we talk about correlations between two variables, there is usually a negative correlation (-1), no correlation (0), or positive correlation (1). In Moran's I -1 means evenly dispersed, 0 is random, and 1 is perfectly clustered. 
 
@@ -1493,5 +1883,3 @@ moran.test(condoComb %>% slice(-c(2492, 2542)) %>% pull(residuals),
                   lw3)
 ```
 
-
-[^1]: [Moran's I](https://en.wikipedia.org/wiki/Moran%27s_I)
