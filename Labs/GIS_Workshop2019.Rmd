@@ -110,7 +110,7 @@ We can start to answer questions about how features are distributed in space, wh
 of patterns are created by the feature, where clusters might be located, and the 
 relationship between a set of features over space. We can also go beyond visual
 exploration and inspection but utilize statistics to examine and describe these
-spatial phoenomena.
+spatial phenomena.
 
 ```{r spatialStats, echo=FALSE, fig.cap="Spatial Statistics"}
 knitr::include_graphics('https://freshbiostats.files.wordpress.com/2013/03/spatial_map2.png')
@@ -266,7 +266,7 @@ Intersections of the projection surface usually only happen once or twice, these
 knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/CIRCLE_LINES.svg/1280px-CIRCLE_LINES.svg.png")
 ```
 
-Here's another graphic showing that if the cylinder fits just around the equator, there is a point of tangency. On the otherhand,
+Here's another graphic showing that if the cylinder fits just around the equator, there is a point of tangency. On the other hand,
 if the developable surface is smaller, some of it will be inside of the object we are trying to project which makes it secant where it
 intersects the object twice.
 ```{r projectionObjects, echo=FALSE, fig.cap=""}
@@ -276,8 +276,8 @@ knitr::include_graphics("http://geokov.com/Images/coordref/cylindrical-projectio
 Here are more diagrams showing secant projections. You'll see the points where the projection
 surface(in this case a cone or cylinder) create these bands called Standard Parallels. These lines
 are where there are no distortions along the projection. Between the parallels, these is a negative
-distoration, meaning that there is more object than space on the developable surface, while outside of the
-parellels there is positive distortion because there is less objectfor the surface and gets blown up. 
+distortion, meaning that there is more object than space on the developable surface, while outside of the
+parallels there is positive distortion because there is less object for the surface and gets blown up. 
 
 ```{r secants, echo=FALSE, fig.cap=""}
 knitr::include_graphics("https://www.e-education.psu.edu/geog862/sites/www.e-education.psu.edu.geog862/files/images/Lesson06/Decreasing%20Distortion.png")
@@ -351,7 +351,7 @@ Here are a sample:
 
 - Physical maps show landscape features like rivers and land masses
 - Topographic maps show the contours of elevation lines
-- Cliamte maps can show atmostpheric condtions
+- Climate maps can show atmospheric conditions
 - Thematic maps show special topics like election results or even energy usage in areas.
 
 ```{r barometricPressure, echo=FALSE, fig.cap="Barometric Pressure"}
@@ -361,13 +361,13 @@ knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/thumb/5/
 ## Mapping Elements
 
 Here is a list of items that should be added to each map. How we will be using
-maps are for thematic mapping and should be thought of more as data visulation.
+maps are for thematic mapping and should be thought of more as data visualization.
 This doesn't mean graphic design principles should be thrown out the door, but
 as much ambiguity should be removed from the product. 
 
 - Title : Should clearly introduce the topic of the map
-- Legend : Gives an undestanding of the range, and variation in data (make the units easy to read)
-- North Arrow : Offers orientation for caridinal directions
+- Legend : Gives an understanding of the range, and variation in data (make the units easy to read)
+- North Arrow : Offers orientation for cardinal directions
 - Scale Bar : Shows the scale whether it is large or small scale map and amount of detail to be excepted.^[[Scale](https://en.wikipedia.org/wiki/Scale_(map))]
 - Sources : Give credit where credit is deserved
 - Date : It's a good practice to date your maps so you remember when it was made
@@ -386,9 +386,9 @@ and it's the deft hand of the creator to dictate how much detail and data needs 
 be added to get your point across. 
 
 As I say in my classes, you have to be a good map consumer to be a good map producer.
-Not all maps are created eqaul and honing a critical eye towards good data visualzation
-and graphic design will take you far. Also once you create your aestheic whether it's 
-more modern, or tradiational looking, it'll be easier to stick with it. 
+Not all maps are created equal and honing a critical eye towards good data visualization
+and graphic design will take you far. Also once you create your aesthetic whether it's 
+more modern, or traditional looking, it'll be easier to stick with it. 
 
 ```{r mapDesign, echo=FALSE, fig.cap="Modern map making example | Center for Spatial Research"}
 knitr::include_graphics("http://c4sr.columbia.edu/sites/default/files/styles/project-page-image/public/Green_Origins-01.png?itok=X1-dgsUv")
@@ -488,7 +488,7 @@ map4 <- tm_shape(nybb) + tm_borders(col = "blue", lwd = 0.5, lty = 2)
 tmap_arrange(map1, map2, map3, map4)
 ```
 
-We can also use a variable(either continous or categorical) to change the color too.
+We can also use a variable(either continuous or categorical) to change the color too.
 
 ```{r}
 tm_shape(nybb) + tm_fill(col = "BoroName") + 
@@ -538,8 +538,8 @@ What happens when you need to rotate your map? Affine transformation to the resc
 we will use a matrix to help us rotate the map by radians(converted from degrees).
 
 This might be important if you are used to seeing geographies in a particular orientation
-such as Manhattan. So even though Manahttan is not perfectly vertically aligned with North
-a lot of dpecition show it as such.
+such as Manhattan. So even though Manhattan is not perfectly vertically aligned with North
+a lot of depictions show it as such.
 ^[[Affube Tranformations](https://www.mathworks.com/discovery/affine-transformation.html)]
 
 ```{r}
@@ -655,11 +655,11 @@ Lambert Conformal Conic:
 
 ```{r}
 tm_shape(usCounties, projection = 2163, unit = "mi") + 
-    tm_polygons(col = "Lambert_Diff", lwd = 0.1, palette = "RdBu", n = 7, midpoint = 0, style = "fisher") + 
-    tm_compass(position = c("right","bottom"),
-               text.color = "grey", 
-               color.dark = "grey",
-               size = 1) +
+    tm_polygons(col = "Lambert_Diff", lwd = 0.1, palette = "RdBu", n = 7, midpoint = 0, style = "fisher") +
+        # tm_compass(position = c("right","bottom"),
+    #            text.color = "grey", 
+    #            color.dark = "grey",
+    #            size = 1) +
     tm_scale_bar(position = c("center", "bottom"),
                  text.color = "grey",
                  color.dark = "grey") +
@@ -674,10 +674,10 @@ Equidistant:
 ```{r}
 tm_shape(usCounties, projection = 2163, unit = "mi") + 
     tm_polygons(col = "Equidistant_Diff", lwd = 0.1, palette = "RdBu", n = 7, midpoint = 0, style = "fisher") + 
-    tm_compass(position = c("right","bottom"),
-               text.color = "grey", 
-               color.dark = "grey",
-               size = 1) +
+    # tm_compass(position = c("right","bottom"),
+    #            text.color = "grey", 
+    #            color.dark = "grey",
+    #            size = 1) +
     tm_scale_bar(position = c("center", "bottom"),
                  text.color = "grey",
                  color.dark = "grey") +
@@ -691,10 +691,10 @@ NY State Plane:
 ```{r}
 tm_shape(usCounties, projection = 2163, unit = "mi") + 
     tm_polygons(col = "NYStatePlane_Diff", lwd = 0.1,palette = "RdBu", n = 4, midpoint = 0, style = "fisher") + 
-    tm_compass(position = c("right","bottom"),
-               text.color = "grey", 
-               color.dark = "grey",
-               size = 1) +
+    # tm_compass(position = c("right","bottom"),
+    #            text.color = "grey", 
+    #            color.dark = "grey",
+    #            size = 1) +
     tm_scale_bar(position = c("center", "bottom"),
                  text.color = "grey",
                  color.dark = "grey") +
@@ -704,9 +704,7 @@ tm_shape(usCounties, projection = 2163, unit = "mi") +
 ```
 
 
-# Data
-
-## Attribute data operations
+# Attribute data operations
 
 the `sf` library is great because it extends the data.frame and adds geographic features to it. Much like the tidy data
 paradigm, each row is still an observations and each column is a feature. The main difference between a normal data.frame 
@@ -725,7 +723,7 @@ If we ever wanted to go back to a normal data.frame object it's very simple with
 st_drop_geometry(nybb) %>% class()
 ```
 
-### Subsetting
+## Subsetting
 
 Subsetting attribute data will be done in the same ways you have been dealing
 with `data.frame` object types. The first way of doing it is through the `[` 
@@ -751,7 +749,7 @@ nybb %>% filter(Shape_Area >= 1937566944)
 ```
 
 
-### Joining data
+## Joining data
 
 For storage purposes, most geographic data does not come with much extra attribute data.
 Therefore joining in data with unique key is going to be important. You'll have to make sure
@@ -790,14 +788,14 @@ tm_shape(nybb_demo) + tm_polygons(col = "population")
 ```
 
 
-## Spatial Operations
+# Spatial Operations
 
 The main reason we want to use GIS is for spatial operations or geoprocessing tools.
 Before we working with attribute data, but we will be selecting and filtering
 based on their location and shape. Common tools are intersects, clip, spatial joins,
 and buffers. 
 
-### Intersects
+## Intersects
 
 Now we will load in Capital Improvement Projects data from the NYC Department of Education.
 You'll notice that we are reading in normal csv first and then casting it as an sf
@@ -820,11 +818,13 @@ cipSF <- st_transform(cipSF, 2263)
 ```
 
 let's subset just Brooklyn so we can use it as our selection criteria.
+
 ```{r}
 BK <- nybb %>% filter(BoroName == "Brooklyn")
 ```
 
 and we can see what it looks like. 
+
 ```{r}
 tm_shape(nybb) + tm_polygons(col = "white") +
     tm_shape(BK) + tm_fill(col = "grey")+
@@ -848,7 +848,7 @@ cipNY %>% head()
 ```
 
 
-### Disjoint
+## Disjoint
 
 The opposite of `st_intersects()` is disjoints.  Here we can the dense matrix
 where the geometries do not spatially relate. 
@@ -857,7 +857,7 @@ where the geometries do not spatially relate.
 st_disjoint(cipSF, nybb, sparse = FALSE) %>% head()
 ```
 
-### Within
+## Within
 
 While intersect is kind of the catch-all of spatial relationships,
 you can be more specific. within checks if x is within y.  
@@ -865,7 +865,7 @@ you can be more specific. within checks if x is within y.
 st_within(cipSF, nybb, sparse = FALSE) %>% head()
 ```
 
-### Within Distance
+## Within Distance
 
 if you want to add a search distance with your spatial query, `st_is_within_distance`
 is your tool. You can add a dist argument(remember what your units are) and 
@@ -876,7 +876,7 @@ sel <- st_is_within_distance(cipSF, nybb, dist = 100, sparse = FALSE)
 sel %>% head()
 ```
 
-### Spatial Joining
+## Spatial Joining
 
 sometimes, you want to add attribute data from one geometry to another. In a normal
 join we did it with a unique key, but a spatial join will happen with intersect. 
@@ -893,13 +893,13 @@ tm_shape(nybb) + tm_polygons(col = "white")+
                                     alpha = 0.4) 
 ```
 
-### Spatial Data Aggregation
+## Spatial Data Aggregation
 
 ```{r}
 cipJoin %>% aggregate(by = nybb, FUN = mean)
 ```
 
-### Distances
+## Distances
 
 When we were looking at topological relationships, the results were only binary, either they
 intersect or does not, etc...
@@ -920,17 +920,17 @@ tm_shape(nybb_centroid) + tm_symbols(col = "blue", size = .2) +
 tm_shape(cipSF %>% slice(1:10)) + tm_symbols(col = "red", size = .2, shape = 1)
 ```
 
-## Geometric Operations
+# Geometric Operations
 
 So far you have worked with attribute data, and spatial operations. One we thing 
 we haven't really done is work with the geometric operations or the shapes that
 make up the shapefile. These operations are also unique because their outputs are
 new geoemtires!
 
-### Simplification
+## Simplification
 
 Remember that all of this data is generated by hand, where someone painstakingly
-hand-coded these vectors from often statellite imagery or historic maps. The level
+hand-coded these vectors from often satellite imagery or historic maps. The level
 of detail might be greater than you would like sometimes and generalizing these
 geometries might be needed. This helps to reduce the memory it takes to store
 these complex objects too. 
@@ -954,7 +954,7 @@ object.size(nybb)
 object.size(nyc_simp)
 ```
 
-The issue wwith our previous function is that topology between geometries
+The issue with our previous function is that topology between geometries
 are not preserved. The mapshaper version will actually preserve the
 relationship between geometries with the `keep_shapes` argument set to TRUE.
 
@@ -973,9 +973,9 @@ while the rmapshaper uses the [Visvalingam-Whyatt Line Simplification Algorithm]
 Here is a [great explanation](https://bost.ocks.org/mike/simplify/) with example.
 This is a [cool comparisson](http://bl.ocks.org/msbarry/9152218)
 
-### Centroids
+## Centroids
 
-Centroids are also known as the geometric center which is the artithmetic mean position of all the points that consist of a geometry. 
+Centroids are also known as the geometric center which is the arithmetic mean position of all the points that consist of a geometry. 
 You can think of it as the place where if you were to put your finger on the spot it 
 would balance perfectly.
 
@@ -1026,12 +1026,12 @@ tm_shape(subwayLines) + tm_lines(col = "lines") +
     tm_shape(subwaysurface) + tm_symbols(col = "lines", size = 0.5, shape = 5)
 ```
 
-### Buffers
+## Buffers
 
 Sometimes you need to create a radius around your original geometry. Maybe you need a
 1 mile buffer around a nuclear power plant to see what is in the vicinity of the plant?
 Or maybe you need to make a catchment area for how many school age children live in 
-the interserction of a half-mile from the school and a half-mile from a public library?
+the intersection of a half-mile from the school and a half-mile from a public library?
 
 To use the function call `st_buffer` with the specified distance.
 
@@ -1045,7 +1045,7 @@ tm_shape(nybb %>% filter(BoroName != "Staten Island")) + tm_polygons(col = "whit
 tm_shape(subwayQuarterBuffer) + tm_polygons(col = "lines", alpha = 0.2) 
 ```
 
-### Clipping
+## Clipping
 
 clipping is a form of spatial subsetting except kind of like a cookie cutter you will be 
 extracting the portion you would like to keep. Here are some common uses for
@@ -1056,7 +1056,7 @@ knitr::include_graphics("https://geocompr.robinlovelace.net/figures/venn-clip-1.
 ```
 
 
-### Selecting with Intersect
+## Selecting with Intersect
 
 If you want to create a new geometry from the selection `st_intersection` will
 create a new object for you.
@@ -1071,7 +1071,7 @@ tm_shape(nybb) + tm_polygons() +
 ```
 
 
-### Selecting with Difference
+## Selecting with Difference
 
 If you want to create a new geometry from the selection `st_intersection` will
 create a new object for you.
@@ -1142,7 +1142,7 @@ interesting part is the statistics behind the data.
 
 ## Centrography
 
-The foundations of point pattern analysis is the summary statistcs that we
+The foundations of point pattern analysis is the summary statistics that we
 can collect from our points. Much like normal descriptive stats we can get the
 mean center, standard distance and standard deviational ellipse if your points may 
 have a non uniform trend. 
@@ -1158,7 +1158,7 @@ Window(cipPPP) <- as(nybb,"Spatial") %>% as("owin")
 ```
 
 ```{r}
-aspace::calc_sdd(id = 1, filename = "Data/sdd.txt", points = data.frame(cipPPP$x, cipPPP$y))
+aspace::calc_sdd(id = 1, filename = file.path(dataDir, "sdd.txt"), points = data.frame(cipPPP$x, cipPPP$y))
 ```
 
 You can see that our standard distance is 41,324 feet where roughly 68% of our data will be covered in from
@@ -1166,7 +1166,7 @@ the center which is (1006143,201747.6).
 
 Other uses:
 
-- compare two or more distrubutions
+- compare two or more distributions
 - compare the same feature but over time
 
 ## Global Density
@@ -1178,7 +1178,7 @@ schools per acre.
 
 ## Local Density
 
-We looked global density, but what about point patterns that cane be measured across differenct location within the study region?
+We looked global density, but what about point patterns that cane be measured across different location within the study region?
 We can then contrast if density is equal across the region, or if there maybe an underlying 
 local process at play. 
 
@@ -1187,8 +1187,9 @@ local process at play.
 The first method uses quadrats or sub-divisions, these are often squares, but many other
 shapes such as hexagons and triangles can be implored. 
 
-We can first create a 3x3 quadrat using the `quadratcount` funciton which will divide
-up our schools and count up the number of schools.
+We can first create a 3x3 quadrat using the `quadratcount` function which will divide
+up our schools and count up the number of schools. Also quadrat areas don't have to be uniform, it could
+be created on a covariate like temperature, landuses, etc by creating a [tessellated surface](http://wiki.gis.com/wiki/index.php/Tessellation).
 
 ```{r}
 quad <- quadratcount(cipPPP, nx = 3, ny = 3)
@@ -1204,22 +1205,40 @@ or you could also do it by borough by spatially joining the boro info,
 doing group_by on boro, and summarizing the data.
 
 ```{r}
-st_join(cipSF, nybb) %>% group_by(BoroName) %>% 
+cipBoro <- st_join(nybb, cipSF) %>% group_by(BoroName) %>% 
     summarise(schools = n(),
               area = first(Shape_Area),
-              density = schools/area) %>% 
+              awards = sum(Award),
+              density = schools/(area/43560), # convert to acres
+              awardDens = awards/(area/43560)) %>% 
     arrange(desc(density))
+
+cipBoro
+
+tm_shape(cipBoro) + tm_polygons(col = "density", title = "School Density per Acre")
+tm_shape(cipBoro) + tm_polygons(col = "awardDens", title = "Award Density \n(Dollars per Acre)")
 ```
 
 ## Kerenel Density
 
-The kernel density is a method for exploring desnity from sampled features. A circula search area
-is applied that determines the distance to search for sample locations to spread values around the
-locations. 
+The kernel density is a method for exploring density from sampled features. It isn't 
+too different from the quadrat method since we are still calculating a local density,
+but in the kernel method there is a moving window that defines what local is.
+A circular search area is applied that determines the distance to 
+search for sample locations to spread values around the
+locations. If you want to learn more about kernel's here is the [wikipedia link](https://en.wikipedia.org/wiki/Kernel_(statistics)#Nonparametric_statistics)
 
+If you remember Minesweeper a kernel density map will make a lot of sense.
+
+```{r kernel, echo=FALSE, fig.cap="Kernel Density"}
+knitr::include_graphics('https://mgimond.github.io/Spatial/11-Point-Patterns_files/figure-html/f11-kernel01-1.png')
+```
 
 We will now calculate the density and plot it out with the default values. we are
-using the `density` function from `spatstat`. The default kernel is the "gaussian smoothin kernel"
+using the `density` function from `spatstat`. The default kernel is the "Gaussian smoothing kernel"
+
+$$(u) = \frac{1}{\sqrt{2\pi}}e^{-\frac{1}{2}u^2}$$
+
 and the default sigma is the standard deviation of the distribution. For more info about
 Gaussian smoothing check out this [link](https://homepages.inf.ed.ac.uk/rbf/HIPR2/gsmooth.htm).
 
@@ -1232,23 +1251,30 @@ raster::contour(cipKerneldefault, add = TRUE)
 
 We can specify the `sigma` value, here we will use 5000 ft, larger sigmas will produce
 smoother and more generalized density rasters. 
+
 ```{r}
+par(mfrow=c(1,2))
 cipKernel5000 <- density(cipPPP,sigma = 5000)
-plot(cipKernel5000, main=NULL, las=1)
+plot(cipKernel5000, main="Non-Weighted", las=1)
 raster::contour(cipKernel5000, add = TRUE)
 ```
 
+We could also add a weight with the amount of money each school
+was awarded with the `weights` field.
+
 ```{r}
 cipKernelWeighted <- density(cipPPP,sigma = 5000, weights = cipSF$Award)
-plot(cipKernelWeighted, main=NULL, las=1)
+plot(cipKernelWeighted, main="Weighted", las=1)
 raster::contour(cipKernelWeighted, add = TRUE)
 ```
 
+```{r echo=FALSE}
+par(mfrow=c(1,1))
+```
+
+tmap also has it's own function to make a kernel density map using `smooth_map`
 
 ```{r}
-kernelRast <- raster(cipKernelWeighted)
-crs(kernelRast) <- "+init=epsg:2263"
-
 cip_smooth <- tmaptools::smooth_map(cipSF, smooth.raster = TRUE, nlevels = 10, cover = nybb)
 
 tm_shape(cip_smooth$polygons) +
@@ -1258,21 +1284,80 @@ tm_shape(cip_smooth$polygons) +
     	tm_legend( position=c("left", "top"), bg.color="white", frame = FALSE)
 ```
 
+if you already have a raster, we can input that is with the `smooth.raster` as
+`FALSE`. 
+
+```{r}
+kernelRast <- raster::raster(cipKernelWeighted)
+crs(kernelRast) <- "+init=epsg:2263"
+
+cip_smoothRast <- tmaptools::smooth_map(kernelRast, smooth.raster = FALSE, nlevels = 10,
+                                        cover = nybb)
+
+tm_shape(cip_smoothRast$raster$layer) +
+    	tm_raster( palette=topo.colors(5), title="CIP Density",
+    	           alpha = 0.5) +
+    	tm_shape(cip_smoothRast$iso) +
+    	tm_lines(col = "level",palette=topo.colors(7),
+    	         legend.col.show = FALSE) + 
+    tm_shape(cipSF %>% mutate(Award = Award / 1000000)) +  
+    tm_symbols(size = .1, shape = 1, col = "Award",
+               title.col = "Award in millions($)") + 
+    	tm_legend( position=c("left", "top"), bg.color="gray", frame = FALSE) + 
+    tm_layout(bg.color = "black")
+	
+```
+
+Let's interact with our new raster with leaflet.
+
+```{r}
+m <- leaflet() %>% 
+    setView(lng = -73.9691305, lat = 40.7764627, zoom = 11) %>% 
+    addProviderTiles(providers$CartoDB.Positron)
+
+kernelMask <- mask(kernelRast, nybb)
+pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values(kernelMask),
+  na.color = "transparent")
+
+m %>% 
+  addRasterImage(kernelMask, opacity = 0.8, color = pal,
+group = "Kernel") %>%
+  addLegend(pal = pal, values = values(kernelMask),
+    title = "CIP Kernel Density", position = "topleft") %>% 
+    addCircleMarkers(data = cip,
+    stroke = FALSE, fillOpacity = 0.5,
+    radius = 3, color = "purple",
+    popup = ~`Building ID`,
+        group = "Schools"
+  ) %>% 
+    addLayersControl(
+    overlayGroups = c("Kernel", "Schools"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+```
+
 
 ## Distance Based Analysis
 
-pattern analysis whereby the interest lies in how the points are distributed relative to one another (a second-order property of the point pattern) as opposed to how the points are distributed relative to the study extent. An average nearest neighbor (ANN) analysis measures the average distance from each point in the study area to its nearest point. 
+We just looked at density based analysis, but what about on distance? We should also be interested in 
+the distance based relationship between points also. 
+
+### Average Nearest Neighbor
+
+An average nearest neighbor (ANN) analysis measures the average distance from each point in the study area to its nearest point. 
 
 The parameter k can take on any order neighbor (up to n-1 where n is the total number of points).
 
-The average nearest neighbor function can be expended to generate an ANN vs neighbor order plot. In the following example, we’ll plot ANN as a function of neighbor order for the first 100 closest neighbors:
-
 ```{r}
+# average distance to first nearest neighbor
 annCIP <- mean(nndist(cipPPP, k=1))
+annCIP
 
+# average distance to second nearest neighbor
 mean(nndist(cipPPP, k=2))
 ```
 
+The average nearest neighbor function can be expanded to generate an ANN vs neighbor order plot. In the following example, we’ll plot ANN as a function of neighbor order for the for all of the neighbors:
 
 ```{r}
 ANN <- 1:(cipPPP$n-1) %>% 
@@ -1284,26 +1369,30 @@ plot(ANN ~eval(1:(cipPPP$n-1)), type = "b",main = "Average Nearest Neighbor")
 
 The bottom axis shows the neighbor order number and the left axis shows the average nearest neighbor distance in feet.
 
-Do you see a problem here? Could different shapes encompassing the same point pattern have the same surface area? If so, shouldn’t the shape of our study area be a parameter in our ANN analysis? 
+Here are two different views of the cluster and their average nearest neighbor plot:
 
+```{r ANNcluster, echo=FALSE, fig.cap="Three different point patterns: a single cluster, a dual cluster and a randomly scattered pattern."}
+knitr::include_graphics('https://mgimond.github.io/Spatial/11-Point-Patterns_files/figure-html/f11-diff-patterns-1.png')
+```
 
-
-![Three different point patterns: a single cluster, a dual cluster and a randomly scattered pattern.](https://mgimond.github.io/Spatial/11-Point-Patterns_files/figure-html/f11-diff-patterns-1.png)
-
-![Three different ANN vs. neighbor order plots. The black ANN line is for the first point pattern (single cluster); the blue line is for the second point pattern (double cluster) and the red line is for the third point pattern.](https://mgimond.github.io/Spatial/11-Point-Patterns_files/figure-html/f11-diff-ANN-plots-1.png)
+```{r ANNcluster2, echo=FALSE, fig.cap="Three different ANN vs. neighbor order plots. The black ANN line is for the first point pattern (single cluster); the blue line is for the second point pattern (double cluster) and the red line is for the third point pattern."}
+knitr::include_graphics('https://mgimond.github.io/Spatial/11-Point-Patterns_files/figure-html/f11-diff-ANN-plots-1.png')
+```
 
 Popular spatial analysis techniques compare observed point patterns to ones generated by an 
 independent random process (IRP) also called complete spatial randomness (CSR). 
-Any event has equal probability of being in any location.
+Where any event has equal probability of being in any location at a given time.
 
-Average Nearest Neighbors. 
+Average Nearest Neighbors Ratio:
 
 $$ANN_{ratio}=\dfrac{ANN}{ANN_{expected}}$$
 
-Average Nearest Neighbor Expected
+Average Nearest Neighbor Expected:
+
 $$ANN_{Expected}=\dfrac{0.5}{\sqrt{n/A}} $$
 
 Remember the average nearest neighbor for schools is 1511 feet
+
 ```{r}
 annCIP
 ```
@@ -1314,34 +1403,56 @@ annRatio <- annCIP / (0.5/(sqrt(cipPPP$n/area(cipPPP))))
 annRatio
 ```
 
-![](https://pro.arcgis.com/en/pro-app/tool-reference/data-management/GUID-EFBA5DB8-A161-4FE1-B2CB-792B65DC1469-web.png)
+Do you see a problem here? Could different shapes encompassing the same point pattern have the same surface area? 
+If so, shouldn't’t the shape of our study area be a parameter in our ANN analysis? 
 
-We can see how if we change our area of study the ratio will go up where 
-a dispersed pattern would be observed. 
+```{r minBoundingGeo, echo=FALSE, fig.cap="Different conceptualizations of the minimmum bouding geometry"}
+knitr::include_graphics('https://pro.arcgis.com/en/pro-app/tool-reference/data-management/GUID-EFBA5DB8-A161-4FE1-B2CB-792B65DC1469-web.png')
+```
+
+We can see how if we change our area of study the ratio will go up and 
+a dispersed pattern can be observed. 
 
 ```{r}
 annRatio <- annCIP / (0.5/(sqrt(cipPPP$n/(area(cipPPP)/10))))
 annRatio
 ```
 
-Now we'll create the simulation using Monte Carlo Methods.
+Now we'll create the simulation using Monte Carlo Methods to compare a randomly
+distributed average nearest neighbor scenario.
+
+
 ```{r}
-n     <- 599L               # Number of simulations
-ann.r <- vector(length = n) # Create an empty object to be used to store simulated ANN values
+# Number of simulations
+n     <- 599L       
+# Create an empty object to be used to store simulated ANN values
+ann.r <- vector(length = n) 
+
 for (i in 1:n){
-  rand.p   <- rpoint(n=cipPPP$n, win= as.owin(sf::st_bbox(nybb)))  # Generate random point locations
-  ann.r[i] <- mean(nndist(rand.p, k=1))  # Tally the ANN values
+    # Generate random point locations in NYC
+    rand.p   <- rpoint(n=cipPPP$n, win= as(nybb,"Spatial") %>% as("owin"))
+    # Tally the ANN values
+    ann.r[i] <- mean(nndist(rand.p, k=1)) 
 }
 ```
 
+let's take a look at what random points distributed along NYC would look like:
+
 ```{r}
-Window(rand.p) <- as.owin(sf::st_bbox(nybb))
+Window(rand.p) <- as(nybb,"Spatial") %>% as("owin")
 plot(rand.p, pch=16, main=NULL, cols=rgb(0,0,0,0.5))
 ```
+
+Can you easily tell that it's random? How sure can you be? more on that later...
+
+Let's see the distribution of the ANNs from the Monte Carlo simulation.
+
 ```{r}
 tibble(ANN = ann.r) %>% ggplot(aes(x = ANN)) + 
     geom_histogram(fill = "green", col = "gray") +theme_minimal()
 ```
+
+... and where does our actual ANN value sit?
 
 ```{r}
 
@@ -1361,13 +1472,38 @@ p
 In our working example, you’ll note that or simulated ANN value was nowhere near the range of ANN values computed under the null yet we don’t have a p-value of zero. This is by design since the strength of our estimated p will be proportional to the number of simulations–this reflects the chance that given an infinite number of simulations at least one realization of a point pattern could produce an ANN value more extreme than ours.
 
 
-It’s important to remember that the ANN tool is a distance based approach to point pattern analysis. Even though we are randomly generating points following some underlying probability distribution map we are still concerning ourselves with the repulsive/attractive forces that might dictate the placement of Walmarts relative to one another–i.e. we are not addressing the question “can some underlying process explain the X and Y placement of the stores”.
+It’s important to remember that the ANN tool is a distance based approach to point pattern analysis. Even though we are randomly generating points following some underlying probability distribution map we are still concerning ourselves with the repulsive/attractive forces that might dictate the placement of locations relative to one another–i.e. we are not addressing the question “can some underlying process explain the X and Y placement of the stores”.
+
+# Global Methods
 
 ## Spatial Autocorrelation
 
-from Manny Gimond's [github](https://mgimond.github.io/Spatial/spatial-autocorrelation.html)
+So if you are familiar with timeseries forecasting, autocorrelation should ring a bell.
+autocorrelation is when a variable is correlated with itself and this could happen over time
+or... space. This is the crux of Tobler's first law of geography "everything is related 
+to everything else, but near things are more related than distant things." 
 
-![](https://mgimond.github.io/Spatial/img/Random_maps.png)
+Classic statistics assume that variables are independent but in space we observe that
+near things are more related. 
+
+Clusters are examples of positive spatial correlations while a checker board pattern
+is a negative correlation. This is very similar to normal correlations when you think 
+about the directionality of the relationship between two variables. No correlation
+in our case means randomness. 
+
+```{r spatialautocorrelation, echo=FALSE}
+knitr::include_graphics('https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/GUID-5CCEE7E5-839C-46E8-A88B-FCD02F07B209-web.gif')
+```
+
+Here's a great example of population density and elevation. We know intuitively
+that people usually live in clusters and that elevation is closely
+dependent on it's neighbors (except for cliffs!).
+
+```{r autocorrelation, echo=FALSE}
+knitr::include_graphics('https://mgimond.github.io/Spatial/img/Random_maps.png')
+```
+
+Let's read in some NYC census tract data and it's shapefile.
 
 ```{r}
 nyct <- read_sf(file.path(dataDir, "gis/nyct2010"))
@@ -1392,42 +1528,93 @@ nyct <- nyct %>% left_join(nycACS, by = c("BoroCode" = "BoroCode",
     mutate(MedIncome = tidyr::replace_na(MedIncome, 0 ))
 ```
 
+and plot out median income. It looks like there might be clusters of
+similar income groups, but we need to say if it's happening
+more than we expect if things were random.
+
 ```{r}
 tm_shape(nyct) + tm_polygons(col = "MedIncome")
 ```
 
+### Neighbors
 
-Defining Neighboring polygons 
+Defining Neighboring polygons can take many forms. The common ones come from
+chess, where it could be shared edges, corners, or both. There are also distance
+based measures of neighbors that we'll explore a little later. We have also
+already since $k$ nearest neighbors which is an extension of distance based 
+neighbors but up to $k$ of them.
 
-for creating neighbors from sf [article](https://cran.r-project.org/web/packages/spdep/vignettes/nb_sf.html)
+```{r autocorrelation2, echo=FALSE}
+knitr::include_graphics('http://www.lpc.uottawa.ca/publications/moransi/image2.gif')
+```
 
-![](http://www.lpc.uottawa.ca/publications/moransi/image2.gif)
+for creating neighbors from sf objects check out this [article](https://cran.r-project.org/web/packages/spdep/vignettes/nb_sf.html)
+
+we are going to use the `poly2nb` function with the queen case as `TRUE` to 
+create our neighbors list. 
 
 ```{r}
 library(spdep)
+nyct <- nyct %>% 
+    mutate(MedIncome = if_else(MedIncome == 0, 0.1, MedIncome)) # adding a little noise for 0s
+
 nyctSP  <- as(nyct, "Spatial")
 
 
 nb <- poly2nb(nyctSP, queen=TRUE)
-c(612, 806, 1623)
-nb <- subset(nb,
-  !(1:length(nb) %in% c(612, 806, 1623)))
+
+nb
+
+# nb <- subset(nb,
+#   !(1:length(nb) %in% c(612, 806, 1623)))
 nb[[1]]
 ```
+
+inspecting our neighbors list, we can see that three polygons
+do not have any neighbors! This is not good and will have to be removed. 
+
+```{r}
+tm_shape(nyct) + tm_borders(col = "gray") + 
+tm_shape(nyct[c(612, 806, 1623),]) + tm_fill(col = "red") + 
+    tm_text(text = "CT2010", size = .6, remove.overlap = FALSE, col = "black")
+```
+
+You can also see when we call the first item in our neighbors list, it returns
+the ids for it's neighbors which matches the queens case!
+
+Now we can also map it back to our census tracts and pinpoint our census tracts
+and which ones are the ones that are neighbors
 
 ```{r}
 nyctSP$CT2010[1]
 nyctSP$CT2010[nb[[1]]]
 ```
 
+You can see our first census tract is in red on Staten Island, and the 
+neighbors are in orange.
+
+```{r}
+tm_shape(nyct[nb[[1]],]) + tm_fill(col = "orange") + 
+    tm_shape(nyct[1,]) + tm_fill(col = "red") +
+    tm_shape(nyct) + tm_borders(col = "gray")  + 
+    tm_text( text = "BoroCT2010")
+```
+
+Our neighbors list is really just a network if you think about it. We can
+visualize it similarly to network analysis graphs and draw edges between
+our nodes, which is our census tract centroids. 
+
 ```{r}
 par(bg = 'black')
-plot(nb, coordinates(nyctSP[-c(612, 806, 1623),]), points=FALSE, lwd = 0.5, col = "#DC16C3")
+plot(nb, coordinates(nyctSP), points=FALSE, lwd = 0.5, col = "#DC16C3")
 ```
 
 Next, we need to assign weights to each neighboring polygon. In our case, each neighboring polygon will be assigned equal weight `(style="W")`. This is accomplished by assigning the fraction $1/(\text{# of neighbors})$to each neighboring county then summing the weighted income values. While this is the most intuitive way to summaries the neighbors’ values it has one drawback in that polygons along the edges of the study area will base their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data. For this example, we’ll stick with the `style="W"` option for simplicity’s sake but note that other more robust options are available, notably `style="B"`.
+
 ```{r}
-lw <- nb2listw(nb, style="W", zero.policy=TRUE)
+nb2 <- poly2nb(nyctSP[-c(612,806,1623),], queen=TRUE)
+
+lw <- nb2listw(nb2, style="W", zero.policy=TRUE)
 ```
 To see the weight of the first polygon’s four neighbors type:
 ```{r}
@@ -1437,10 +1624,32 @@ each neighbor gets a fifth of the weight.
 
 
 Finally, we’ll compute the average neighbor income value for each polygon. These values are often referred to as spatially lagged values.
+Again if you think about timeseries forecasting. If you have worked with auto-regressive models you can
+think about the ACF plot which returns the autocorrelation of a series with it's lagged values.
+It shows us how the present value is related with its past values and if there is
+seasonality(whether it is weekly, monthly, quarterly, etc...) we'll see a high
+autocorrelation value at those lag points!
+
+```{r autoregression, echo=FALSE, fig.cap="Sine wave(left) and the coorelogram of its ACF(right)."}
+knitr::include_graphics("https://nwfsc-timeseries.github.io/atsa-labs/Applied_Time_Series_Analysis_files/figure-html/tslab-plotSineACF-1.png")
+```
 
 ```{r}
-nyctMedInc <-  nyct %>% slice(-c(612, 806, 1623)) %>% pull(MedIncome)
-Inc.lag <- lag.listw(lw, nyctMedInc)
+nyctMedInc <-  nyct %>% 
+    slice(-c(612, 806, 1623)) %>% 
+    pull(MedIncome)
+
+MedIncLag <- lag.listw(lw, nyctMedInc)
+```
+
+Now that we have gotten through the concepts of what criteria a neighbor consists of
+and creating those lagged variables. If we plot the lagged median income(mean income
+of neighbors) vs. the median income and get the OLS regression line, that is the 
+Moran's I which is an measure of spatial autocorrelation. [Geary's C](https://en.wikipedia.org/wiki/Geary%27s_C)
+is another often used statistic, but we'll dive into Moran's I further in the next section.
+
+```{r laggedRegression, echo=FALSE, fig.cap="The lagged variable plotted against the variable"}
+knitr::include_graphics("https://mgimond.github.io/Spatial/img/MoranI_scatter_plot.png")
 ```
 
 ## Moran's I
@@ -1458,93 +1667,325 @@ where $N$ is the number of spatial units indexed by $i$ and $ j$;$x$ is the vari
 
 The values of $I$ usually range from -1 to 1. This shouldn't come as a surprise if you think of values that get outputted when we talk about correlations between two variables, there is usually a negative correlation (-1), no correlation (0), or positive correlation (1). In Moran's I -1 means evenly dispersed, 0 is random, and 1 is perfectly clustered. 
 
+Let's take our lagged median income and make our plot comparing the median income
+variable. We can see that our Moran's I value is 0.58 which is the correlation
+coefficient between our lagged and non-lagged variable. 
+
+```{r}
+lagModel <- lm(MedIncLag ~ nyctMedInc)
+
+data.frame(MedIncLag = MedIncLag,
+           nyctMedInc = nyctMedInc) %>% 
+    ggplot(aes(x= nyctMedInc, y = MedIncLag)) + 
+    geom_point() + 
+    geom_smooth(method = "lm", ) + 
+    xlab("Median Income") + 
+    ylab("Mean Neighbor Median Income") + 
+    annotate("text", x = 45000, y = 200000, label = 
+                 paste("Moran's I is", coef(lagModel)[2] %>% 
+                          round(2) %>% 
+                          as.character())) + 
+    theme_minimal()
+```
+
+You can see where neighbors might have some effect on your census tract's median
+household income.
+
+```{r}
+tm_shape(nyct %>% 
+    slice(-c(612, 806, 1623)) %>% 
+        mutate(MedIncLag = MedIncLag)) + 
+    tm_polygons(col = "MedIncLag", n = 5, style = "jenks",
+                title = "Lagged Median Income")
+```
+
+We can see that the tracts with larges negative differences are
+parks, cemeteries, or JFK airport.
+
+```{r}
+tm_shape(nyct %>% 
+    slice(-c(612, 806, 1623)) %>% 
+        mutate(MedIncDiff = nyctMedInc - MedIncLag)) + 
+    tm_polygons(col = "MedIncDiff", title = "Median Income Difference",
+                palette = "RdBu", n = 7, midpoint = 0,
+                style = "jenks")
+```
+
+There is also a premade function called `moran.test` that will take in a
+numeric vector in our case the median income values from the census tracts
+and the `listw` object which is our lagged value weights we specified
+which in our case we distributed the weights equally among our neighbors.
+
 ```{r}
 moran.test(nyctMedInc,lw)
 ```
 
+The previous method was calculated analytically, but we could also calculate
+our Moran's I through Monte Carlo simulation with the `moran.mc` function.
+We feed in the same inputs but this also input how many times we want to run the 
+simulation.
+
+In the Monte Carlo method, the median income values are randomly assigned to the
+census tracts and a moran's I value is computed for each simulation. We can then compute
+the moran's I values if we randomly placed those original values compared to
+our actual Moran's I.
+
 ```{r}
-MC <- moran.mc(nyctMedInc, lw, nsim=599)
+MC <- moran.mc(nyctMedInc, lw, nsim = 600)
 MC
 ```
 
+You can see that our Moran's I value is not very different between the two methods.
+
+We can also plot the simulation output and see where our Moran's I score falls 
+along the density plot of our correlation coefficients we would see if our
+median income values was randomized.
+
 ```{r}
-# Plot the distribution (note that this is a density plot instead of a histogram)
 par(bg = "white")
 plot(MC, main="", las=1)
 ```
 
-## Moran's I as function of distance
+## Moran's I as a function of distance
+
+So remember when I said that defining a what  neighbor is can be subjective and
+we really only talked about topological neighbors so far? We can also think of 
+neighbors as a function of distance. We'll explore neighbors as the distance between
+two centroids to determine closeness. 
+
+First we will have to create coordinates with the `coordinates` function to convert
+our `sp` object.
 
 ```{r}
-coo <- coordinates(nyctSP)
+nyctCoord <- coordinates(nyctSP)
 ```
-7920 feet
+
+now we will use the `dnearneigh` function to specify a lower distance band, upper distance band
+to return our `nb` object much like earlier when we selected `queen = TRUE` with
+`poly2nb`.
+
 ```{r}
-dist1  <-  dnearneigh(coo, 0, 7920)  
-c(612, 1677)
-dist1 <- subset(dist1,
-  !(1:length(dist1) %in% c(612, 1677)))
+dist1  <-  dnearneigh(nyctCoord, 0, 5280)  
 dist1
+noLinkd1 <- c(612, 806, 1094, 1382, 1383, 1623, 1667, 1677, 1712, 1724, 1760, 1891, 1941, 1942, 1950, 2095)
 ```
 
-This depends on how many permutations you take. this is the computational approach for inference.
-It can changes with the number of simulations.
-p = (M + 1) / (N + 1)
+We will re run our function with our nolink coordinates.
+
 ```{r}
-lwD1 <- nb2listw(dist1, style="W",zero.policy=T) 
-MI1  <-  moran.mc(nyct %>% slice(-c(612,1677)) %>% pull(MedIncome), lwD1, nsim=599,zero.policy=T) 
+dist1_1  <-  dnearneigh(nyctCoord[-noLinkd1,], 0, 5280)  
+dist1_1
+```
+
+We will now take our `nb` object `dist1_1` and create the `lw` object. We will use
+Monte Carlo simulation again to determine the Moran's I number of our new
+neighbor search results.
+
+```{r}
+lwD1 <- nb2listw(dist1_1, style="W",zero.policy=T) 
+MI1  <-  moran.mc(nyct %>% slice(-noLinkd1) %>% pull(MedIncome), 
+                  lwD1, nsim = 600, zero.policy=T) 
 MI1
 ```
+
+Our Moran's I value dropped a little when changed our search distance to a mile
+or 5280 feet. Though compared to our simulations we are well above what you would
+normally expect from random simulations.
+
 ```{r}
 plot(MI1, main="", las=1) 
-
 ```
 
+Now we will go to the extreme and show you what would happen if we select a lot more
+neighbors with a search radius of 50,000 ft which is ~9.5 miles.
 
 ```{r}
-dist2  <-  dnearneigh(coo, 0, 10000)  
+dist2  <-  dnearneigh(nyctCoord, 0, 50000)  
+dist2
 ```
 
-This depends on how many permutations you take. this is the computational approach for inference.
-It can changes with the number of simulations.
-p = (M + 1) / (N + 1)
+You can see that our Moran's I has dropped close to 0. Even here though we can
+see that our values are greater than what you would expect if it was simulated
+and randomly assigned to polygons.
+
 ```{r}
 lwD2 <- nb2listw(dist2, style="W",zero.policy=T) 
-MI2  <-  moran.mc(nyct %>% pull(MedIncome), lwD2, nsim=599,zero.policy=T) 
+MI2  <-  moran.mc(nyct %>% pull(MedIncome), lwD2, 
+                  nsim = 600, zero.policy=T) 
 MI2
 ```
+
 ```{r}
 plot(MI2, main="", las=1) 
-
 ```
 
+```{r}
+MedIncLag2 <- lag.listw(lwD2, nyct %>% pull(MedIncome))
+
+lagModel2 <- lm(MedIncLag2 ~ nyct %>% pull(MedIncome))
+
+data.frame(MedIncLag = MedIncLag2,
+           nyctMedInc = nyct %>% pull(MedIncome)) %>% 
+    ggplot(aes(x= nyctMedInc, y = MedIncLag)) + 
+    geom_point() + 
+    geom_smooth(method = "lm", ) + 
+    xlab("Median Income") + 
+    ylab("Mean Neighbor Median Income") + 
+    annotate("text", x = 45000, y = 70000, label = 
+                 paste("Moran's I is", coef(lagModel2)[2] %>% 
+                          round(4) %>% 
+                          as.character())) + 
+    theme_minimal()
+```
+
+```{r}
+tm_shape(nyct %>% mutate(MedIncLag2 = MedIncLag2)) + 
+    tm_polygons(col = "MedIncLag2", n = 5, style = "jenks",
+                legend.title = "Lagged Median Income")
+```
+
+
+# Local Statistics
+
+So far we have been looking at the global scope or one number to determine
+how much clustering/dispersion of the whole data set. Now we will look
+at local clusters with the Local Moran's I. 
+
 ## Local Moran's I
+
+This method calculates the local Moran's I value,
+z-score, a pseudo p-value, and a code representing the cluster typr for each statistically 
+significant feature. This will help us identify spatial clusters with high/low values
+and even spatial outliers. 
+
+A positive local Moran's I value indicates that feature has neighboring features with similarly
+high or low values, while a negative values indicates that neighboring features
+are dissimilar(an outlier). The p-value will allow us to determine if these values 
+are statistically significant enough. 
 
 ```{r}
 localMoran <- localmoran(nyctMedInc, lw)
 nyctLocal <- nyct %>% slice(-c(612, 806, 1623)) %>% cbind(localMoran)
 ```
 
+The outputs are:
+- Ii: local moran statistic
+
+- E.Ii: expectation of local moran statistic
+
+- Var.Ii: variance of local moran statistic
+
+- Z.Ii: standard deviate of local moran statistic
+
+- Pr(): p-value of local moran statistic
+
 ```{r}
 tm_shape(nyctLocal) + 
-    tm_polygons(col = "Ii", lwd = 0.1, palette = "-RdBu", n = 7, midpoint = 0, style = "jenks") 
+    tm_polygons(col = "Ii", lwd = 0.1, 
+                palette = "-RdBu", n = 7, 
+                midpoint = 0, style = "jenks") 
 ```
 
-A high positive z-score for a feature indicates that the surrounding features have similar values (either high values or low values). The COType field in the Output Feature Class will be HH for a statistically significant cluster of high values and LL for a statistically significant cluster of low values.
+Remember we don't know which are high clusters, or low clusters. We just know
+where are clusters and outliers, hot-spot analysis is another method.
 
-A low negative z-score (for example, less than -3.96) for a feature indicates a statistically significant spatial data outlier. The COType field in the Output Feature Class will indicate if the feature has a high value and is surrounded by features with low values (HL) or if the feature has a low value and is surrounded by features with high values (LH).
+## Getis-Ord General G
+
+Also referred to as Local G is a high/low clustering technique. The resulting
+z-score will tell you if there are high value clusters or low value clusters. 
+
+The higher the z-score, the more intense the clustering of high values(hot spot)
+are being exhibited in your map. On the converse the greater the negative z-scores
+are, the more intense the clustering of low values(cold spot) is being detected.
+
+```{r localG, echo=FALSE, fig.cap=""}
+knitr::include_graphics("https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/GUID-3275CB40-D309-4326-818D-CF22E69B77B2-web.png")
+```
+
+(1) You can see that the only difference between the numerator and the denominator is $w_{i,j}$
+which is the spatial weight. Also this method will only work with positive values and say 
+you are working with binary outcomes, or positive values less than 1,then the 
+resulting General G will also be between 0 and 1. 
+
+```{r}
+getisG <- localG(nyctMedInc, lw)
+nyctLocal <- nyctLocal %>% mutate(localG = as.numeric(getisG))
+```
+
+In our map, we can see that the Upper West side, Upper East side, Midtown, most of Downtown,
+downtown Brooklyn are all high median income clusters. Over in the Bronx most of them are 
+low median income clusters as many parts of Brooklyn and Queens. 
+
+```{r}
+zbreaksG <- c(min(nyctLocal$localG), -2.58, -1.96, -1.65, 1.65, 1.96, 2.58, max(nyctLocal$localG))
+```
+
+```{r}
+tm_shape(nyctLocal) + 
+    tm_polygons(col = "localG", lwd = 0.1, palette = "-RdBu",
+                breaks = zbreaksG) 
+```
+
+With natural Jenks breaks for classification.
+
+```{r}
+tm_shape(nyctLocal) + 
+ tm_polygons(col = "localG", lwd = 0.1, palette = "-RdBu",
+             n = 7, midpoint = 0, style = "jenks")
+```
+
 
 ## Getis Gi*
 
+The Getis Gi* (pronounced "G-i-star") is also called hot spot analysis. The resulting
+z-score will tell you if there are high value clusters or low value clusters. 
+
+The higher the z-score, the more intense the clustering of high values(hot spot)
+are being exhibited in your map. On the converse the greater the negative z-scores
+are, the more intense the clustering of low values(cold spot) is being detected.
+
+```{r localGstar, echo=FALSE, fig.cap=""}
+knitr::include_graphics("http://resources.esri.com/help/9.3/arcgisengine/java/gp_toolref/spatial_statistics_tools/Getis-Ord%20Local%20Statistics.png")
+```
+
+To get our getis gi* score we will use the `localG` function. One important note
+is that your `lw` object needs to have the `self.included` attribute
+set to `TRUE` to get the feature being analyzed included. This is the main difference
+between the Gi* and other local spatial statistics like local Moran's I. 
+
 ```{r}
-getis <- localG(nyctMedInc, lw)
-nyctLocal <- nyctLocal %>% mutate(G = getis)
+nb2Self <- include.self(nb2)
+lwSelf <- nb2listw(nb2Self, style="W", zero.policy=TRUE)
+getisGstar <- localG(nyctMedInc, lwSelf)
+nyctLocal <- nyctLocal %>% mutate(Gistar = as.numeric(getisGstar))
+```
+
+In our map, we can see that the Upper West side, Upper East side, Midtown, most of Downtown,
+downtown Brooklyn are all high median income clusters. Over in the Bronx most of them are 
+low median income clusters as many parts of Brooklyn and Queens. 
+
+```{r}
+zbreaksGstar <- c(min(nyctLocal$Gistar), -2.58, -1.96, -1.65, 1.65, 1.96, 2.58, max(nyctLocal$Gistar))
 ```
 
 ```{r}
 tm_shape(nyctLocal) + 
-    tm_polygons(col = "G", lwd = 0.1, palette = "-RdBu", n = 7, midpoint = 0, style = "jenks") 
+    tm_polygons(col = "Gistar", lwd = 0.1, palette = "-RdBu",
+                breaks = zbreaksGstar) 
 ```
+
+With natural Jenks breaks for classification.
+
+```{r}
+tm_shape(nyctLocal) + 
+ tm_polygons(col = "Gistar", lwd = 0.1, palette = "-RdBu",
+             n = 7, midpoint = 0, style = "jenks")
+```
+
+Here's a quick example of reading results from this method:
+
+So, when doing a hot spot analysis using Getis-Ord Gi*, if you have chosen a scale for your analysis that is small, even though there are features around with low values, it is definitely conceivable that a feature with a very high value would show up as a hot spot even though it is surrounded by low values (essentially the value of the feature is so high that it brings the local mean up).  Alternatively, it makes sense that the same feature, when analyzed using Local Moran's I, would show up as a High surrounded by Low values.  Essentially, both analyzes are right, it just depends on the question that you're asking which result makes sense for you.
+[link](https://community.esri.com/message/410840?commentID=410840#comment-410840)
 
 # Spatial Lag
 
@@ -1563,7 +2004,9 @@ You can now include spatially lagged variables into regression
 
 ## Inverse Distance Weighted
 
-Inverse distance weighted (IDW) interpolation determines cell values using a linearly weighted combination of a set of sample points. The weight is a function of inverse distance. The surface being interpolated should be that of a spatially dependent variable.
+Inverse distance weighted (IDW) interpolation determines cell values using a linearly 
+weighted combination of a set of sample points. The weight is a function of inverse distance. 
+The surface being interpolated should be that of a spatially dependent variable.
 
 ```{r}
 elevation <- read_csv(file.path(dataDir, "elevation.csv"))
@@ -1603,6 +2046,7 @@ for (i in 1:length(elevationsp)) {
 }
 
 ```
+
 ```{r}
 # Plot the differences
 OP <- par(pty="s", mar=c(4,3,0,0))
@@ -1615,7 +2059,7 @@ par(OP)
 
 ```{r}
 # Compute RMSE
-sqrt( sum((IDW.out - elevationsp$ELEVATION)^2) / length(elevationsp))
+sqrt(sum((IDW.out - elevationsp$ELEVATION)^2) / length(elevationsp))
 ```
 
 ## Cross-validation
@@ -1686,24 +2130,19 @@ Weighted Regression.
 - nonstationarity (regional variation)
 - multicollinearity
 
-## Geographically Weighted Regression
+**Regaionl variation**
+ways to overcome spatial variation in your OLS regression:
 
-Global models, like OLS regression, create equations that best describe the overall data relationships in a study area. When those relationships are consistent across the study area, the OLS regression equation models those relationships well. When those relationships behave differently in different parts of the study area, however, the regression equation is more of an average of the mix of relationships present, and in the case where those relationships represent two extremes, the global average will not model either extreme well. When your explanatory variables exhibit nonstationary relationships (regional variation), global models tend to fall apart unless robust methods are used to compute regression results.
+1) include a variable in the model that explains the regional variation,
+it could be zipcode, elevation, etc.
+1) use methods like geographically weighted regression
+1) Change the scale of the study area so that stationarity can be expected ie.
+no regional variation is exhibited. 
 
-- Include a variable in the model that explains the regional variation. If you see that your model is always over predicting in the north and under predicting in the south, for example, add a regional variable set to 1 for northern features and set to 0 for southern features.
-- Use methods that incorporate regional variation into the regression model such as geographically weighted regression.
-- Redefine/Reduce the size of the study area so that the processes within it are all stationary (so they no longer exhibit regional variation).
+## OLS Global Regression
 
-Geographically Weighted Regression (GWR) is one of several spatial regression techniques increasingly used in geography and other disciplines. GWR provides a local model of the variable or process you are trying to understand/predict by fitting a regression equation to every feature in the data set. GWR constructs these separate equations by incorporating the dependent and explanatory variables of features falling within the bandwidth of each target feature. The shape and size of the bandwidth is dependent on user input for the Kernel type, Bandwidth method, Distance, and Number of neighbors parameters.
-
-
-Local regression. bin(bandwidth) values by location. take weighted average of $y$ observed for $x$ close to $x_0$
-
-moving weighted average for every x point. a combination of weighted averages. the data determines the variability.
-
-local regression vs GWR is that geographic closeness vs variable closeness.  so large and it's one slope, too little and there's no
-variation sample of one for selecting the right bandwidth. adaptive kernel for sparse or dense locations. used more as an exploratory
-tool, we haven't explained anything yet only that the relationship we posited isn't stable across space. 
+Let's read in out nySales data, and clean the data a bit and get the condo sales
+only.
 
 ```{r}
 nySales <- read_csv(file.path(dataDir, "nycSales.csv"))
@@ -1727,14 +2166,33 @@ condos <- nySales %>% filter(type == "condo") %>%
 
 ```
 
+Now we can look at the sale prices(logged) to see the 
+distribution.
+
 ```{r}
-condos %>% ggplot(aes(log(price))) + geom_histogram()
+condos %>% ggplot(aes(log(price))) + 
+    geom_histogram(fill = "light blue") + 
+    theme_minimal()
 ```
+
+We can create a multiple regression with num_beds, num_baths,
+num_sqft, built_date to predict our price.
 
 ```{r}
 mod1 <- lm(log(price) ~  num_beds + num_baths + num_sqft + built_date, condos)
+summary(mod1)
+sqrt(mean(mod1$residuals^2))
+```
+
+We can see that we have some outliers in our first plot. We can also see that 
+in our coefficient plot num_baths has a strong effect on the price,
+followed by num_beds. In real estate development, the most expensive rooms to
+build are kitchens and bathrooms which would validate these results.
+
+```{r}
 plot(mod1, which = 3)
-coefplot::coefplot(mod1, sort = "mag", intercept = FALSE)
+coefplot::coefplot(mod1, sort = "mag", intercept = FALSE) + 
+    theme_minimal()
 ```
 
 Now let's get our residuals
@@ -1759,20 +2217,35 @@ tm_shape(nycNeighb) + tm_borders() +
                                    size =0.1, alpha = 0.5) 
 ```
 
-What we add the borough variable?
+What if we add the borough variable?
+
+we can see that our RMSE score is now 0.44 compared to 0.51. We are doing a bit better
+when we are trying to explain our condo sale prices.
 
 ```{r}
 mod2 <- lm(log(price) ~  borough + num_beds + num_baths + num_sqft + built_date, condos)
-plot(mod2, which = 3)
-coefplot::coefplot(mod2, sort = "mag", intercept = FALSE)
+summary(mod2)
+sqrt(mean(mod2$residuals^2))
 ```
 
-Now let's get our residuals
+We'll also see that Manhattan, Brooklyn, and Queens have big coefficients.
+
+```{r}
+plot(mod2, which = 3)
+coefplot::coefplot(mod2, sort = "mag", intercept = FALSE) + 
+    theme_minimal()
+```
+
+Now let's get our residuals again
 
 ```{r}
 resids2 <- residuals(mod2)
 condoSF <- condoSF %>% mutate(resids2 = resids2) 
 ```
+
+By mapping out our residuals, we'll see that we are doing a bit better,
+but visually you can see that our residuals are still autocorrelated.
+There must be other explanatory variables that we haven't captured yet.
 
 ```{r}
 tm_shape(nycNeighb) + tm_borders() + 
@@ -1780,36 +2253,88 @@ tm_shape(nycNeighb) + tm_borders() +
                                    size =0.1, alpha = 0.5) 
 ```
 
-first we will calibrate the bandwidth of the kernel that will be sued to capture the points fro each regression
+We can look to see if our residuals are normally distributed around our OLS regression
+line, but we can see that by mapping them out and with our new knowledge about
+spatial autocorrelation, we can see that our residuals are not spatially distributed 
+randomly.
+
+## Geographically Weighted Regression
+
+Global models, like OLS regression, create equations that best describe the overall data relationships in a study area. When those relationships are consistent across the study area, the OLS regression equation models those relationships well. When those relationships behave differently in different parts of the study area, however, the regression equation is more of an average of the mix of relationships present, and in the case where those relationships represent two extremes, the global average will not model either extreme well. When your explanatory variables exhibit nonstationary relationships (regional variation), global models tend to fall apart unless robust methods are used to compute regression results.
+
+- Include a variable in the model that explains the regional variation. If you see that your model is always over predicting in the north and under predicting in the south, for example, add a regional variable set to 1 for northern features and set to 0 for southern features.
+- Use methods that incorporate regional variation into the regression model such as geographically weighted regression.
+- Redefine/Reduce the size of the study area so that the processes within it are all stationary (so they no longer exhibit regional variation).
+
+Geographically Weighted Regression (GWR) is one of several spatial regression techniques increasingly used in geography and other disciplines. GWR provides a local model of the variable or process you are trying to understand/predict by fitting a regression equation to every feature in the data set. GWR constructs these separate equations by incorporating the dependent and explanatory variables of features falling within the bandwidth of each target feature. The shape and size of the bandwidth is dependent on user input for the Kernel type, Bandwidth method, Distance, and Number of neighbors parameters.
+
+An examination of the spatial variability among the local regression coefficients can 
+illuminate spatial heterogeneities ie local deviations from the global regression model.
+
+
+take weighted average of $y$ observed for $x$ close to $x_0$
+So it is basically a moving weighted average for every x point
+resulting in a combination of weighted averages. 
+
+local regression vs GWR is that geographic closeness vs variable closeness.  so large and it's one slope, too little and there's no
+variation sample of one for selecting the right bandwidth. adaptive kernel for sparse or dense locations. used more as an exploratory
+tool, we haven't explained anything yet only that the relationship we posited isn't stable across space. 
+
+
+Let's convert our `condoSF` to a `sp` object
+
+```{r}
+condoSP <- as(condoSF, "Spatial")
+```
+
+first we will calibrate the bandwidth of the kernel that will be used to capture the points for each regression
 (this will take a little while).
 
 The bandwidth is hard to specify a priori and the preferred approach is
 to carry out a cross-validation, minimizing the root mean square prediction
 error.
 
-```{r}
-condoSP <- as(condoSF, "Spatial")
-#GWRbandwidth <- spgwr::gwr.sel(price ~  num_beds + num_baths + num_sqft + built_date, data=condoSP, gweight = gwr.Gauss) 
-```
 Once the bandwidth has been found, or chosen by hand, the gwr function may be
 used to fit the model with the chosen local kernel and bandwidth.
 
-This function creates an
-object that contains a data frame with the individual coefficient estimates
-for each variable and each location. 
+This function creates an object that contains a dataframe with the individual coefficient estimates
+for each variable and each location. Also it can run in parallel so we can use the
+`parallel` package to spin up a cluster.
+
+We first will need to create `condoBW` to select a suitable number of neighbors.
+You can use `gwr.sel` to either choose a bandwidth or number of neighbors. The default
+is to use cross validation, but the Akaike Information Criterion could also be used.
+
 ```{r}
 no_cores <- parallel::detectCores() - 1 # Calculate the number of cores
 cl <-parallel:: makeCluster(no_cores)# Initiate cluster
-gwrG <-spgwr::gwr(log(price) ~  num_beds + num_baths + num_sqft + built_date, data=condoSP, bandwidth = 3400,
+condoBW <- gwr.sel(log(price) ~  num_beds + num_baths + num_sqft + built_date, 
+                   data=condoSP,gweight = gwr.Gauss, verbose = FALSE, adapt  = TRUE)
+condoGWR <-spgwr::gwr(log(price) ~  num_beds + num_baths + num_sqft + built_date, data=condoSP, adapt = condoBW,
                   gweight = gwr.Gauss, hatmatrix = TRUE, se.fit = TRUE, cl = cl)
 parallel::stopCluster(cl)
-
-gwrG
 ```
 
+we can checkout the results for our GWR. There are a lot of values and many of them can be 
+found in this [link](http://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-statistics-toolbox/interpreting-gwr-results.htm)
+but the residual sum of squares, quasi-global R2and the statistics on the explanatory
+coefficients can be found.
 
 ```{r}
-results <- as.data.frame(gwrG$SDF)
+condoGWR
+```
+
+We can also calculate the RMSE score which is  0.42, which is slightly 
+better than our OLS models. 
+
+```{r}
+sqrt(mean(condoGWR$SDF$gwr.e^2))
+```
+
+let's save our results from our gwr as a data.frame and add it as columns
+into our `sf` object from before so we can start exploring it.
+```{r}
+results <- as.data.frame(condoGWR$SDF)
 results %>% head()
 condoComb <- condoSF %>% 
     mutate(
@@ -1819,67 +2344,99 @@ condoComb <- condoSF %>%
            coefnum_sqft = results$num_sqft,
            residuals = results$gwr.e)
 ```
+
+Let's look at the regional coefficients we got for the number of baths. You can see
+that there are areas where the coefficient for a number of bath is much greater
+than other parts of NYC
+
 ```{r}
 tm_shape(condoComb %>% filter(!is.na(coefnum_baths))) + tm_dots(col ="coefnum_baths", 
                                    palette = "RdBu", n = 7, midpoint = 0,
-                                   size =0.1) + 
+                                   size =0.1, title = "Num Bath Coefficient") + 
     tm_shape(nycNeighb) + tm_borders() + 
     tm_legend(position = c("left", "top"))
 ```
+
+For our build date, we cans ee that some places have a negative effect on condo
+prices while some areas have a positive effect. Here is an instance where maybe
+squaring older buildings and creating a parabolic curve for built date might be
+a helpful transformation.
+
 ```{r}
 tm_shape(condoComb %>% filter(!is.na(coefbuilt_date))) + tm_dots(col ="coefbuilt_date", 
                                   palette = "RdBu", n = 7, midpoint = 0,
-                                   size =0.1) + 
+                                   size =0.1, title = "Built Date Coefficient") + 
     tm_shape(nycNeighb) + tm_borders() + 
     tm_legend(position = c("left", "top"))
 ```
+
+We can also see for our number of beds, the pattern of coefficients are similar 
+to that of the number of beds, which could mean that there is multicollinearity.
+
 ```{r}
 tm_shape(condoComb %>% filter(!is.na(coefnum_beds))) + tm_dots(col ="coefnum_beds", 
                                    palette = "RdBu", n = 7, midpoint = 0,
-                                   size =0.1) + 
+                                   size =0.1, title = "Num Beds Coefficient") + 
     tm_shape(nycNeighb) + tm_borders() + 
     tm_legend(position = c("left", "top"))
 ```
+
+we can again map out our residuals and see that visually it looks like we still
+have autocorrelation, but it seems to be less prominent than before.
 
 ```{r}
 tm_shape(condoComb %>% filter(!is.na(residuals))) + tm_dots(col ="residuals", 
                                   palette = "RdBu", n = 7, midpoint  = 0,
-                                   size =0.1) + 
+                                   size =0.1, title = "GWR Residuals") + 
     tm_shape(nycNeighb) + tm_borders()
 ```
 
+We can see what our average nearest neighbor distance is for our condos for our
+neighbor ratio we got from our gwr which was 0.14. this makes our number of neighbors
+out of ~2,550 that are neighbors as ~350 closest condos. 
+
+The mean distance is 8,291 ft and the median distance is 6,500 feet.
+
 ```{r}
-distances <- st_distance(condoComb %>% filter(!is.na(residuals)),condoComb %>% filter(!is.na(residuals)))
+condoPPP <- condoComb %>% as("Spatial") %>% as("ppp")
+mean(nndist(condoPPP, k = 350))
+median(nndist(condoPPP, k = 350))
+```
 
-# Set block diagonal elements to NA
-for (i in seq(1, nrow(distances), 1)) {
-    distances[i:(i),i:(i)] = NA
-}
+For simplicity sake I'm going to use 1.25 miles or 6,600 feet for now to go through
+our moran's I calculation which is close to our median average 350th nearest neighbor.
 
-distVec <- apply(distances %>% as.data.frame(), 1, min, na.rm = TRUE)
-max(distVec)
-condoDist  <-  dnearneigh(condoComb %>% filter(!is.na(residuals)), 0, 7920) 
-c(2492, 2542)
+```{r}
+condoDist  <-  dnearneigh(condoComb, 0, 6600) 
+condoDist
+noLinkCondo <- c(244, 2492, 2518, 2542)
+condoDist2  <-  dnearneigh(condoComb  %>% "["(-noLinkCondo,), 
+                           0, 6600)  
+condoDist2
+```
 
-condoDist <- subset(condoDist,
-  !(1:length(condoDist) %in% c(2492, 2542)))
+we can plot out what our edges look like in our `nb` object.
+it will look pretty dense since most condos should have 350 edges
+created to other condos.
 
+```{r}
 par(bg = 'black')
 
-plot(condoDist, st_coordinates(condoComb[-c(2492, 2542),]), 
+plot(condoDist2, st_coordinates(condoComb %>% 
+                                "["(-noLinkCondo,)), 
      points=FALSE, lwd = 0.5, col = alpha("#DC16C3", 0.05))
-
 ```
+
+Now you will see that our Moran's I value is getting close to 0.
+This means that we are getting closer to spatial randomness in our residuals
+which is a good thing.
 
 ```{r}
-lw3 <- nb2listw(condoDist, style="W", zero.policy=TRUE)
-MI3  <-  moran.mc(condoComb %>% slice(-c(2492, 2542)) %>% pull(residuals), 
-                  lw3, nsim=599,zero.policy=T) 
+lw3 <- nb2listw(condoDist2, style="W", zero.policy=TRUE)
+MI3  <-  moran.mc(condoComb %>% 
+                      "["(-noLinkCondo,) %>% 
+                      pull(residuals), 
+                  lw3, nsim=600,zero.policy=T) 
 
 MI3
-par(bg = 'white')
-plot(MI3, main="", las=1) 
-moran.test(condoComb %>% slice(-c(2492, 2542)) %>% pull(residuals), 
-                  lw3)
 ```
-
