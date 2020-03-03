@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -70,9 +70,7 @@ h6 {
 
 <link rel="stylesheet" href="www/ml4Planners.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -86,7 +84,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -191,8 +188,6 @@ $(document).ready(function () {
 });
 </script>
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
 
 <style type="text/css">
@@ -237,6 +232,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -249,20 +245,17 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -315,41 +308,62 @@ $(document).ready(function () {
 
 
 <hr />
-<p><em>Urban planning decisions are inherently difficult, as cities comprise systems of immense complexity and increasingly large volumes of data. While planners aren’t new to qualitative and quantitative tools to model such decisions, this course will engage the role of technologies in the planning process by focusing on challenges and advantages gained from three new skills in particular: data munging, machine learning, and data visualization. Students will learn to apply the skills and techniques necessary to describe, model, and evaluate their results alongside the history and theory intersecting technocracy and urban planning.</em></p>
-<div id="text-books" class="section level2">
-<h2>Text Books</h2>
+<div id="course-description" class="section level2">
+<h2>Course Description</h2>
+<p>Urban planning decisions are inherently difficult, as cities comprise systems of immense complexity and increasing volumes of data. While planners aren’t new to quantitative tools to model decision-making, this course will engage the role of technologies in the planning process by focusing on the challenges and advantages gained from three new skills: data munging, data visualization, and machine learning. Students will learn to apply these skills and techniques to describe, model, and evaluate their results alongside the history and theory intersecting technocracy and urban planning.</p>
+</div>
+<div id="course-goals" class="section level2">
+<h2>Course Goals</h2>
+<p>The objective of this course is to expose urban planning students to the world of Data Science. Future urban planners will be required to handle vast quantities of data that governments and companies are amassing. This data will not only vary in quality and variety, but planners must also wield methods to clean and merge data into a usable state. Once the data is cleaned, machine learning algorithms will help find hidden insights, automate decision-making, and plan the future of cities. Throughout the course, readings and discussions will engage students on critical topics ranging: objectivity through quantification, the role of planners in data science, and modern technological culture against the city.</p>
+</div>
+<div id="learning-objectives" class="section level2">
+<h2>Learning Objectives</h2>
+<p>By the end of the semester, students should be able to: - Be proficient at Data Munging - Run through EDA - Apply and execute the correct ML algorithm - Evaluate the results - Communicate methods and modeling results clearly</p>
+</div>
+<div id="course-expectations" class="section level2">
+<h2>Course Expectations</h2>
+<div id="attendance" class="section level3">
+<h3>Attendance</h3>
+<p>Classroom attendance is mandatory for this class. We expect an e-mail or in-person explanation on any absences at least 24 hours before class. You will be responsible to catch up on class materials by yourself and your classmate’s help, and are expected to complete assignments at the same deadline as the rest of your class.</p>
+</div>
+</div>
+<div id="resources" class="section level2">
+<h2>Resources</h2>
+<div id="text-books" class="section level3">
+<h3>Text Books</h3>
 <p><strong>R for Everyone: Advanced Analytics and Graphics</strong> by <em>Jared Lander</em> (<a href="https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&amp;qid=1518561244&amp;sr=8-1&amp;keywords=r+for+everyone">amazon</a>)</p>
 <p><strong>R for Data Science</strong> by <em>Hadley Wickhham</em> (<a href="https://r4ds.had.co.nz/">Online</a>)</p>
 <p><strong>Applied Predictive Modeling</strong> by <em>Max Kuhn and Kjell Johnson</em> (<a href="https://link-springer-com.ezproxy.cul.columbia.edu/book/10.1007%2F978-1-4614-6849-3">Online</a>)</p>
 <p><strong>Text Mining with R</strong> by <em>Julia Silge and David Robinson</em> (<a href="https://www.tidytextmining.com/">Online</a>)</p>
 </div>
-<div id="online-resources" class="section level2">
-<h2>Online Resources</h2>
+<div id="online-resources" class="section level3">
+<h3>Online Resources</h3>
 <p><a href="http://onlinestatbook.com/2/index.html">Online Stat Book</a> -Basic stats knowledge</p>
 </div>
-<div id="assignments" class="section level2">
-<h2>Assignments</h2>
+<div id="assignments" class="section level3">
+<h3>Assignments</h3>
 <p>There will be weekly <a href="assignments.html">assignments</a>, consisting of problem sets and reading responses that reinforce and propel topics covered in class.</p>
 </div>
-<div id="late-assignments" class="section level2">
-<h2>Late Assignments</h2>
+<div id="late-assignments" class="section level3">
+<h3>Late Assignments</h3>
 <p>Assignments will be deducted 10% for assignments up to a day late, 50% between 2-7 days and assignments later than a week will not be accepted.</p>
 </div>
-<div id="readings" class="section level2">
-<h2>Readings</h2>
+<div id="readings" class="section level3">
+<h3>Readings</h3>
 <p>There will also be bi-weekly <a href="readings.html">readings</a> assigned.</p>
 </div>
-<div id="final-deliverable" class="section level2">
-<h2>Final Deliverable</h2>
-<p>The end of the class will be acompanied by a 311 categorization challenege and report. The final report will document data/methods, including commented code, and description of analysis and conclusions.</p>
+<div id="final-deliverable" class="section level3">
+<h3>Final Deliverable</h3>
+<p>The end of the class will be accompanied by a 311 categorization challenge and report. The final report will document data/methods, including commented code, description of analysis, and conclusions.</p>
 </div>
-<div id="grading" class="section level2">
-<h2>Grading</h2>
+<div id="grading" class="section level3">
+<h3>Grading</h3>
 <ul>
 <li>Problem Sets 40%</li>
 <li>Reading Responses 20%</li>
 <li>Final Report 40%</li>
 </ul>
+</div>
 </div>
 <div id="gsapp-honor-system-and-plagiarism" class="section level2">
 <h2>GSAPP Honor System and Plagiarism</h2>
@@ -383,7 +397,7 @@ $(document).ready(function () {
 <li>Exploratory Data Analysis</li>
 <li>Getting started with ggplot2</li>
 <li>Histograms and Distributions</li>
-<li>Rmarkdown</li>
+<li>R Markdown</li>
 </ul>
 </div>
 <div id="machine-learning" class="section level3">
@@ -391,8 +405,8 @@ $(document).ready(function () {
 <ul>
 <li>What is machine learning?</li>
 <li>Machine learning problems</li>
-<li>Supervised vs. Unsupervised Learning</li>
-<li>Regression, Classification, Clustering</li>
+<li>Supervised Learning</li>
+<li>Regression, Classification</li>
 <li>Classification
 <ul>
 <li>KNN K nearest neighbors</li>
@@ -407,15 +421,26 @@ $(document).ready(function () {
 <li>GLM exercise</li>
 <li>Regression with trees</li>
 <li>Regression trees exercise</li>
-<li>Elastic Net</li>
 </ul></li>
-<li>Timeseries Modeling
+<li>Unsupervised Learning</li>
+<li>Clustering
+<ul>
+<li>K-means</li>
+<li>Hierarchical Clustering</li>
+</ul></li>
+<li>Time series Modeling
 <ul>
 <li>Autoregression</li>
 <li>ARIMA</li>
 <li>SARIMA</li>
+<li>ETS</li>
 </ul></li>
-<li>Ensemble Models</li>
+<li>Advanced Models
+<ul>
+<li>Random Forests</li>
+<li>SVM</li>
+<li>Elastic Net</li>
+</ul></li>
 <li>Model Evaluation
 <ul>
 <li>Confusion matrix</li>
@@ -427,161 +452,303 @@ $(document).ready(function () {
 <li>Cross Validation</li>
 </ul></li>
 </ul>
-</div>
-</div>
-<div id="final-projects" class="section level2">
-<h2>Final Projects</h2>
-<ul>
-<li>Final Report</li>
-</ul>
 <hr />
+</div>
 </div>
 <div id="calendar" class="section level1">
 <h1>Calendar</h1>
-<div id="week-1---1222019" class="section level4">
-<h4>Week 1 - 1/22/2019</h4>
+<div id="week-1---1222019" class="section level3">
+<h3>Week 1 - 1/22/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Intro Week</strong></li>
-<li>Computational thinking</li>
-<li>What is machine learning?</li>
-<li>Machine learning applications</li>
+<li>Be familiar with computational thinking</li>
+<li>Distinguish the difference between machine learning and Artificial Intelligence?</li>
+<li>Be exposed to machine learning applications</li>
+<li>Work with basic data types and variables in R</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
 <li>Lab - Intro to R part 1</li>
+</ul>
+<p><strong>Reading</strong></p>
+<ul>
+<li>The Rise of Statistical Thinking | Porter</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
 <li>Assignment 1 - Intro R</li>
-<li>Reading - The Rise of Statistical Thinking | Porter</li>
 <li>Reading Response 1</li>
 </ul>
 </div>
-<div id="week-2---1292019" class="section level4">
-<h4>Week 2 - 1/29/2019</h4>
+<div id="week-2---1292019" class="section level3">
+<h3>Week 2 - 1/29/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Intro Week</strong></li>
+<li>Discuss the pervasiveness of statistics in business and academia</li>
+<li>Explore causality in the social sciences</li>
+<li>Work with data structures and functions in R</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Reading discussion</li>
 <li>Lab - Intro to R part 2</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
 <li>Assignment 2 - Functions</li>
 </ul>
 </div>
-<div id="week-3---252019" class="section level4">
-<h4>Week 3 - 2/5/2019</h4>
+<div id="week-3---252019" class="section level3">
+<h3>Week 3 - 2/5/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Data Week</strong></li>
-<li>APIs</li>
-<li>Data Munging</li>
+<li>Work with APIs to pull data</li>
+<li>Read in data from multiple sources</li>
+<li>Explain the concept of “Tidy Data”</li>
+<li>Be exposed to common data cleaning and manipulation techniques</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Lab - Data Munging 3</li>
+</ul>
+<p><strong>Reading</strong></p>
+<ul>
+<li>Trust in Numbers &amp; Rethinking Objectivity | Porter &amp; Megill</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
 <li>Assignment 3 - Data Munging</li>
-<li>Reading - Trust in Numbers &amp; Rethinking Objectivity | Porter &amp; Megill</li>
-<li>Reading Reponse 2</li>
+<li>Reading Response 2</li>
 </ul>
 </div>
-<div id="week-4---2122019" class="section level4">
-<h4>Week 4 - 2/12/2019</h4>
+<div id="week-4---2122019" class="section level3">
+<h3>Week 4 - 2/12/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Data Week</strong></li>
-<li>Exploratory Data Analysis</li>
-<li>Rmarkdown</li>
-<li>Exploratory Data Analysis</li>
-<li>Assignment 4 - EDA/Reports</li>
+<li>Critically examine quantification and objectivity</li>
+<li>Discuss the rise of the scientific method and standardization in society</li>
+<li>Describe the philosophy of Exploratory Data Analysis (EDA)</li>
+<li>Practice common EDA techniques</li>
+<li>Utilize R Markdown to make data-driven documents</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Reading discussion</li>
+<li>Lab - Reports with R Markdown 4</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<p>-Assignment 4 - EDA/Reports</p>
+</div>
+<div id="week-5---2192019" class="section level3">
+<h3>Week 5 - 2/19/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
+<ul>
+<li>Implement simple linear regression</li>
+<li>Discuss the theory and methods behind regression</li>
+<li>Visualize and interpret the results from simple linear regression</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Lab - Linear Regression 5</li>
+</ul>
+<p><strong>Reading</strong></p>
+<ul>
+<li>Critical Theory of Technology | Feenberg</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Assignment 4 - Linear Regression</li>
+<li>Reading Response 3</li>
 </ul>
 </div>
-<div id="week-5---2192019" class="section level4">
-<h4>Week 5 - 2/19/2019</h4>
+<div id="week-6---2262019" class="section level3">
+<h3>Week 6 - 2/26/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Regression Week</strong></li>
-<li>Linear Regression</li>
-<li>Reading - Critical Theory of Technology | Feenberg</li>
-<li>Reading Reponse 3</li>
+<li>Critically examine technology through the instrumentalist substantive theories</li>
+<li>Apply theories of technology to AI and ML</li>
+<li>Explore the production and control of technology</li>
+<li>Implement multiple linear regression and logistic regression</li>
+<li>Continue exploring the methods behind regression analysis</li>
+<li>Visualize and interpret the results from more complex regression modeling</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Reading discussion</li>
+<li>Lab - Mulitvariate Regression + Generalized Linear Models 6</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Assignment 5 - Mulitvariate Regression + Generalized Linear Models</li>
 </ul>
 </div>
-<div id="week-6---2262019" class="section level4">
-<h4>Week 6 - 2/26/2019</h4>
+<div id="week-7---352019" class="section level3">
+<h3>Week 7 - 3/5/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Regression Week</strong></li>
-<li>Generalized Linear Models</li>
-<li>Assignment 5 - Mulitvariate Regression + ElasticNet</li>
+<li>Be familiar with time series data</li>
+<li>Classify patterns in time series data</li>
+<li>Implement and explain various models for forecasting</li>
 </ul>
-</div>
-<div id="week-7---352019" class="section level4">
-<h4>Week 7 - 3/5/2019</h4>
+<p><strong>Class Plan</strong></p>
 <ul>
-<li><strong>Forecasting Week</strong></li>
-<li>Seasonality</li>
-<li>Trends</li>
-<li>Cycles</li>
-<li>Assignment 6- Forecasting</li>
+<li>Lab - Forecasting 7</li>
+</ul>
+<p><strong>Reading</strong></p>
+<ul>
 <li>Reading - Making Social Science Matter | Flyvbjerg</li>
-<li>Reading Reponse 4</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Assignment 6- Forecasting</li>
+<li>Reading Response 4</li>
 </ul>
 </div>
-<div id="week-8---3122019" class="section level4">
-<h4>Week 8 - 3/12/2019</h4>
+<div id="week-8---3122019" class="section level3">
+<h3>Week 8 - 3/12/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Classification Week</strong></li>
-<li>Decision Trees</li>
-<li>Random Forest</li>
+<li>Engage in discourse of the role rationality has on social science research</li>
+<li>Question the role of the scientific method in the social sciences</li>
+<li>Explain classification in the context of machine learning</li>
+<li>Visualize and interpret the results from classification modeling</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Reading discussion</li>
+<li>Lab - Classification 8</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
 <li>Assignment 7 - Classification</li>
 </ul>
 </div>
-<div id="week-9---3192019" class="section level4">
-<h4>Week 9 - 3/19/2019</h4>
+<div id="week-9---3192019" class="section level3">
+<h3>Week 9 - 3/19/2019</h3>
+<p><strong>Spring Break</strong></p>
+</div>
+<div id="week-10---3262019" class="section level3">
+<h3>Week 10 - 3/26/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Spring Break</strong></li>
+<li>Explain the components that make up natural language processing(NLP)</li>
+<li>Ingest and handle various text inputs</li>
+<li>Create tidy text for text mining applications</li>
+<li>Visualize and interpret NLP results</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Lab - Natural Language Processing 10</li>
+</ul>
+<p><strong>Reading</strong></p>
+<ul>
+<li>Order without Design | Bertaud</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Assignment 9 - Natural Language Processing</li>
+<li>Reading Response 5</li>
 </ul>
 </div>
-<div id="week-10---3262019" class="section level4">
-<h4>Week 10 - 3/26/2019</h4>
+<div id="week-11---422019" class="section level3">
+<h3>Week 11 - 4/2/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Text Mining Week</strong></li>
-<li>Tidy Text</li>
-<li>Natural Langange Processing/Understanding</li>
-<li>Assignment 8 - NLP</li>
-<li>Reading - Order without Design | Bertaud</li>
-<li>Reading Reponse 5</li>
+<li>Contrast the approaches of urban economics and urban planning</li>
+<li>Explore the effects of the market and regulations in city design</li>
+<li>Identify objectivity in the urban realm</li>
+<li>Apply unsupervised learning algorithms such as k-means and hierarchical clustering</li>
+<li>Visualize and interpret clustering results</li>
+<li>Discuss final project topics and ideas</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Reading discussion</li>
+<li>Lab 11 - Unsupervised Learning</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Assignment 10 - Final Project Scoping + Data (due in two weeks)</li>
 </ul>
 </div>
-<div id="week-11---422019" class="section level4">
-<h4>Week 11 - 4/2/2019</h4>
+<div id="week-12---492019" class="section level3">
+<h3>Week 12 - 4/9/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Unsupervised Learning Week</strong></li>
-<li>Kmeans</li>
-<li>Heirarchical Clustering</li>
-<li>Assignment 9 - Scoping + Data (due in two weeks)</li>
-<li>Discussion on Final Competition</li>
+<li>Load and display spatial data</li>
+<li>Perform various geoprocressing methods</li>
+<li>Execute geocomputational workflows</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Lab 12 - Geospatial</li>
+</ul>
+<p><strong>Reading</strong></p>
+<ul>
+<li>Weapons of Math Destruction | O’Neill</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Reading Response 6</li>
 </ul>
 </div>
-<div id="week-12---492019" class="section level4">
-<h4>Week 12 - 4/9/2019</h4>
+<div id="week-13---4162019" class="section level3">
+<h3>Week 13 - 4/16/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Geocomputation Week</strong></li>
-<li>Sf</li>
-<li>Rgdal</li>
-<li>Reading -Weapons of Math Destruction | O’Neill</li>
-<li>Reading Reponse 6</li>
+<li>Discuss possible adverse effects of deploying machine learning algorithms</li>
+<li>Argue instances where algorithms should or should not be used</li>
+<li>Comprehend the variance-bias trade off</li>
+<li>Explore regularization through the Lasso and Ridge methods</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Reading discussion</li>
+<li>Lab 13 - Regularization</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Final Project</li>
 </ul>
 </div>
-<div id="week-13---4162019" class="section level4">
-<h4>Week 13 - 4/16/2019</h4>
+<div id="week-14---4232019" class="section level3">
+<h3>Week 14 - 4/23/2019</h3>
+<p><strong>Objective</strong></p>
+<p>By the end of this class, students should be able to…</p>
 <ul>
-<li><strong>Feature Week</strong></li>
-<li>Elasctic Net</li>
-<li>PCA</li>
+<li>Implement algorithms and tune parameters with Caret</li>
+<li>Explain boosting and bagging in the context of ML</li>
+<li>Perform more complex algorithms such as random forest and XGBoost</li>
+<li>Visualize and interpret the results from XGBoost</li>
+</ul>
+<p><strong>Class Plan</strong></p>
+<ul>
+<li>Lab 14 - Hyperparameter Tuning</li>
+</ul>
+<p><strong>Assignment</strong></p>
+<ul>
+<li>Final Project</li>
 </ul>
 </div>
-<div id="week-14---4232019" class="section level4">
-<h4>Week 14 - 4/23/2019</h4>
-<ul>
-<li><strong>Feature Week</strong></li>
-<li>Elasctic Net</li>
-<li>Assignment 10 - Analysis</li>
-</ul>
+<div id="week-15---4302019" class="section level3">
+<h3>Week 15 - 4/30/2019</h3>
+<p><strong>Work day</strong></p>
 </div>
-<div id="week-15---4302019" class="section level4">
-<h4>Week 15 - 4/30/2019</h4>
-<ul>
-<li>Work day</li>
-</ul>
-</div>
-<div id="week-16---562019" class="section level4">
-<h4>Week 16 - 5/6/2019</h4>
-<ul>
-<li><strong>Final Report Due</strong></li>
-</ul>
+<div id="week-16---562019" class="section level3">
+<h3>Week 16 - 5/6/2019</h3>
+<p><strong>Final Report Due</strong></p>
 </div>
 </div>
 
@@ -602,6 +769,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

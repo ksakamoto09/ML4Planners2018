@@ -4,10 +4,32 @@ title: "Syllabus"
 
 --------
 
+## Course Description
 
-*Urban planning decisions are inherently difficult, as cities comprise systems of immense complexity and increasingly large volumes of data. While planners aren’t new to qualitative and quantitative tools to model such decisions, this course will engage the role of technologies in the planning process by focusing on challenges and advantages gained from three new skills in particular: data munging, machine learning, and data visualization. Students will learn to apply the skills and techniques necessary to describe, model, and evaluate their results alongside the history and theory intersecting technocracy and urban planning.*
+Urban planning decisions are inherently difficult, as cities comprise systems of immense complexity and increasing volumes of data. While planners aren’t new to quantitative tools to model decision-making, this course will engage the role of technologies in the planning process by focusing on the challenges and advantages gained from three new skills: data munging, data visualization, and machine learning. Students will learn to apply these skills and techniques to describe, model, and evaluate their results alongside the history and theory intersecting technocracy and urban planning.
 
-## Text Books
+## Course Goals
+
+The objective of this course is to expose urban planning students to the world of Data Science. Future urban planners will be required to handle vast quantities of data that governments and companies are amassing. This data will not only vary in quality and variety, but planners must also wield methods to clean and merge data into a usable state. Once the data is cleaned, machine learning algorithms will help find hidden insights, automate decision-making, and plan the future of cities. Throughout the course, readings and discussions will engage students on critical topics ranging: objectivity through quantification, the role of planners in data science, and modern technological culture against the city. 
+
+## Learning Objectives
+
+By the end of the semester, students should be able to: 
+- Be proficient at Data Munging
+- Run through EDA
+- Apply and execute the correct ML algorithm
+- Evaluate the results
+- Communicate methods and modeling results clearly
+
+## Course Expectations
+
+### Attendance
+
+Classroom attendance is mandatory for this class. We expect an e-mail or in-person explanation on any absences at least 24 hours before class. You will be responsible to catch up on class materials by yourself and your classmate’s help, and are expected to complete assignments at the same deadline as the rest of your class.
+
+## Resources
+
+### Text Books
 
 **R for Everyone: Advanced Analytics and Graphics** by *Jared Lander* ([amazon](https://www.amazon.com/Everyone-Advanced-Analytics-Graphics-Addison-Wesley/dp/013454692X/ref=sr_1_1?ie=UTF8&qid=1518561244&sr=8-1&keywords=r+for+everyone))
 
@@ -21,27 +43,27 @@ title: "Syllabus"
 ([Online](https://www.tidytextmining.com/))
 
 
-## Online Resources
+### Online Resources
 
 [Online Stat Book](http://onlinestatbook.com/2/index.html) -Basic stats knowledge
 
-## Assignments
+### Assignments
 
 There will be weekly [assignments](assignments.html), consisting of problem sets and reading responses that reinforce and propel topics covered in class.
 
-## Late Assignments
+### Late Assignments
 
 Assignments will be deducted 10% for assignments up to a day late, 50%  between 2-7 days and assignments later than a week will not be accepted. 
 
-## Readings
+### Readings
 
 There will also be bi-weekly [readings](readings.html) assigned.
 
-## Final Deliverable
+### Final Deliverable
 
-The end of the class will be acompanied by a 311 categorization challenege and report. The final report will document data/methods, including commented code, and description of analysis and conclusions. 
+The end of the class will be accompanied by a 311 categorization challenge and report. The final report will document data/methods, including commented code, description of analysis, and conclusions. 
 
-## Grading
+### Grading
 
 * Problem Sets 40%
 * Reading Responses 20%
@@ -76,14 +98,14 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
 * Exploratory Data Analysis
 * Getting started with ggplot2
 * Histograms and Distributions
-* Rmarkdown
+* R Markdown
 
 ### Machine Learning
 
 * What is machine learning?
 * Machine learning problems
-* Supervised vs. Unsupervised Learning
-* Regression, Classification, Clustering
+* Supervised Learning
+* Regression, Classification
 * Classification
     + KNN K nearest neighbors
     + KNN exercise 
@@ -95,12 +117,19 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
     + GLM exercise 
     + Regression with trees
     + Regression trees exercise
-    + Elastic Net
-* Timeseries Modeling
+* Unsupervised Learning
+* Clustering
+    + K-means
+    + Hierarchical Clustering
+* Time series Modeling
     + Autoregression
     + ARIMA
     + SARIMA
-* Ensemble Models
+    + ETS
+* Advanced Models
+    + Random Forests
+    + SVM
+    + Elastic Net
 * Model Evaluation
     + Confusion matrix
     + Sensitivity, specificity, precision, recall
@@ -110,109 +139,289 @@ Students must adhere to the principles of [academic honesty](https://www.arch.co
     + RMSE
     + Cross Validation
 
-## Final Projects
-
-* Final Report
 
 --------
 
 # Calendar
 
-#### Week 1 - 1/22/2019
-* **Intro Week**
-* Computational thinking
-* What is machine learning?
-* Machine learning applications
-* Lab - Intro to R part 1
-* Assignment 1 - Intro R
-* Reading - The Rise of Statistical Thinking | Porter
-* Reading Response 1
+### Week 1 - 1/22/2019
+**Objective**
 
-#### Week 2 - 1/29/2019
-* **Intro Week**
-* Lab - Intro to R part 2
-* Assignment 2 - Functions
+By the end of this class, students should be able to...
 
-#### Week 3 - 2/5/2019
-* **Data Week**
-* APIs
-* Data Munging
-* Assignment 3 - Data Munging
-* Reading - Trust in Numbers & Rethinking Objectivity | Porter & Megill
-* Reading Reponse 2 
+- Be familiar with computational thinking
+- Distinguish the difference between machine learning and Artificial Intelligence?
+- Be exposed to machine learning applications
+- Work with basic data types and variables in R
 
-#### Week 4 - 2/12/2019
-* **Data Week**
-* Exploratory Data Analysis
-* Rmarkdown
-* Exploratory Data Analysis
-* Assignment 4 - EDA/Reports
+**Class Plan**
+
+- Lab - Intro to R part 1
+
+**Reading**
+
+- The Rise of Statistical Thinking | Porter
+
+**Assignment**
+
+- Assignment 1 - Intro R
+- Reading Response 1
+
+### Week 2 - 1/29/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Discuss the pervasiveness of statistics in business and academia
+- Explore causality in the social sciences
+- Work with data structures and functions in R
+
+**Class Plan**
+
+- Reading discussion
+- Lab - Intro to R part 2
+
+**Assignment**
+
+- Assignment 2 - Functions
+
+### Week 3 - 2/5/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Work with APIs to pull data
+- Read in data from multiple sources
+- Explain the concept of "Tidy Data"
+- Be exposed to common data cleaning and manipulation techniques
+
+**Class Plan**
+
+- Lab - Data Munging 3
+
+**Reading**
+
+- Trust in Numbers & Rethinking Objectivity | Porter & Megill
+
+**Assignment**
+
+- Assignment 3 - Data Munging
+- Reading Response 2 
+
+### Week 4 - 2/12/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Critically examine quantification and objectivity
+- Discuss the rise of the scientific method and standardization in society
+- Describe the philosophy of Exploratory Data Analysis (EDA)
+- Practice common EDA techniques
+- Utilize R Markdown to make data-driven documents
+
+**Class Plan**
+
+- Reading discussion
+- Lab - Reports with R Markdown 4
+
+**Assignment**
+
+-Assignment 4 - EDA/Reports
+
+### Week 5 - 2/19/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Implement simple linear regression
+- Discuss the theory and methods behind regression
+- Visualize and interpret the results from simple linear regression
+
+**Class Plan**
+
+- Lab - Linear Regression 5
+
+**Reading**
+
+- Critical Theory of Technology | Feenberg
+
+**Assignment**
+
+- Assignment 4 - Linear Regression
+- Reading Response 3 
+
+### Week 6 - 2/26/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Critically examine technology through the instrumentalist substantive theories
+- Apply theories of technology to AI and ML
+- Explore the production and control of technology
+- Implement multiple linear regression and logistic regression
+- Continue exploring the methods behind regression analysis
+- Visualize and interpret the results from more complex regression modeling
 
 
-#### Week 5 - 2/19/2019
-* **Regression Week**
-* Linear Regression
-* Reading - Critical Theory of Technology | Feenberg
-* Reading Reponse 3
+**Class Plan**
 
-#### Week 6 - 2/26/2019
-* **Regression Week**
-* Generalized Linear Models
-* Assignment 5 - Mulitvariate Regression + ElasticNet
+- Reading discussion
+- Lab - Mulitvariate Regression +  Generalized Linear Models 6
 
-#### Week 7 - 3/5/2019
-* **Forecasting Week**
-* Seasonality
-* Trends
-* Cycles
-* Assignment 6- Forecasting
-* Reading - Making Social Science Matter | Flyvbjerg
-* Reading Reponse 4
+**Assignment**
 
-#### Week 8 - 3/12/2019
-* **Classification Week**
-* Decision Trees
-* Random Forest
-* Assignment 7 - Classification
+- Assignment 5 - Mulitvariate Regression +  Generalized Linear Models
 
-#### Week 9 - 3/19/2019 
-* **Spring Break**
+### Week 7 - 3/5/2019
+**Objective**
 
-#### Week 10 - 3/26/2019
-* **Text Mining Week**
-* Tidy Text
-* Natural Langange Processing/Understanding
-* Assignment 8 - NLP
-* Reading -  Order without Design | Bertaud
-* Reading Reponse 5
+By the end of this class, students should be able to...
 
-#### Week 11 - 4/2/2019
-* **Unsupervised Learning Week**
-* Kmeans
-* Heirarchical Clustering
-* Assignment 9 - Scoping + Data (due in two weeks)
-* Discussion on Final Competition
+- Be familiar with time series data
+- Classify patterns in time series data
+- Implement and explain various models for forecasting
 
-#### Week 12 - 4/9/2019
-* **Geocomputation Week**
-* Sf
-* Rgdal
-* Reading -Weapons of Math Destruction | O'Neill
-* Reading Reponse 6
+**Class Plan**
 
-#### Week 13 - 4/16/2019
-* **Feature Week**
-* Elasctic Net
-* PCA
+- Lab - Forecasting 7
 
-#### Week 14 - 4/23/2019
-* **Feature Week**
-* Elasctic Net
-* Assignment 10 - Analysis
+**Reading**
 
-#### Week 15 - 4/30/2019
-* Work day
+- Reading - Making Social Science Matter | Flyvbjerg
 
-#### Week 16 - 5/6/2019
-* **Final Report Due**
+**Assignment**
+
+- Assignment 6- Forecasting
+- Reading Response 4
+
+
+### Week 8 - 3/12/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Engage in discourse of the role rationality has on social science research
+- Question the role of the scientific method in the social sciences
+- Explain classification in the context of machine learning
+- Visualize and interpret the results from classification modeling
+
+**Class Plan**
+
+- Reading discussion
+- Lab - Classification 8
+
+**Assignment**
+
+- Assignment 7 - Classification
+
+### Week 9 - 3/19/2019 
+**Spring Break**
+
+### Week 10 - 3/26/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Explain the components that make up natural language processing(NLP)
+- Ingest and handle various text inputs
+- Create tidy text for text mining applications
+- Visualize and interpret NLP results
+
+**Class Plan**
+
+- Lab - Natural Language Processing 10
+
+**Reading**
+
+-  Order without Design | Bertaud
+
+**Assignment**
+
+- Assignment 9 - Natural Language Processing
+- Reading Response 5
+
+### Week 11 - 4/2/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Contrast the approaches of urban economics and urban planning
+- Explore the effects of the market and regulations in city design
+- Identify objectivity in the urban realm
+- Apply unsupervised learning algorithms such as k-means and hierarchical clustering
+- Visualize and interpret clustering results
+- Discuss final project topics and ideas
+
+**Class Plan**
+
+- Reading discussion
+- Lab 11 - Unsupervised Learning
+
+**Assignment**
+
+- Assignment 10 - Final Project Scoping + Data (due in two weeks)
+
+### Week 12 - 4/9/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Load and display spatial data
+- Perform various geoprocressing methods
+- Execute geocomputational workflows
+
+**Class Plan**
+
+- Lab 12 - Geospatial
+
+**Reading**
+
+- Weapons of Math Destruction | O'Neill
+
+**Assignment**
+
+- Reading Response 6
+
+### Week 13 - 4/16/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Discuss possible adverse effects of deploying machine learning algorithms
+- Argue instances where algorithms should or should not be used
+- Comprehend the variance-bias trade off
+- Explore regularization through the Lasso and Ridge methods
+
+**Class Plan**
+
+- Reading discussion
+- Lab 13 - Regularization
+
+**Assignment**
+
+- Final Project
+
+### Week 14 - 4/23/2019
+**Objective**
+
+By the end of this class, students should be able to...
+
+- Implement algorithms and tune parameters with Caret
+- Explain boosting and bagging in the context of ML
+- Perform more complex algorithms such as random forest and XGBoost
+- Visualize and interpret the results from XGBoost
+
+**Class Plan**
+
+- Lab 14 - Hyperparameter Tuning
+
+**Assignment**
+
+- Final Project
+
+### Week 15 - 4/30/2019
+**Work day**
+
+### Week 16 - 5/6/2019
+**Final Report Due**
 
